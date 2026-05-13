@@ -31,7 +31,7 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [dropdownOpen]);
 
   const handleLogout = () => {
     logout();

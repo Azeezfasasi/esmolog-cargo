@@ -10,7 +10,7 @@ import UserDashboardStats from '@/components/DashboardComponents/UserDashboardSt
 import React from 'react'
 import { useProfile } from '@/components/context-api/ProfileContext'
 
-export default function page() {
+export default function Page() {
   const { isAdmin, isEmployee, isClient } = useProfile();
 
   return (
