@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-inter), 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .playwrite-text {
+    font-family: "Playwrite AU SA", cursive;
+    font-optical-sizing: auto;
+    font-style: normal;
+  }
+  
+  .font-poppins {
+    font-family: var(--font-poppins), 'Poppins', sans-serif;
+  }
+}
