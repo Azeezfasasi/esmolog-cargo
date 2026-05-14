@@ -3,8 +3,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
-import Image from 'next/image';
-
 export default function PrintModalContent({ shipment, onClose }) {
   const printRef = useRef();
   const [isDownloading, setIsDownloading] = useState(false);
@@ -265,12 +263,10 @@ export default function PrintModalContent({ shipment, onClose }) {
           {shipment ? (
             <>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                <Image
-                  src="/images/cargorealmlogo.png"
+                <img
+                  src="/img/esmologtrans.png"
                   alt="Logo"
-                  width={200}
-                  height={60}
-                  className="object-contain w-[250px] h-[70px]"
+                  style={{ maxWidth: '250px', maxHeight: '70px', objectFit: 'contain' }}
                 />
               </div>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -281,11 +277,10 @@ export default function PrintModalContent({ shipment, onClose }) {
                 </div>
                 {shipment.qrCodeUrl && (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Image
+                    <img
                       src={shipment.qrCodeUrl}
                       alt="Shipment QR Code"
-                      width={150}
-                      height={150}
+                      style={{ width: '150px', height: '150px', objectFit: 'contain' }}
                     />
                     <p style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.5rem', textAlign: 'center' }}>Scan to track shipment</p>
                   </div>

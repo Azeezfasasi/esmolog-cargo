@@ -16,24 +16,24 @@ const ShipmentToolbar = ({
   statuses = [],
 }) => {
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-gray-50 rounded-xl shadow">
-      <div className="flex items-center gap-2 w-full md:w-auto">
-        <Search className="text-gray-500" />
+    <div className="flex flex-col gap-3 sm:gap-4 p-2 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl shadow">
+      <div className="flex items-center gap-2 w-full">
+        <Search className="text-gray-500 flex-shrink-0" />
         <Input
           type="text"
           placeholder="Search by name, ID or destination"
           value={searchQuery}
           onChange={(e) => onSearch(e.target.value)}
-          className="w-full md:w-64"
+          className="w-full text-sm"
         />
       </div>
 
       {/* Facility and Status Filters */}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
         <select
           value={selectedFacility}
           onChange={(e) => onFacilityChange(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-1 text-sm"
+          className="border border-gray-300 rounded px-3 py-2 sm:py-1 text-sm w-full sm:w-auto flex-1 sm:flex-initial"
         >
           <option value="">All Facilities</option>
           {Array.isArray(facilities) && facilities.length > 0 ? (
@@ -65,7 +65,7 @@ const ShipmentToolbar = ({
         <select
           value={selectedStatus}
           onChange={(e) => onStatusChange(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-1 text-sm w-[200px]"
+          className="border border-gray-300 rounded px-3 py-2 sm:py-1 text-sm w-full sm:w-[200px] flex-1 sm:flex-initial"
         >
           <option value="">All Statuses</option>
           {Array.isArray(statuses) && statuses.length > 0 ? (

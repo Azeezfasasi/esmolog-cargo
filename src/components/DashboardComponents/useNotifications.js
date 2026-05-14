@@ -21,13 +21,14 @@ const useNotifications = () => {
 
         setLoading(true);
 
-        // Fetch pending registrations
-        const registrationsRes = await axios.get('/api/programmes/registrations?status=pending');
-        const registrations = registrationsRes.data.registrations || [];
+        // Fetch all notifications (registrations, prayer requests, shipments, subscribers)
+        let allNotifications = [];
 
-        // Combine notifications (only registrations for now)
-        const combinedNotifications = [
-          ...registrations.map(reg => ({
+        try {
+          const registrationsRes = await axios.get('/api/programmes/registrations?status=pending');
+          const registrations = registrationsRes.data.registrations || [];
+
+          allNotifications.push(...registrations.map(reg => ({
             id: `registration-${reg._id}`,
             type: 'registration',
             title: 'Pending Programme Registration',
@@ -35,16 +36,68 @@ const useNotifications = () => {
             time: new Date(reg.registeredAt).toLocaleDateString(),
             link: '/dashboard/programme-registration-list',
             icon: '📝',
-          })),
-        ];
+          })));
+        } catch (err) {
+          console.warn('Error fetching programme registrations:', err);
+        }
 
-        // Sort by most recent
-        combinedNotifications.sort(
-          (a, b) => new Date(b.time) - new Date(a.time)
-        );
+        try {
+          const notificationsRes = await axios.get('/api/notifications');
+          const data = notificationsRes.data.data || {};
 
-        setNotifications(combinedNotifications.slice(0, 10)); // Show last 10
-        setUnreadCount(combinedNotifications.length);
+          // Add prayer requests
+          if (data.prayerRequests && Array.isArray(data.prayerRequests)) {
+            allNotifications.push(...data.prayerRequests.map(prayer => ({
+              id: `prayer-${prayer._id}`,
+              type: 'prayer-request',
+              title: 'New Prayer Request',
+              message: `${prayer.user?.name || 'Unknown'} submitted a prayer request: "${prayer.request.substring(0, 50)}${prayer.request.length > 50 ? '...' : ''}"`,
+              time: new Date(prayer.createdAt).toLocaleDateString(),
+              link: '/dashboard/allposts', // Adjust link as needed
+              icon: '🙏',
+            })));
+          }
+
+          // Add shipment status updates
+          if (data.shipments && Array.isArray(data.shipments)) {
+            allNotifications.push(...data.shipments.flatMap(shipment => {
+              return (shipment.trackingHistory || []).map(history => ({
+                id: `shipment-${shipment._id}-${history.timestamp}`,
+                type: 'shipment-update',
+                title: 'Shipment Status Updated',
+                message: `Tracking #${shipment.trackingNumber}: Status changed to "${history.status}"${history.location ? ` - ${history.location}` : ''}`,
+                time: new Date(history.timestamp).toLocaleDateString(),
+                link: '/dashboard/myshipments',
+                icon: '📦',
+              }));
+            }).slice(0, 5)); // Limit to 5 most recent
+          }
+
+          // Add subscriber changes
+          if (data.subscribers && Array.isArray(data.subscribers)) {
+            allNotifications.push(...data.subscribers.map(subscriber => ({
+              id: `subscriber-${subscriber._id}`,
+              type: 'subscription-change',
+              title: subscriber.isSubscribed ? 'New Newsletter Subscriber' : 'Newsletter Unsubscribe',
+              message: `${subscriber.email} ${subscriber.isSubscribed ? 'subscribed to' : 'unsubscribed from'} the newsletter${subscriber.name ? ` (${subscriber.name})` : ''}`,
+              time: new Date(subscriber.updatedAt).toLocaleDateString(),
+              link: '/dashboard/allnewsletter',
+              icon: subscriber.isSubscribed ? '📧' : '❌',
+            })));
+          }
+        } catch (err) {
+          console.warn('Error fetching API notifications:', err);
+        }
+
+        // Sort by most recent (using time as proxy)
+        allNotifications.sort((a, b) => {
+          const timeA = new Date(a.time || 0).getTime();
+          const timeB = new Date(b.time || 0).getTime();
+          return timeB - timeA;
+        });
+
+        setNotifications(allNotifications.slice(0, 10)); // Show last 10
+        setUnreadCount(allNotifications.length);
         setError(null);
       } catch (err) {
         console.error('Error fetching notifications:', err);

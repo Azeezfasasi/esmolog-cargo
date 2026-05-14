@@ -1,10 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 
 export default function NotificationModal({ isOpen, onClose, notifications, unreadCount }) {
   if (!isOpen) return null;
+
+  // Group notifications by type
+  const groupedNotifications = useMemo(() => {
+    const groups = {
+      'registration': [],
+      'prayer-request': [],
+      'shipment-update': [],
+      'subscription-change': [],
+    };
+
+    notifications.forEach(notif => {
+      if (groups[notif.type]) {
+        groups[notif.type].push(notif);
+      }
+    });
+
+    return groups;
+  }, [notifications]);
+
+  const hasAnyNotification = Object.values(groupedNotifications).some(arr => arr.length > 0);
 
   return (
     <>
@@ -45,7 +65,7 @@ export default function NotificationModal({ isOpen, onClose, notifications, unre
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto">
-            {notifications.length === 0 ? (
+            {!hasAnyNotification ? (
               <div className="flex flex-col items-center justify-center h-64 text-gray-500">
                 <svg className="w-16 h-16 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -55,42 +75,146 @@ export default function NotificationModal({ isOpen, onClose, notifications, unre
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {notifications.map((notification) => (
-                  <Link
-                    key={notification.id}
-                    href={notification.link}
-                    onClick={onClose}
-                  >
-                    <div className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150 cursor-pointer border-l-4 border-transparent hover:border-green-700">
-                      <div className="flex items-start gap-4">
-                        <div className="text-3xl flex-shrink-0">{notification.icon}</div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-semibold text-gray-900">{notification.title}</h3>
-                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
-                          <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            {notification.time}
-                          </p>
-                        </div>
-                      </div>
+                {/* Programme Registrations */}
+                {groupedNotifications.registration.length > 0 && (
+                  <>
+                    <div className="px-6 py-2 bg-gray-100 text-xs font-semibold text-gray-600 sticky top-0">
+                      📝 Programme Registrations ({groupedNotifications.registration.length})
                     </div>
-                  </Link>
-                ))}
+                    {groupedNotifications.registration.map((notification) => (
+                      <Link
+                        key={notification.id}
+                        href={notification.link}
+                        onClick={onClose}
+                      >
+                        <div className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150 cursor-pointer border-l-4 border-transparent hover:border-green-700">
+                          <div className="flex items-start gap-4">
+                            <div className="text-3xl flex-shrink-0">{notification.icon}</div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm font-semibold text-gray-900">{notification.title}</h3>
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
+                              <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {notification.time}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </>
+                )}
+
+                {/* Prayer Requests */}
+                {groupedNotifications['prayer-request'].length > 0 && (
+                  <>
+                    <div className="px-6 py-2 bg-gray-100 text-xs font-semibold text-gray-600 sticky top-0">
+                      🙏 Prayer Requests ({groupedNotifications['prayer-request'].length})
+                    </div>
+                    {groupedNotifications['prayer-request'].map((notification) => (
+                      <Link
+                        key={notification.id}
+                        href={notification.link}
+                        onClick={onClose}
+                      >
+                        <div className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150 cursor-pointer border-l-4 border-transparent hover:border-green-700">
+                          <div className="flex items-start gap-4">
+                            <div className="text-3xl flex-shrink-0">{notification.icon}</div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm font-semibold text-gray-900">{notification.title}</h3>
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
+                              <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {notification.time}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </>
+                )}
+
+                {/* Shipment Updates */}
+                {groupedNotifications['shipment-update'].length > 0 && (
+                  <>
+                    <div className="px-6 py-2 bg-gray-100 text-xs font-semibold text-gray-600 sticky top-0">
+                      📦 Shipment Updates ({groupedNotifications['shipment-update'].length})
+                    </div>
+                    {groupedNotifications['shipment-update'].map((notification) => (
+                      <Link
+                        key={notification.id}
+                        href={notification.link}
+                        onClick={onClose}
+                      >
+                        <div className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150 cursor-pointer border-l-4 border-transparent hover:border-green-700">
+                          <div className="flex items-start gap-4">
+                            <div className="text-3xl flex-shrink-0">{notification.icon}</div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm font-semibold text-gray-900">{notification.title}</h3>
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
+                              <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {notification.time}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </>
+                )}
+
+                {/* Subscription Changes */}
+                {groupedNotifications['subscription-change'].length > 0 && (
+                  <>
+                    <div className="px-6 py-2 bg-gray-100 text-xs font-semibold text-gray-600 sticky top-0">
+                      📧 Newsletter Subscriptions ({groupedNotifications['subscription-change'].length})
+                    </div>
+                    {groupedNotifications['subscription-change'].map((notification) => (
+                      <Link
+                        key={notification.id}
+                        href={notification.link}
+                        onClick={onClose}
+                      >
+                        <div className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150 cursor-pointer border-l-4 border-transparent hover:border-green-700">
+                          <div className="flex items-start gap-4">
+                            <div className="text-3xl flex-shrink-0">{notification.icon}</div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm font-semibold text-gray-900">{notification.title}</h3>
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
+                              <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {notification.time}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </>
+                )}
               </div>
             )}
           </div>
 
           {/* Footer */}
-          {notifications.length > 0 && (
+          {hasAnyNotification && (
             <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
               <Link
-                href="/dashboard/programme-registration-list"
+                href="/dashboard"
                 onClick={onClose}
                 className="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-semibold text-sm transition-colors duration-200"
               >
-                View All Pending Registrations
+                View Dashboard
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
