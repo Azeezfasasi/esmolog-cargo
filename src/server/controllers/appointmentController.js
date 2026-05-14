@@ -40,19 +40,19 @@ exports.createAppointment = async (req, res) => {
     // --- Send Confirmation Email to User ---
     const userEmailContent = `
       <p>Hi ${name},</p>
-      <p>Thank you for booking an appointment with Cargo Realm and Logistics.</p>
+      <p>Thank you for booking an appointment with ESMOLOG Cargo and Logistics.</p>
       <p>Your appointment details are:</p>
       <ul>
         <li><strong>Date:</strong> ${formatDateForEmail(appointmentDate)}</li>
         <li><strong>Time:</strong> ${appointmentTime}</li>
-        <li><strong>Status:</strong> Pending (awaiting confirmation from Cargo Realm and Logistics staff)</li>
+        <li><strong>Status:</strong> Pending (awaiting confirmation from ESMOLOG Cargo and Logistics staff)</li>
       </ul>
       <p>We will review your request and get back to you shortly.</p>
       <p>For any inquiries, please reply to this email or call us.</p>
       <p>Sincerely,</p>
-      <p>Cargo Realm and Logistics Team</p>
+      <p>ESMOLOG Cargo and Logistics Team</p>
     `;
-    await sendMail(email, 'Your Appointment Request with Cargo Realm and Logistics', userEmailContent);
+    await sendMail(email, 'Your Appointment Request with ESMOLOG Cargo and Logistics', userEmailContent);
 
     // --- Send Notification Email to Admin ---
     const adminEmailContent = `
@@ -70,7 +70,7 @@ exports.createAppointment = async (req, res) => {
       </ul>
       <p>Please log in to the admin panel to review and confirm this appointment.</p>
     `;
-    await sendMail(process.env.EMAIL_USER, 'New Appointment Request | Cargo Realm and Logistics', adminEmailContent);
+    await sendMail(process.env.EMAIL_USER, 'New Appointment Request | ESMOLOG Cargo and Logistics', adminEmailContent);
 
     res.status(201).json({
       message: 'Appointment request submitted successfully. Check your email for confirmation.',
@@ -170,10 +170,10 @@ exports.deleteAppointment = async (req, res) => {
     // Optional: Send email notification about deletion
     const emailContent = `
       <p>Hi ${deletedAppointment.name},</p>
-      <p>Your appointment scheduled for ${formatDateForEmail(deletedAppointment.appointmentDate)} at ${deletedAppointment.appointmentTime} has been deleted by Cargo Realm and Logistics staff.</p>
+      <p>Your appointment scheduled for ${formatDateForEmail(deletedAppointment.appointmentDate)} at ${deletedAppointment.appointmentTime} has been deleted by ESMOLOG Cargo and Logistics staff.</p>
       <p>If you have any questions, please contact us.</p>
       <p>Sincerely,</p>
-      <p>Cargo Realm and Logistics Team</p>
+      <p>ESMOLOG Cargo and Logistics Team</p>
     `;
     await sendMail(deletedAppointment.email, 'Your Appointment Has Been Deleted', emailContent);
 
@@ -212,7 +212,7 @@ exports.rescheduleAppointment = async (req, res) => {
     // --- Send Reschedule Confirmation Email to User ---
     const userEmailContent = `
       <p>Hi ${appointment.name},</p>
-      <p>Your appointment with Cargo Realm and Logistics has been rescheduled.</p>
+      <p>Your appointment with ESMOLOG Cargo and Logistics has been rescheduled.</p>
       <p><strong>Original Appointment:</strong> ${formatDateForEmail(oldDate)} at ${oldTime}</p>
       <p><strong>New Appointment Details:</strong></p>
       <ul>
@@ -222,7 +222,7 @@ exports.rescheduleAppointment = async (req, res) => {
       </ul>
       <p>We look forward to seeing you at the new time.</p>
       <p>Sincerely,</p>
-      <p>Cargo Realm and Logistics Team</p>
+      <p>ESMOLOG Cargo and Logistics Team</p>
     `;
     await sendMail(appointment.email, 'Your Appointment Has Been Rescheduled', userEmailContent);
 
@@ -262,10 +262,10 @@ exports.cancelAppointment = async (req, res) => {
     // --- Send Cancellation Confirmation Email to User ---
     const userEmailContent = `
       <p>Dear ${appointment.name},</p>
-      <p>Your appointment with Cargo Realm and Logistics scheduled for ${formatDateForEmail(appointment.appointmentDate)} at ${appointment.appointmentTime} has been cancelled.</p>
+      <p>Your appointment with ESMOLOG Cargo and Logistics scheduled for ${formatDateForEmail(appointment.appointmentDate)} at ${appointment.appointmentTime} has been cancelled.</p>
       <p>If you have any questions or wish to rebook, please contact us.</p>
       <p>Sincerely,</p>
-      <p>Cargo Realm and Logistics Team</p>
+      <p>ESMOLOG Cargo and Logistics Team</p>
     `;
     await sendMail(appointment.email, 'Your Appointment Has Been Cancelled', userEmailContent);
 
@@ -315,7 +315,7 @@ exports.changeAppointmentStatus = async (req, res) => {
       <p>The status of your appointment scheduled for ${formatDateForEmail(appointment.appointmentDate)} at ${appointment.appointmentTime} has been updated from '${oldStatus}' to '${status}'.</p>
       <p>Please log in to your portal or contact us for more details.</p>
       <p>Sincerely,</p>
-      <p>Cargo Realm and Logistics Team</p>
+      <p>ESMOLOG Cargo and Logistics Team</p>
     `;
 
     if (appointment.email) {

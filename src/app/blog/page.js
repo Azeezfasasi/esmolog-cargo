@@ -8,9 +8,7 @@ export default function page() {
   return (
     <>
         <SubscribePopUp />
-        <HeaderSection />
         <AllBlog />
-        <FooterSection />
     </>
   )
 }

@@ -34,7 +34,7 @@ exports.register = async (req, res) => {
     console.log('Registered User (after save, with hashed password):', user.password); // Verify it's hashed
     
     // Optional: Send welcome email
-    await sendMail(email, 'Welcome to Cargo Realm and Logistics', `<p>Hi ${name}, welcome to Cargo Realm and Logistics!</p>`);
+    await sendMail(email, 'Welcome to ESMOLOG Cargo and Logistics', `<p>Hi ${name}, welcome to ESMOLOG Cargo and Logistics!</p>`);
     
     // If you want to log in the user immediately after registration and send a token:
     const token = generateToken(user._id, user.role);
@@ -250,10 +250,10 @@ exports.changeUserPasswordByAdmin = async (req, res) => {
     // Optional: Send a notification email to the user whose password was changed
     await sendMail(userToUpdate.email, 'Your Password Has Been Changed',
       `<p>Hi ${userToUpdate.name},</p>
-       <p>Your password for Cargo Realm and Logistics account has been changed by an administrator.</p>
+       <p>Your password for ESMOLOG Cargo and Logistics account has been changed by an administrator.</p>
        <p>If you did not request this change, please contact support immediately.</p>
        <p>Thank you,</p>
-       <p>Cargo Realm and Logistics Team</p>`
+       <p>ESMOLOG Cargo and Logistics Team</p>`
     );
 
     res.json({ message: 'User password updated successfully.' });

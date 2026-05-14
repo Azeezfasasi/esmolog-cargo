@@ -21,7 +21,7 @@ export default function FooterSection() {
           <div className="flex items-center space-x-2 mb-4">
             {/* Using an SVG for the logo as it's scalable and matches the image */}
             <Image src="/img/esmologtrans.png" alt="logo" width={250} height={60} className='w-[170px] h-[120px]' />
-            {/* <span className="text-xl font-semibold text-white">Cargo Realm and Logistics</span> */}
+            {/* <span className="text-xl font-semibold text-white">ESMOLOG Cargo and Logistics</span> */}
           </div>
           <p className="text-sm leading-relaxed">
             Your reliable partner for global cargo shipments. We provide efficient, secure, and timely logistics solutions tailored to your business needs, ensuring your goods reach their destination with care.
@@ -80,7 +80,7 @@ export default function FooterSection() {
 
       {/* Bottom Section: Copyright */}
       <div className="border-t border-gray-700 mt-12 pt-8 text-center text-sm text-gray-500">
-        &copy; {new Date().getFullYear()} Cargo Realm and Logistics. All rights reserved.
+        &copy; {new Date().getFullYear()} ESMOLOG Cargo and Logistics. All rights reserved.
       </div>
     </footer>
   );

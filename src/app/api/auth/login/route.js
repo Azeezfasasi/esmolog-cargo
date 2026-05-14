@@ -45,7 +45,7 @@ export async function POST(request) {
       success: true,
       token: token,
       user: {
-        id: user._id.toString(),
+        _id: user._id.toString(),
         name: user.name,
         email: user.email,
         role: user.role,

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const blogSchema = new mongoose.Schema({
   blogTitle: { type: String, required: true },
@@ -6,7 +6,9 @@ const blogSchema = new mongoose.Schema({
   description: { type: String, required: true },
   sentBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   date: { type: Date, default: Date.now },
-  status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft' }
+  status: { type: String, enum: ['draft', 'published', 'archived'], default: 'published' }
 }, { timestamps: true });
 
-module.exports = mongoose.models.Blog || mongoose.model('Blog', blogSchema);
+const Blog = mongoose.models.Blog || mongoose.model('Blog', blogSchema);
+
+export default Blog;

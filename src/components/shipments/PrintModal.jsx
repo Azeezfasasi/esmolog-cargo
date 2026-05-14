@@ -222,7 +222,7 @@ export default function PrintModalContent({ shipment, onClose }) {
         return { backgroundColor: '#ECFCCB', color: '#3F6212' }; // Lime
       case 'Arrived Carrier Connecting facility': 
         return { backgroundColor: '#FEF9C3', color: '#713F12' }; // Yellow
-      case 'Departed CARGO realm facility (Nig)': 
+      case 'Departed ESMOLOG Cargo facility (Nig)': 
         return { backgroundColor: '#FFEDD5', color: '#9A3412' }; // Orange
       case 'Arrived nearest airport': 
         return { backgroundColor: '#E0F2FE', color: '#075985' }; // Sky
@@ -275,7 +275,7 @@ export default function PrintModalContent({ shipment, onClose }) {
               </div>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <div>
-                  <p style={{ fontWeight: '600' }}>Cargo Realm and Logistics</p>
+                  <p style={{ fontWeight: '600' }}>ESMOLOG Cargo and Logistics</p>
                   <p>Nacho Export Warehouse, Murital Muhammad International Airport, <br /> Ikeja Lagos.</p>
                   <p>Email: <br /> info@cargorealmandlosgistics.com</p>
                 </div>

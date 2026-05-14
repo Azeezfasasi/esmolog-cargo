@@ -8,7 +8,7 @@ import Link from 'next/link'; // Import Link
 
 function AllBlog() {
   const fetchBlogPosts = async () => {
-    const response = await axios.get(`${API_BASE_URL}/blog`);
+    const response = await axios.get(`${API_BASE_URL}/blogs`);
     return response.data;
   };
 
@@ -75,7 +75,7 @@ function AllBlog() {
         {blogPosts && blogPosts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {blogPosts.map((post) => (
-              <Link href={`/app/account/blogdetail/${post._id}`} 
+              <Link href={`/blog/${post._id}`} 
                 key={post._id}
                 className="bg-white p-6 rounded-lg shadow-md flex flex-col text-left group overflow-hidden"
               >

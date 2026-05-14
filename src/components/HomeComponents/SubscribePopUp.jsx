@@ -28,7 +28,7 @@ export const SubscribePopUp = () => {
             <div className='flex flex-col items-center'>
                 <Image src="/img/esmologtrans.png" alt="Newsletter image" width={120} height={120} />
                 <div className='text-center font-semibold text-[26px] mb-3'>Subscribe to newsletter</div>
-                <div className='text-center text-sm text-gray-600'>Enter your email to get the update on Cargo Realm and Logistics&apos;s hottest deals, exclusive offers, early access to shipments and more.<br />Don&apos;t miss out</div>
+                <div className='text-center text-sm text-gray-600'>Enter your email to get the update on ESMOLOG Cargo and Logistics&apos;s hottest deals, exclusive offers, early access to shipments and more.<br />Don&apos;t miss out</div>
                 <div className='w-full mt-2 mb-3'>
                     <SubscribeNowPopup />
                 </div>

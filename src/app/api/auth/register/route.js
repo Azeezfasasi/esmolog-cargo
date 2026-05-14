@@ -49,7 +49,7 @@ export async function POST(request) {
       message: 'User registered successfully',
       token: token,
       user: {
-        id: user._id,
+        _id: user._id.toString(),
         name: user.name,
         email: user.email,
         role: user.role,

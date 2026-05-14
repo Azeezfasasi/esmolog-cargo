@@ -84,7 +84,7 @@ const sendClientNotification = async (shipment, subject, body) => {
                 </p>
 
                 <p style="margin-top: 25px; margin-bottom: 0; font-size: 16px;">Thank you for using our service.</p>
-                  <p style="margin-top: 5px; margin-bottom: 0; font-size: 16px; font-weight: bold;">The Cargo Realm Team</p>
+                  <p style="margin-top: 5px; margin-bottom: 0; font-size: 16px; font-weight: bold;">The ESMOLOG Cargo Team</p>
               </td>
             </tr>
           </table>
@@ -93,7 +93,7 @@ const sendClientNotification = async (shipment, subject, body) => {
             <tr>
               <td style="padding: 20px 30px; text-align: center; font-size: 12px; color: #777777;">
                 <p style="margin: 0;">This is an automated email. Please do not reply to this email.</p>
-                  <p style="margin: 5px 0 0;">&copy; ${new Date().getFullYear()} Cargo Realm and Logistics. All rights reserved.</p>
+                  <p style="margin: 5px 0 0;">&copy; ${new Date().getFullYear()} ESMOLOG Cargo and Logistics. All rights reserved.</p>
               </td>
             </tr>
           </table>

@@ -75,7 +75,7 @@ function AddEventMain() { // Renamed from CreateEvent to AddEventMain as per use
       setMonthlyRecurrenceOrdinal('first');
 
       setTimeout(() => {
-        router.push('/dashboard/addevents'); // Navigate to manage events page
+        router.push('/dashboard/allevents'); // Navigate to manage events page
       }, 2000);
     },
     onError: (err) => {

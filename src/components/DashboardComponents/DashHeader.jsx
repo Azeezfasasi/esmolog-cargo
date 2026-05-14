@@ -35,7 +35,7 @@ function DashHeader() {
         <Link href="/dashboard" className="flex items-center bg-gray-100 p-2 rounded-md">
           <Image
             src="/img/cargorealmlogo.png"
-            alt="Cargo Realm Logo"
+            alt="ESMOLOG Logo"
             className="h-[30px] w-[120px] md:h-[40px] md:w-[220px] mr-0"
             width={120}
             height={30}

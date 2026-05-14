@@ -105,13 +105,13 @@ exports.submitContactForm = async (req, res) => {
               <tr>
                 <td style="padding: 20px 30px;">
                   <p style="margin-top: 0; margin-bottom: 15px; font-size: 16px;">Hi ${name},</p>
-                  <p style="margin-bottom: 15px; font-size: 16px;">Thank you for contacting Cargo Realm and Logistics. We have received your quote request and will get back to you as soon as possible.</p>
+                  <p style="margin-bottom: 15px; font-size: 16px;">Thank you for contacting ESMOLOG Cargo and Logistics. We have received your quote request and will get back to you as soon as possible.</p>
                   <p style="margin-bottom: 15px; font-size: 16px;">Your message:</p>
                   <blockquote style="border-left: 4px solid #ccc; margin: 0; padding-left: 10px; color: #555; font-style: italic;">
                     <p>${message}</p>
                   </blockquote>
                   <p style="margin-top: 25px; margin-bottom: 0; font-size: 16px;">Sincerely,</p>
-                  <p style="margin-top: 5px; margin-bottom: 0; font-size: 16px; font-weight: bold;">Cargo Realm and Logistics Team</p>
+                  <p style="margin-top: 5px; margin-bottom: 0; font-size: 16px; font-weight: bold;">ESMOLOG Cargo and Logistics Team</p>
                 </td>
               </tr>
             </table>
@@ -120,7 +120,7 @@ exports.submitContactForm = async (req, res) => {
               <tr>
                 <td style="padding: 20px 30px; text-align: center; font-size: 12px; color: #777777;">
                   <p style="margin: 0;">This is an automated email. Please do not reply to this email.</p>
-                    <p style="margin: 5px 0 0;">&copy; ${new Date().getFullYear()} Cargo Realm and Logistics. All rights reserved.</p>
+                    <p style="margin: 5px 0 0;">&copy; ${new Date().getFullYear()} ESMOLOG Cargo and Logistics. All rights reserved.</p>
                 </td>
               </tr>
             </table>
@@ -129,7 +129,7 @@ exports.submitContactForm = async (req, res) => {
       </table>
     </div>
     `;
-    await sendMail(email, 'Quote Request Received - Cargo Realm and Logistics', clientEmailContent);
+    await sendMail(email, 'Quote Request Received - ESMOLOG Cargo and Logistics', clientEmailContent);
 
     // 2. Fetch all admin users
     const adminUsers = await User.find({ role: 'admin' });
@@ -233,7 +233,7 @@ exports.submitContactForm = async (req, res) => {
                 <tr>
                   <td style="padding: 20px 30px; text-align: center; font-size: 12px; color: #777777;">
                     <p style="margin: 0;">This is an automated alert. Please do not reply to this email.</p>
-                    <p style="margin: 5px 0 0;">&copy; ${new Date().getFullYear()} Cargo Realm and Logistics. All rights reserved.</p>
+                    <p style="margin: 5px 0 0;">&copy; ${new Date().getFullYear()} ESMOLOG Cargo and Logistics. All rights reserved.</p>
                   </td>
                 </tr>
               </table>
@@ -337,7 +337,7 @@ exports.replyToContactForm = async (req, res) => {
               <tr>
                 <td style="padding: 20px 30px;">
                   <p style="margin-top: 0; margin-bottom: 15px; font-size: 16px;">Hi ${contactForm.name || 'Valued Member'},</p>
-                  <p style="margin-bottom: 15px; font-size: 16px;">Thank you for your message. Here is a reply from Cargo Realm and Logistics:</p>
+                  <p style="margin-bottom: 15px; font-size: 16px;">Thank you for your message. Here is a reply from ESMOLOG Cargo and Logistics:</p>
                   <blockquote style="border-left: 4px solid #ccc; margin: 0; padding-left: 10px; color: #555; font-style: italic;">
                     <p>${replyContent}</p>
                   </blockquote>
@@ -346,7 +346,7 @@ exports.replyToContactForm = async (req, res) => {
                     <p>${contactForm.message}</p>
                   </blockquote>
                   <p style="margin-top: 25px; margin-bottom: 0; font-size: 16px;">Sincerely,</p>
-                  <p style="margin-top: 5px; margin-bottom: 0; font-size: 16px; font-weight: bold;">Cargo Realm and Logistics Team</p>
+                  <p style="margin-top: 5px; margin-bottom: 0; font-size: 16px; font-weight: bold;">ESMOLOG Cargo and Logistics Team</p>
                 </td>
               </tr>
             </table>
@@ -355,7 +355,7 @@ exports.replyToContactForm = async (req, res) => {
               <tr>
                 <td style="padding: 20px 30px; text-align: center; font-size: 12px; color: #777777;">
                   <p style="margin: 0;">This is an automated email. Please do not reply to this email.</p>
-                  <p style="margin: 5px 0 0;">&copy; ${new Date().getFullYear()} Cargo Realm and Logistics. All rights reserved.</p>
+                  <p style="margin: 5px 0 0;">&copy; ${new Date().getFullYear()} ESMOLOG Cargo and Logistics. All rights reserved.</p>
                 </td>
               </tr>
             </table>

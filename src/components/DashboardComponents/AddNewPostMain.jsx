@@ -47,7 +47,7 @@ function AddNewPostMain() {
 
       // Optional: Redirect to the blog list page or the newly created blog post
       setTimeout(() => {
-        router.push('/dashboard/allposts'); 
+        router.push('/dashboard/allblogpost'); 
       }, 2000);
     },
     onError: (err) => {

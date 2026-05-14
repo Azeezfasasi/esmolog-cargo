@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config/Api';
-import Link from 'next/link';
 
 function ContactForm() {
   // Form states
@@ -23,11 +22,20 @@ function ContactForm() {
   const [localError, setLocalError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Clear messages when form fields change (except after successful submission)
+  // Auto-dismiss success message after 5 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 9000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
+
+  // Clear error message when form fields change
   useEffect(() => {
     setLocalError('');
-    setSuccessMessage('');
-  }, [name, email, phoneNumber, message, shippingType, originCountry, destinationCountry, weight, length, height, message]);
+  }, [name, email, phoneNumber, message, shippingType, originCountry, destinationCountry, weight, length, height]);
 
   // Mutation for submitting the contact form
   const submitContactFormMutation = useMutation({

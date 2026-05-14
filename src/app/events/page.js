@@ -1,7 +1,10 @@
 import React from 'react'
+import ViewEvents from '@/components/HomeComponents/ViewEvents';
 
-export default function page() {
+export default function EventsPage() {
   return (
-    <div>page</div>
+    <>
+      <ViewEvents />
+    </>
   )
 }

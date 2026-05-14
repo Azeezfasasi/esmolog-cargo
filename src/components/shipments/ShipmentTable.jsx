@@ -60,7 +60,7 @@ export default function ShipmentTable({ shipments, onActionClick }) {
                     shipment.status === 'failed-delivery-attempt' ? 'bg-rose-100 text-rose-800' :
                     shipment.status === 'Awaiting Delivery' ? 'bg-lime-100 text-lime-800' :
                     shipment.status === 'Arrived Carrier Connecting facility' ? 'bg-teal-100 text-teal-800' :
-                    shipment.status === 'Departed CARGO realm facility (Nig)' ? 'bg-orange-100 text-orange-800' :
+                    shipment.status === 'Departed ESMOLOG Cargo facility (Nig)' ? 'bg-orange-100 text-orange-800' :
                     shipment.status === 'Arrived nearest airport' ? 'bg-sky-100 text-sky-800' :
                     shipment.status === 'Shipment is Delayed' ? 'bg-red-200 text-red-900' :
                     shipment.status === 'Delivery date not available' ? 'bg-gray-200 text-gray-800' :

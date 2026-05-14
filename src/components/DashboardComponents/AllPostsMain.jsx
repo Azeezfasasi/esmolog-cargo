@@ -24,7 +24,7 @@ export default function AllPostsMain() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/blog`);
+      const res = await axios.get(`${API_BASE_URL}/blogs`);
       setPosts(res.data || []);
       setError(null);
     } catch (err) {
@@ -101,11 +101,11 @@ export default function AllPostsMain() {
       };
 
       if (modalType === 'create') {
-        await axios.post(`${API_BASE_URL}/blog`, payload, {
+        await axios.post(`${API_BASE_URL}/blogs`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else if (modalType === 'edit' && selectedPost) {
-        await axios.put(`${API_BASE_URL}/blog/${selectedPost._id}`, payload, {
+        await axios.put(`${API_BASE_URL}/blogs/${selectedPost._id}`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -121,7 +121,7 @@ export default function AllPostsMain() {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_BASE_URL}/blog/${id}`, {
+      await axios.delete(`${API_BASE_URL}/blogs/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchPosts();

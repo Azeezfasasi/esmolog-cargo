@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useParams, Link } from 'react-router-dom'; // Import useParams and Link
-import { useQuery } from '@tanstack/react-query'; // Import useQuery
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { API_BASE_URL } from '@/config/Api'; // Adjust path as needed
+import { API_BASE_URL } from '@/config/Api';
 
 function BlogDetailMain() {
   const { id } = useParams();
@@ -65,7 +66,7 @@ function BlogDetailMain() {
         <div className="text-center text-lg text-red-600">
           Error loading blog post: {error.message}
           <div className="mt-4">
-            <Link href="/app/blog" className="text-blue-600 hover:underline">Back to All Blogs</Link>
+            <Link href="/blog" className="text-blue-600 hover:underline">Back to All Blogs</Link>
           </div>
         </div>
       </section>
@@ -79,7 +80,7 @@ function BlogDetailMain() {
         <div className="text-center text-lg text-gray-700">
           Blog post not found.
           <div className="mt-4">
-            <Link href="/app/blog" className="text-blue-600 hover:underline">Back to All Blogs</Link>
+            <Link href="/blog" className="text-blue-600 hover:underline">Back to All Blogs</Link>
           </div>
         </div>
       </section>
@@ -92,7 +93,7 @@ function BlogDetailMain() {
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg">
         {/* Back Button */}
         <div className="mb-8">
-          <Link href="/app/blog" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition duration-200">
+          <Link href="/blog" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>

@@ -36,6 +36,7 @@ export default function HeaderSection() {
       submenus: [
         { href: "/about-us", label: "About Us" },
         { href: "/services", label: "Our Services" },
+        { href: "/blog", label: "Our Blog" },
         { href: "/gallery", label: "Gallery" }, 
         { href: "/events", label: "Events" }, 
       ]
@@ -54,7 +55,7 @@ export default function HeaderSection() {
                 src="/img/esmologtrans.png"
                 width={130}
                 height={40}
-                alt="Cargo Realm Logo"
+                alt="ESMOLOG Cargo Logo"
                 className="h-[70px] w-[70px] md:h-[70px] md:w-[100px] mr-0"
             />
         </Link>

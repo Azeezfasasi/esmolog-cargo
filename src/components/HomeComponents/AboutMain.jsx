@@ -8,7 +8,7 @@ function AboutMain() {
       <div className="max-w-7xl mx-auto text-center">
         {/* Main Headline */}
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4">
-          About Cargo Realm and Logistics
+          About ESMOLOG Cargo and Logistics
         </h2>
         {/* Sub-headline */}
         <p className="max-w-2xl mx-auto text-gray-600 leading-relaxed mb-12">
@@ -33,10 +33,10 @@ function AboutMain() {
               Our Story and Purpose
             </h3>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Founded in 2016, Cargo Realm and Logistics has grown into a trusted force in the logistics and supply chain industry. Our mission is rooted in reliability, transparency, and delivering excellence across every shipment and service we provide.      
+              Founded in 2016, ESMOLOG Cargo and Logistics has grown into a trusted force in the logistics and supply chain industry. Our mission is rooted in reliability, transparency, and delivering excellence across every shipment and service we provide.      
             </p>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We are committed to moving goods efficiently and securely while building long-lasting partnerships with our clients. At Cargo Realm and Logistics, we believe in going beyond transportation, we deliver confidence, speed, and tailored logistics solutions that drive global trade forward.
+              We are committed to moving goods efficiently and securely while building long-lasting partnerships with our clients. At ESMOLOG Cargo and Logistics, we believe in going beyond transportation, we deliver confidence, speed, and tailored logistics solutions that drive global trade forward.
             </p>
             <p className="text-gray-700 leading-relaxed">
               Through innovation, integrity, and a customer-first mindset, we continuously strive to exceed expectations and make a meaningful impact in the lives of businesses and the communities we serve.
@@ -83,7 +83,7 @@ function AboutMain() {
         <h3 className="text-3xl font-bold text-gray-900 mb-4">
           Our Core Values
         </h3>
-        <p className="w-[80%] mx-auto text-center font-semibold text-gray-700 leading-relaxed mb-7">At Cargo Realm and Logistics, our values are the foundation of our business. They guide every decision we make and every interaction we have, ensuring we provide exceptional service while fostering a culture of integrity and responsibility.</p>
+        <p className="w-[80%] mx-auto text-center font-semibold text-gray-700 leading-relaxed mb-7">At ESMOLOG Cargo and Logistics, our values are the foundation of our business. They guide every decision we make and every interaction we have, ensuring we provide exceptional service while fostering a culture of integrity and responsibility.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {/* Value 1 */}
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-left">

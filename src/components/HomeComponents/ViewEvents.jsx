@@ -3,8 +3,8 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Link from 'next/link';
 import { API_BASE_URL } from '@/config/Api';
-// import Link from 'next/link';
 
 function ViewEvents() {
   // Function to fetch all upcoming events from the backend
@@ -83,9 +83,10 @@ function ViewEvents() {
             {events.map((event, index) => {
               const { day, month } = formatEventDate(event.date);
               return (
-                <div
-                  key={event._id} // Use _id from MongoDB
-                  className="relative bg-orange-50 p-6 rounded-lg shadow-md flex flex-col text-left group overflow-hidden"
+                <Link 
+                  key={event._id}
+                  href={`/events/${event._id}`}
+                  className="relative bg-orange-50 p-6 rounded-lg shadow-md flex flex-col text-left group overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer"
                 >
                   {/* Date Badge */}
                   <div className="absolute top-0 right-0 bg-gray-900 text-white text-center p-3 rounded-bl-lg">
@@ -126,7 +127,7 @@ function ViewEvents() {
                   {index === 0 && ( // Apply accent only to the first card
                     <div className="w-2/3 h-2 bg-orange-300 rounded-full mt-auto self-start"></div>
                   )}
-                </div>
+                </Link>
               );
             })}
           </div>

@@ -43,7 +43,7 @@ export async function getUserFromCookie() {
   if (!decoded) return null;
   
   return {
-    userId: decoded.userId,
+    _id: decoded.userId,
     email: decoded.email,
     name: decoded.name,
     role: decoded.role,
@@ -67,7 +67,14 @@ export async function requireAuth(request, allowedRoles = []) {
     return { error: 'Insufficient permissions', status: 403 };
   }
   
-  return { user: decoded };
+  return { 
+    user: {
+      _id: decoded.userId,
+      email: decoded.email,
+      name: decoded.name,
+      role: decoded.role,
+    }
+  };
 }
 
 export function verifyAuth(req) {
@@ -78,7 +85,17 @@ export function verifyAuth(req) {
     }
 
     const token = authHeader.slice(7); // Remove 'Bearer ' prefix
-    return verifyJWT(token);
+    const decoded = verifyJWT(token);
+    
+    if (!decoded) return null;
+    
+    // Return with _id instead of userId for consistency
+    return {
+      _id: decoded.userId,
+      email: decoded.email,
+      name: decoded.name,
+      role: decoded.role,
+    };
   } catch (error) {
     console.error('Auth verification error:', error);
     return null;
