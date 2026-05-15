@@ -1,16 +1,6 @@
 const Appointment = require('../models/Appointment');
-const sendMail = require('../utils/mailer');
-const User = require('../models/User'); 
-
-// Helper to format date for emails
-const formatDateForEmail = (date) => {
-  if (!date) return 'N/A';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
+const { AppointmentEmailService } = require('../services/emailService');
+const User = require('../models/User');
 
 exports.createAppointment = async (req, res) => {
   try {
@@ -31,46 +21,33 @@ exports.createAppointment = async (req, res) => {
       message,
       appointmentDate,
       appointmentTime,
-      bookedBy: req.user ? req.user.id : null, // Capture user ID if logged in
-      status: 'pending' // Default status
+      bookedBy: req.user ? req.user.id : null,
+      status: 'pending'
     });
 
     await newAppointment.save();
 
-    // --- Send Confirmation Email to User ---
-    const userEmailContent = `
-      <p>Hi ${name},</p>
-      <p>Thank you for booking an appointment with ESMOLOG Cargo and Logistics.</p>
-      <p>Your appointment details are:</p>
-      <ul>
-        <li><strong>Date:</strong> ${formatDateForEmail(appointmentDate)}</li>
-        <li><strong>Time:</strong> ${appointmentTime}</li>
-        <li><strong>Status:</strong> Pending (awaiting confirmation from ESMOLOG Cargo and Logistics staff)</li>
-      </ul>
-      <p>We will review your request and get back to you shortly.</p>
-      <p>For any inquiries, please reply to this email or call us.</p>
-      <p>Sincerely,</p>
-      <p>ESMOLOG Cargo and Logistics Team</p>
-    `;
-    await sendMail(email, 'Your Appointment Request with ESMOLOG Cargo and Logistics', userEmailContent);
+    // Send confirmation email to client using template
+    await AppointmentEmailService.sendConfirmationToClient({
+      name,
+      email,
+      appointmentDate,
+      appointmentTime,
+      appointmentId: newAppointment._id,
+      message
+    }).catch(err => console.error('Failed to send client confirmation:', err));
 
-    // --- Send Notification Email to Admin ---
-    const adminEmailContent = `
-      <p>New Appointment Request Received!</p>
-      <p>Details:</p>
-      <ul>
-        <li><strong>Name:</strong> ${name}</li>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Phone:</strong> ${phoneNumber || 'N/A'}</li>
-        <li><strong>Date:</strong> ${formatDateForEmail(appointmentDate)}</li>
-        <li><strong>Time:</strong> ${appointmentTime}</li>
-        <li><strong>Message:</strong> ${message || 'N/A'}</li>
-        <li><strong>Booked By (User ID):</strong> ${req.user ? req.user.id : 'Visitor'}</li>
-        <li><strong>Appointment ID:</strong> ${newAppointment._id}</li>
-      </ul>
-      <p>Please log in to the admin panel to review and confirm this appointment.</p>
-    `;
-    await sendMail(process.env.EMAIL_USER, 'New Appointment Request | ESMOLOG Cargo and Logistics', adminEmailContent);
+    // Send notification to admin using template
+    await AppointmentEmailService.sendConfirmationToAdmin({
+      name,
+      email,
+      phoneNumber,
+      appointmentDate,
+      appointmentTime,
+      appointmentId: newAppointment._id,
+      message,
+      bookedBy: req.user ? req.user.id : 'Visitor'
+    }).catch(err => console.error('Failed to send admin notification:', err));
 
     res.status(201).json({
       message: 'Appointment request submitted successfully. Check your email for confirmation.',
@@ -170,10 +147,10 @@ exports.deleteAppointment = async (req, res) => {
     // Optional: Send email notification about deletion
     const emailContent = `
       <p>Hi ${deletedAppointment.name},</p>
-      <p>Your appointment scheduled for ${formatDateForEmail(deletedAppointment.appointmentDate)} at ${deletedAppointment.appointmentTime} has been deleted by ESMOLOG Cargo and Logistics staff.</p>
+      <p>Your appointment scheduled for ${formatDateForEmail(deletedAppointment.appointmentDate)} at ${deletedAppointment.appointmentTime} has been deleted by ESMOLOG Worldwide Cargo and Logistics staff.</p>
       <p>If you have any questions, please contact us.</p>
       <p>Sincerely,</p>
-      <p>ESMOLOG Cargo and Logistics Team</p>
+      <p>ESMOLOG Worldwide Cargo and Logistics Team</p>
     `;
     await sendMail(deletedAppointment.email, 'Your Appointment Has Been Deleted', emailContent);
 
@@ -205,39 +182,20 @@ exports.rescheduleAppointment = async (req, res) => {
     appointment.rescheduledFrom = { date: oldDate, time: oldTime };
     appointment.appointmentDate = newAppointmentDate;
     appointment.appointmentTime = newAppointmentTime;
-    appointment.status = 'rescheduled'; // Set status to rescheduled
+    appointment.status = 'rescheduled';
 
     await appointment.save();
 
-    // --- Send Reschedule Confirmation Email to User ---
-    const userEmailContent = `
-      <p>Hi ${appointment.name},</p>
-      <p>Your appointment with ESMOLOG Cargo and Logistics has been rescheduled.</p>
-      <p><strong>Original Appointment:</strong> ${formatDateForEmail(oldDate)} at ${oldTime}</p>
-      <p><strong>New Appointment Details:</strong></p>
-      <ul>
-        <li><strong>Date:</strong> ${formatDateForEmail(newAppointmentDate)}</li>
-        <li><strong>Time:</strong> ${newAppointmentTime}</li>
-        <li><strong>Status:</strong> Rescheduled</li>
-      </ul>
-      <p>We look forward to seeing you at the new time.</p>
-      <p>Sincerely,</p>
-      <p>ESMOLOG Cargo and Logistics Team</p>
-    `;
-    await sendMail(appointment.email, 'Your Appointment Has Been Rescheduled', userEmailContent);
-
-    // --- Send Notification Email to Admin ---
-    const adminEmailContent = `
-      <p>Appointment Rescheduled!</p>
-      <p>Details for Appointment ID: ${appointment._id}</p>
-      <ul>
-        <li><strong>Donor:</strong> ${appointment.name} (${appointment.email})</li>
-        <li><strong>Original:</strong> ${formatDateForEmail(oldDate)} at ${oldTime}</li>
-        <li><strong>New:</strong> ${formatDateForEmail(newAppointmentDate)} at ${newAppointmentTime}</li>
-        <li><strong>Rescheduled By (User ID):</strong> ${req.user ? req.user.id : 'Visitor'}</li>
-      </ul>
-    `;
-    await sendMail(process.env.EMAIL_USER, 'Appointment Rescheduled Notification', adminEmailContent);
+    // Send rescheduled email to client using template
+    await AppointmentEmailService.sendRescheduledToClient({
+      name: appointment.name,
+      email: appointment.email,
+      oldDate,
+      oldTime,
+      newDate: newAppointmentDate,
+      newTime: newAppointmentTime,
+      appointmentId: appointment._id
+    }).catch(err => console.error('Failed to send rescheduled email:', err));
 
     res.json({ message: 'Appointment rescheduled successfully.', appointment });
   } catch (err) {
@@ -255,32 +213,21 @@ exports.cancelAppointment = async (req, res) => {
     }
 
     appointment.status = 'cancelled';
-    appointment.cancelledBy = req.user ? req.user.id : null; // Record who cancelled if logged in
+    appointment.cancelledBy = req.user ? req.user.id : null;
 
     await appointment.save();
 
-    // --- Send Cancellation Confirmation Email to User ---
-    const userEmailContent = `
-      <p>Dear ${appointment.name},</p>
-      <p>Your appointment with ESMOLOG Cargo and Logistics scheduled for ${formatDateForEmail(appointment.appointmentDate)} at ${appointment.appointmentTime} has been cancelled.</p>
-      <p>If you have any questions or wish to rebook, please contact us.</p>
-      <p>Sincerely,</p>
-      <p>ESMOLOG Cargo and Logistics Team</p>
-    `;
-    await sendMail(appointment.email, 'Your Appointment Has Been Cancelled', userEmailContent);
+    // Send cancellation email to client using template
+    await AppointmentEmailService.sendCancelledToClient({
+      name: appointment.name,
+      email: appointment.email,
+      appointmentDate: appointment.appointmentDate,
+      appointmentTime: appointment.appointmentTime,
+      appointmentId: appointment._id,
+      reason: req.body.reason || null
+    }).catch(err => console.error('Failed to send cancellation email:', err));
 
-    // --- Send Notification Email to Admin ---
-    const adminEmailContent = `
-      <p>Appointment Cancelled!</p>
-      <p>Details for Appointment ID: ${appointment._id}</p>
-      <ul>
-        <li><strong>Donor:</strong> ${appointment.name} (${appointment.email})</li>
-        <li><strong>Original Date:</strong> ${formatDateForEmail(appointment.appointmentDate)}</li>
-        <li><strong>Original Time:</strong> ${appointment.appointmentTime}</li>
-        <li><strong>Cancelled By (User ID):</strong> ${req.user ? req.user.id : 'Visitor'}</li>
-      </ul>
-    `;
-    await sendMail(process.env.EMAIL_USER, 'Appointment Cancelled Notification', adminEmailContent);
+    res.json({ message: 'Appointment cancelled successfully.' });
 
 
     res.json({ message: 'Appointment cancelled successfully.', appointment });
@@ -315,7 +262,7 @@ exports.changeAppointmentStatus = async (req, res) => {
       <p>The status of your appointment scheduled for ${formatDateForEmail(appointment.appointmentDate)} at ${appointment.appointmentTime} has been updated from '${oldStatus}' to '${status}'.</p>
       <p>Please log in to your portal or contact us for more details.</p>
       <p>Sincerely,</p>
-      <p>ESMOLOG Cargo and Logistics Team</p>
+      <p>ESMOLOG Worldwide Cargo and Logistics Team</p>
     `;
 
     if (appointment.email) {

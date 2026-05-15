@@ -1,5 +1,5 @@
 const { Newsletter, Subscriber } = require('../models/Newsletter');
-const sendMail = require('../utils/mailer');
+const { NotificationEmailService, NewsletterEmailService } = require('../services/emailService');
 
 exports.sendNewsletter = async (req, res) => {
   try {
@@ -8,8 +8,10 @@ exports.sendNewsletter = async (req, res) => {
     await newsletter.save();
     // Send to all subscribers
     const subscribers = await Subscriber.find({ isSubscribed: true });
-    for (const sub of subscribers) {
-      await sendMail(sub.email, subject, content);
+    const subscriberEmails = subscribers.map(sub => sub.email);
+    
+    if (subscriberEmails.length > 0) {
+      await NewsletterEmailService.sendNewsletterToAllSubscribers(subject, content, subscriberEmails).catch(err => console.error('Error sending newsletter:', err));
     }
     res.status(201).json(newsletter);
   } catch (err) {
@@ -54,10 +56,14 @@ exports.subscribe = async (req, res) => {
     if (subscriber) {
       subscriber.isSubscribed = true;
       await subscriber.save();
+      // Send resubscription confirmation
+      await NotificationEmailService.sendNewsletterSubscriptionConfirmation({ name: subscriber.name || name, email }).catch(err => console.error('Error sending subscription email:', err));
       return res.json({ message: 'Subscribed again' });
     }
     subscriber = new Subscriber({ email, name });
     await subscriber.save();
+    // Send subscription confirmation
+    await NotificationEmailService.sendNewsletterSubscriptionConfirmation({ name, email }).catch(err => console.error('Error sending subscription email:', err));
     res.status(201).json(subscriber);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -71,6 +77,8 @@ exports.unsubscribe = async (req, res) => {
     if (!subscriber) return res.status(404).json({ message: 'Subscriber not found' });
     subscriber.isSubscribed = false;
     await subscriber.save();
+    // Send unsubscription confirmation
+    await NotificationEmailService.sendNewsletterUnsubscriptionConfirmation({ name: subscriber.name || 'Subscriber', email }).catch(err => console.error('Error sending unsubscription email:', err));
     res.json({ message: 'Unsubscribed' });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -117,7 +125,7 @@ exports.sendEmailToSubscriber = async (req, res) => {
       return res.status(404).json({ message: 'Subscriber not found or not subscribed.' });
     }
 
-    await sendMail(subscriber.email, subject, content);
+    await NewsletterEmailService.sendNewsletterToSubscriber(subscriber.email, subject, content);
     res.json({ message: `Email sent to ${subscriber.email} successfully!` });
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -6,19 +6,19 @@ export default function TestimonialSection() {
   const reviews = [
     {
       id: 1,
-      text: 'ESMOLOG Cargo and Logistics delivered my urgent shipment ahead of schedule! Their tracking system was incredibly accurate, and the customer service was exceptional. Highly recommended for all your logistics needs.',
+      text: 'ESMOLOG Worldwide Cargo and Logistics delivered my urgent shipment ahead of schedule! Their tracking system was incredibly accurate, and the customer service was exceptional. Highly recommended for all your logistics needs.',
       author: 'Sarah M.',
       avatar: '/img/avatar.svg',
     },
     {
       id: 2,
-      text: 'We rely on ESMOLOG Cargo and Logistics for all our international freight. Their team handles customs and complex routes with expertise, making the entire process seamless and worry-free. A true partner!',
+      text: 'We rely on ESMOLOG Worldwide Cargo and Logistics for all our international freight. Their team handles customs and complex routes with expertise, making the entire process seamless and worry-free. A true partner!',
       author: 'David R.',
       avatar: '/img/avatar.svg',
     },
     {
       id: 3,
-      text: 'Outstanding service from start to finish. My delicate cargo arrived in perfect condition, thanks to their meticulous handling and secure packaging. ESMOLOG Cargo and Logistics truly lives up to its name!',
+      text: 'Outstanding service from start to finish. My delicate cargo arrived in perfect condition, thanks to their meticulous handling and secure packaging. ESMOLOG Worldwide Cargo and Logistics truly lives up to its name!',
       author: 'Emily L.',
       avatar: '/img/avatar.svg',
     },
@@ -30,7 +30,7 @@ export default function TestimonialSection() {
     },
     {
       id: 5,
-      text: 'Reliable, professional, and always on time. ESMOLOG Cargo and Logistics has become our go-to for all our cargo needs. Their team is responsive and always goes the extra mile to ensure satisfaction.',
+      text: 'Reliable, professional, and always on time. ESMOLOG Worldwide Cargo and Logistics has become our go-to for all our cargo needs. Their team is responsive and always goes the extra mile to ensure satisfaction.',
       author: 'Jessica T.',
       avatar: '/img/avatar.svg',
     },

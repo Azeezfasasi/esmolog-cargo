@@ -13,8 +13,8 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: 'ESMOLOG - Your Ultimate Logistics Management Solution',
-  description: 'Welcome to the ESMOLOG community! We are here to assist in providing necessary academic and social supports to all the incoming Managers',
+  title: 'ESMOLOG Worldwide- Your Ultimate Logistics Management Solution',
+  description: 'Welcome to the ESMOLOG Worldwide community! We are here to assist in providing necessary academic and social supports to all the incoming Managers',
   keywords: 'ESMOLOG, Logistics, Management, Solution',
   icons: {
     icon: '/esmologfav.png',
