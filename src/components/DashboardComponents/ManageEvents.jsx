@@ -252,7 +252,7 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
   return (
     <section className="py-16 px-2 sm:px-3 lg:px-4 bg-gray-100 font-inter overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8">
           Manage Events
         </h2>
 
@@ -268,38 +268,40 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
         )}
 
         {events && events.length > 0 ? (
-          <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Time
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg p-6">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Title
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Location
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Time
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {events.map((event) => (
                   <React.Fragment key={event._id}>
                     <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {editingEventId === event._id ? (
                           <input
                             type="text"
@@ -311,7 +313,7 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
                           event.eventTitle
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {editingEventId === event._id ? (
                           <select
                             value={editCategory}
@@ -327,7 +329,7 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
                           event.category
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {editingEventId === event._id ? (
                           <input
                             type="text"
@@ -339,7 +341,7 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
                           event.location || 'N/A'
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {editingEventId === event._id ? (
                           <input
                             type="date"
@@ -351,7 +353,7 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
                           formatDate(event.date)
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {editingEventId === event._id ? (
                           <input
                             type="time"
@@ -363,7 +365,7 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
                           event.time || 'N/A'
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
                           event.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
                           event.status === 'completed' ? 'bg-green-100 text-green-800' :
@@ -372,9 +374,9 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
                           {event.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         {editingEventId === event._id ? (
-                          <div className="flex justify-end space-x-2">
+                          <div className="flex justify-end space-x-2 text-xs sm:text-sm">
                             <button
                               onClick={handleSaveEdit}
                               className="text-green-600 hover:text-green-900 disabled:opacity-50"
@@ -391,7 +393,7 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
                             </button>
                           </div>
                         ) : (
-                          <div className="flex justify-end space-x-2">
+                          <div className="flex justify-end space-x-2 text-xs sm:text-sm flex-wrap gap-1">
                             <button
                               onClick={() => handleEditClick(event)}
                               className="text-indigo-600 hover:text-indigo-900"
@@ -501,7 +503,74 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {events.map((event) => (
+                <div key={event._id} className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Title</p>
+                      <p className="text-sm font-bold text-gray-900">{event.eventTitle}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Category</p>
+                        <p className="text-sm text-gray-700">{event.category}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Location</p>
+                        <p className="text-sm text-gray-700">{event.location || 'N/A'}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Date</p>
+                        <p className="text-sm text-gray-700">{formatDate(event.date)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Time</p>
+                        <p className="text-sm text-gray-700">{event.time || 'N/A'}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
+                      <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
+                        event.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
+                        event.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {event.status}
+                      </span>
+                    </div>
+                    <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
+                      <button
+                        onClick={() => handleEditClick(event)}
+                        className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(event._id)}
+                        className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
+                        disabled={deleteEventMutation.isPending}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => handleChangeStatus(event._id, event.status)}
+                      className="w-full bg-blue-600 text-white text-xs py-2 rounded font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                      disabled={changeStatusMutation.isPending}
+                    >
+                      Change Status
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           <p className="text-center text-gray-600">No events to manage.</p>
         )}

@@ -272,8 +272,8 @@ export default function PrintModalContent({ shipment, onClose }) {
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <div>
                   <p style={{ fontWeight: '600' }}>ESMOLOG Cargo and Logistics</p>
-                  <p>Nacho Export Warehouse, Murital Muhammad International Airport, <br /> Ikeja Lagos.</p>
-                  <p>Email: <br /> info@cargorealmandlosgistics.com</p>
+                  <p>27, Alimi Bada Str., Oke-ta,<br />  Isolo Lagos.</p>
+                  <p>Email: <br /> info@esmologworldwide.com</p>
                 </div>
                 {shipment.qrCodeUrl && (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

@@ -67,13 +67,13 @@ export default function TrackShipmentMain() {
               height={60}
             />
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Track Your Shipment</h1>
+          <h1 className="text-2xl lg:text-4xl font-bold text-gray-800 mb-2">Track Your Shipment</h1>
           <p className="text-gray-600">Enter your tracking number to view real-time updates</p>
         </div>
 
         {/* Search Form */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <form onSubmit={handleSearch} className="flex gap-3">
+          <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-3">
             <div className="flex-1 relative">
               <input
                 type="text"
@@ -87,7 +87,7 @@ export default function TrackShipmentMain() {
             <button
               type="submit"
               disabled={loading}
-              className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-2"
+              className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium flex justify-center items-center gap-2"
             >
               {loading ? (
                 <>

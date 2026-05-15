@@ -4,9 +4,7 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 
 export default function NotificationModal({ isOpen, onClose, notifications, unreadCount }) {
-  if (!isOpen) return null;
-
-  // Group notifications by type
+  // Group notifications by type - must be called before any early returns
   const groupedNotifications = useMemo(() => {
     const groups = {
       'registration': [],
@@ -25,6 +23,8 @@ export default function NotificationModal({ isOpen, onClose, notifications, unre
   }, [notifications]);
 
   const hasAnyNotification = Object.values(groupedNotifications).some(arr => arr.length > 0);
+
+  if (!isOpen) return null;
 
   return (
     <>

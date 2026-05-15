@@ -70,12 +70,40 @@ function ViewEvents() {
   }
 
   return (
-    <section className="py-0 px-4 sm:px-6 lg:px-8 bg-white font-inter">
+    <>
+    <div className="relative w-full overflow-hidden bg-gradient-to-r from-green-700 to-green-600 py-10 md:py-10">
+      <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_top,white_0%,transparent_55%)]" />
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-start gap-3">
+          <p className="inline-flex items-center gap-2 text-white/90 text-sm uppercase tracking-widest">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+              {/* mail icon */}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 4h16v16H4z" opacity="0" />
+                <path d="M4 4h16v16H4z" />
+                <path d="m22 6-10 7L2 6" />
+              </svg>
+            </span>
+            JOIN US AND BECOME PART OF SOMETHING GREAT
+          </p>
+
+          <h2 className="text-3xl text-white md:text-4xl font-extrabold">
+            OUR UPCOMING EVENTS
+          </h2>
+
+          <div className="h-1 w-20 rounded-full bg-white/60" />
+          <p className="text-white/85">
+            Stay updated with our latest events, workshops, and webinars. Join us to connect, learn, and grow together in the world of logistics and cargo shipping.
+          </p>
+        </div>
+      </div>
+    </div>
+    <section className="px-4 sm:px-6 lg:px-8 bg-white font-inter mt-4 mb-10 py-6 lg:py-16">
       <div className="max-w-7xl mx-auto text-center">
         {/* Top Section: Main Headline */}
-        <h2 className="text-[18px] sm:text-[24px] lg:text-[35px] font-extrabold text-gray-900 mb-9">
+        {/* <h2 className="text-[18px] sm:text-[24px] lg:text-[35px] font-extrabold text-gray-900 mb-9">
           JOIN US AND BECOME PART OF SOMETHING GREAT
-        </h2>
+        </h2> */}
 
         {/* Events Grid */}
         {events && events.length > 0 ? (
@@ -136,6 +164,7 @@ function ViewEvents() {
         )}
       </div>
     </section>
+    </>
   );
 }
 

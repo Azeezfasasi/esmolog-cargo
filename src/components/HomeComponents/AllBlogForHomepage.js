@@ -7,7 +7,7 @@ import { API_BASE_URL } from '@/config/Api';
 import Link from 'next/link'; // Import Link
 import { Newspaper } from 'lucide-react';
 
-function AllBlog() {
+function AllBlogForHomepage() {
   const fetchBlogPosts = async () => {
     const response = await axios.get(`${API_BASE_URL}/blogs`);
     return response.data;
@@ -65,32 +65,19 @@ function AllBlog() {
 
   return (
     <>
-    <div className="relative w-full overflow-hidden bg-gradient-to-r from-green-700 to-green-600 py-10 md:py-10">
-      <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_top,white_0%,transparent_55%)]" />
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col items-start gap-3">
-          <p className="inline-flex items-center gap-2 text-white/90 text-sm uppercase tracking-widest">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-              {/* mail icon */}
-              <Newspaper className="h-4 w-4 text-white" />
-            </span>
-            SHARE, INSPIRE, INNOVATE
-          </p>
-
-          <h2 className="text-3xl text-white md:text-4xl font-extrabold">
-            READ OUR BLOG
-          </h2>
-
-          <div className="h-1 w-20 rounded-full bg-white/60" />
-          <p className="text-white/85">
-            Dive into our blog for the latest insights, industry trends, and expert tips on global logistics and cargo shipping. Stay informed and inspired with our in-depth articles and updates.
-          </p>
-        </div>
-      </div>
-    </div>
     <section className="py-10 px-4 sm:px-6 lg:px-8 bg-gray-50 font-inter">
       <div className="max-w-7xl mx-auto text-center">
-
+        <h2 className="text-[18px] sm:text-[24px] lg:text-[35px] font-extrabold text-gray-900 mb-2">
+          READ OUR BLOG
+        </h2>
+        <p className="text-sm uppercase tracking-widest text-gray-500 mb-2">
+          <span className="inline-flex items-center gap-2">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+              <Newspaper className="h-4 w-4 text-gray-600" />
+            </span>
+             SHARE, INSPIRE, INNOVATE
+          </span>
+        </p>
         {blogPosts && blogPosts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {blogPosts.map((post) => (
@@ -125,4 +112,4 @@ function AllBlog() {
   );
 }
 
-export default AllBlog;
+export default AllBlogForHomepage;

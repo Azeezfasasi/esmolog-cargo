@@ -6,7 +6,9 @@ export default function page() {
   return (
     <>
         <ContactInfo />
-        <ContactForm />
+        <div className="w-full lg:w-[60%] mx-auto border border-green-100 rounded-lg shadow-md mb-12">
+          <ContactForm />
+        </div>
     </>
   )
 }

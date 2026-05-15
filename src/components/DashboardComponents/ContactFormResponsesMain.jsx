@@ -253,8 +253,8 @@ Please ensure your backend route `/contact-forms` is configured to allow &apos;p
   return (
     <section className="py-16 px-2 sm:px-3 lg:px-4 bg-gray-100 font-inter overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-          Manage  Quote Requests
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8">
+          Manage Quote Requests
         </h2>
 
         {actionMessage && (
@@ -269,182 +269,250 @@ Please ensure your backend route `/contact-forms` is configured to allow &apos;p
         )}
 
         {contacts && contacts.length > 0 ? (
-          <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Message Snippet
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Received At
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {contacts.map((contact) => (
-                  <React.Fragment key={contact._id}>
-                    <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {editingContactId === contact._id ? (
-                          <input
-                            type="text"
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            className="w-full p-1 border rounded"
-                          />
-                        ) : (
-                          contact.name
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {editingContactId === contact._id ? (
-                          <input
-                            type="email"
-                            value={editEmail}
-                            onChange={(e) => setEditEmail(e.target.value)}
-                            className="w-full p-1 border rounded"
-                          />
-                        ) : (
-                          contact.email
-                        )}
-                      </td>
-                      <td className="px-6 py-4 max-w-xs truncate text-sm text-gray-700">
-                        {editingContactId === contact._id ? (
-                          <textarea
-                            value={editMessage}
-                            onChange={(e) => setEditMessage(e.target.value)}
-                            rows="2"
-                            className="w-full p-1 border rounded resize-y"
-                          ></textarea>
-                        ) : (
-                          contact.message
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {editingContactId === contact._id ? (
-                          <select
-                            value={editStatus}
-                            onChange={(e) => setEditStatus(e.target.value)}
-                            className="w-full p-1 border rounded bg-white"
-                          >
-                            <option value="new">New</option>
-                            <option value="read">Read</option>
-                            <option value="replied">Replied</option>
-                            <option value="archived">Archived</option>
-                          </select>
-                        ) : (
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
-                            contact.status === 'new' ? 'bg-orange-100 text-orange-800' :
-                            contact.status === 'read' ? 'bg-blue-100 text-blue-800' :
-                            contact.status === 'replied' ? 'bg-green-100 text-green-800' :
-                            'bg-gray-100 text-gray-800' // archived
-                          }`}>
-                            {contact.status}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {formatTimestamp(contact.createdAt)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {editingContactId === contact._id ? (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={handleSaveEdit}
-                              className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
-                              disabled={editContactFormMutation.isPending}
-                            >
-                              {editContactFormMutation.isPending ? 'Saving...' : 'Save'}
-                            </button>
-                            <button
-                              onClick={() => setEditingContactId(null)}
-                              className="text-gray-600 hover:text-gray-900"
-                              disabled={editContactFormMutation.isPending}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={() => { setDetailContact(contact); setShowDetailModal(true); }}
-                              className="text-green-600 hover:text-green-900 cursor-pointer"
-                            >
-                              View
-                            </button>
-                            <button
-                              onClick={() => handleEditClick(contact)}
-                              className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(contact._id)}
-                              className="text-red-600 hover:text-red-900 disabled:opacity-50 cursor-pointer"
-                              disabled={deleteContactFormMutation.isPending}
-                            >
-                              Delete
-                            </button>
-                            <button
-                              onClick={() => handleReplyClick(contact)}
-                              className="text-green-600 hover:text-green-700 disabled:opacity-50 cursor-pointer"
-                              disabled={!contact.email} // Disable if no email to reply to
-                            >
-                              Reply
-                            </button>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                    {/* Expanded row for additional details and reply info */}
-                    {editingContactId === contact._id && (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg p-6">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Message Snippet
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Received At
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {contacts.map((contact) => (
+                    <React.Fragment key={contact._id}>
                       <tr>
-                        <td colSpan="7" className="px-6 py-4 text-sm text-gray-700 bg-gray-50">
-                          <div className="space-y-4">
-                            <div>
-                              <label htmlFor="editPhoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone Number
-                              </label>
-                              <input
-                                type="text"
-                                id="editPhoneNumber"
-                                value={editPhoneNumber}
-                                onChange={(e) => setEditPhoneNumber(e.target.value)}
-                                className="w-full p-2 border rounded"
-                              />
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {editingContactId === contact._id ? (
+                            <input
+                              type="text"
+                              value={editName}
+                              onChange={(e) => setEditName(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            contact.name
+                          )}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {editingContactId === contact._id ? (
+                            <input
+                              type="email"
+                              value={editEmail}
+                              onChange={(e) => setEditEmail(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            contact.email
+                          )}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 max-w-xs truncate text-sm text-gray-700">
+                          {editingContactId === contact._id ? (
+                            <textarea
+                              value={editMessage}
+                              onChange={(e) => setEditMessage(e.target.value)}
+                              rows="2"
+                              className="w-full p-1 border rounded resize-y"
+                            ></textarea>
+                          ) : (
+                            contact.message
+                          )}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm">
+                          {editingContactId === contact._id ? (
+                            <select
+                              value={editStatus}
+                              onChange={(e) => setEditStatus(e.target.value)}
+                              className="w-full p-1 border rounded bg-white"
+                            >
+                              <option value="new">New</option>
+                              <option value="read">Read</option>
+                              <option value="replied">Replied</option>
+                              <option value="archived">Archived</option>
+                            </select>
+                          ) : (
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
+                              contact.status === 'new' ? 'bg-orange-100 text-orange-800' :
+                              contact.status === 'read' ? 'bg-blue-100 text-blue-800' :
+                              contact.status === 'replied' ? 'bg-green-100 text-green-800' :
+                              'bg-gray-100 text-gray-800' // archived
+                            }`}>
+                              {contact.status}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {formatTimestamp(contact.createdAt)}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          {editingContactId === contact._id ? (
+                            <div className="flex justify-end space-x-2 text-xs sm:text-sm">
+                              <button
+                                onClick={handleSaveEdit}
+                                className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                                disabled={editContactFormMutation.isPending}
+                              >
+                                {editContactFormMutation.isPending ? 'Saving...' : 'Save'}
+                              </button>
+                              <button
+                                onClick={() => setEditingContactId(null)}
+                                className="text-gray-600 hover:text-gray-900"
+                                disabled={editContactFormMutation.isPending}
+                              >
+                                Cancel
+                              </button>
                             </div>
-                            {contact.repliedBy && (
-                              <div>
-                                <p className="text-sm font-medium text-gray-700">
-                                  Replied By: <span className="font-normal">{contact.repliedBy.name} ({contact.repliedBy.email})</span>
-                                </p>
-                                <p className="text-sm font-medium text-gray-700">
-                                  Replied At: <span className="font-normal">{formatTimestamp(contact.repliedAt)}</span>
-                                </p>
-                              </div>
-                            )}
-                          </div>
+                          ) : (
+                            <div className="flex justify-end space-x-2 text-xs sm:text-sm flex-wrap gap-1">
+                              <button
+                                onClick={() => { setDetailContact(contact); setShowDetailModal(true); }}
+                                className="text-green-600 hover:text-green-900 cursor-pointer"
+                              >
+                                View
+                              </button>
+                              <button
+                                onClick={() => handleEditClick(contact)}
+                                className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(contact._id)}
+                                className="text-red-600 hover:text-red-900 disabled:opacity-50 cursor-pointer"
+                                disabled={deleteContactFormMutation.isPending}
+                              >
+                                Delete
+                              </button>
+                              <button
+                                onClick={() => handleReplyClick(contact)}
+                                className="text-green-600 hover:text-green-700 disabled:opacity-50 cursor-pointer"
+                                disabled={!contact.email} // Disable if no email to reply to
+                              >
+                                Reply
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
-                    )}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      {/* Expanded row for additional details and reply info */}
+                      {editingContactId === contact._id && (
+                        <tr>
+                          <td colSpan="7" className="px-4 lg:px-6 py-4 text-sm text-gray-700 bg-gray-50">
+                            <div className="space-y-4">
+                              <div>
+                                <label htmlFor="editPhoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                                  Phone Number
+                                </label>
+                                <input
+                                  type="text"
+                                  id="editPhoneNumber"
+                                  value={editPhoneNumber}
+                                  onChange={(e) => setEditPhoneNumber(e.target.value)}
+                                  className="w-full p-2 border rounded"
+                                />
+                              </div>
+                              {contact.repliedBy && (
+                                <div>
+                                  <p className="text-sm font-medium text-gray-700">
+                                    Replied By: <span className="font-normal">{contact.repliedBy.name} ({contact.repliedBy.email})</span>
+                                  </p>
+                                  <p className="text-sm font-medium text-gray-700">
+                                    Replied At: <span className="font-normal">{formatTimestamp(contact.repliedAt)}</span>
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {contacts.map((contact) => (
+                <div key={contact._id} className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Name</p>
+                      <p className="text-sm font-bold text-gray-900">{contact.name}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Email</p>
+                      <p className="text-sm text-gray-700 truncate">{contact.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Message</p>
+                      <p className="text-sm text-gray-700 line-clamp-3">{contact.message}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
+                      <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
+                        contact.status === 'new' ? 'bg-orange-100 text-orange-800' :
+                        contact.status === 'read' ? 'bg-blue-100 text-blue-800' :
+                        contact.status === 'replied' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {contact.status}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Received At</p>
+                      <p className="text-sm text-gray-700">{formatTimestamp(contact.createdAt)}</p>
+                    </div>
+                    <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
+                      <button
+                        onClick={() => { setDetailContact(contact); setShowDetailModal(true); }}
+                        className="flex-1 min-w-[80px] bg-green-50 text-green-600 py-2 rounded text-xs font-medium hover:bg-green-100 transition"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => handleEditClick(contact)}
+                        className="flex-1 min-w-[80px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(contact._id)}
+                        className="flex-1 min-w-[80px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
+                        disabled={deleteContactFormMutation.isPending}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => handleReplyClick(contact)}
+                      className="w-full bg-green-600 text-white py-2 rounded text-xs font-medium hover:bg-green-700 transition disabled:opacity-50"
+                      disabled={!contact.email}
+                    >
+                      Reply
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           <p className="text-center text-gray-600">No contact form submissions to manage.</p>
         )}
@@ -452,60 +520,60 @@ Please ensure your backend route `/contact-forms` is configured to allow &apos;p
 
       {/* Reply Modal */}
       {showReplyModal && currentContactForReply && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative p-8 bg-white w-full max-w-md mx-auto rounded-xl shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
+          <div className="relative p-6 sm:p-8 bg-white w-full max-w-md mx-auto rounded-xl shadow-lg max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 text-center">
               Reply to {currentContactForReply.name}
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-xs sm:text-sm text-gray-600 mb-4">
 Original Message: <span className="italic">&apos;{currentContactForReply.message.substring(0, 100)}...&apos;</span>
             </p>
             <form onSubmit={handleReplySubmit} className="space-y-4">
               {replyError && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative" role="alert">
-                  <span className="block sm:inline">{replyError}</span>
+                  <span className="block sm:inline text-xs sm:text-sm">{replyError}</span>
                 </div>
               )}
               <div>
-                <label htmlFor="replySubject" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="replySubject" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   Subject <span className="text-red-500">*</span>
-                  <span className='ml-2 text-[11px]'>(You can rephrase the subject)</span>
+                  <span className='ml-2 text-[10px] sm:text-[11px]'>(You can rephrase the subject)</span>
                 </label>
                 <input
                   type="text"
                   id="replySubject"
                   value={replySubject}
                   onChange={(e) => setReplySubject(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="replyContent" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="replyContent" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   Reply Content <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="replyContent"
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
-                  rows="8"
+                  rows="6"
                   placeholder='Enter your reply here...'
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-y"
+                  className="w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-y"
                   required
                 ></textarea>
               </div>
-              <div className="flex justify-end space-x-3 mt-6">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 mt-6">
                 <button
                   type="button"
                   onClick={() => setShowReplyModal(false)}
-                  className="px-5 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition duration-200"
+                  className="px-4 sm:px-5 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition duration-200 disabled:opacity-50"
                   disabled={replyToContactFormMutation.isPending}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="px-4 sm:px-5 py-2 text-sm bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   disabled={replyToContactFormMutation.isPending}
                 >
                   {replyToContactFormMutation.isPending ? (

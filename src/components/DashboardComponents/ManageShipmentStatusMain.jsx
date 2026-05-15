@@ -117,19 +117,19 @@ export default function ManageShipmentStatusMain() {
 
   if (loading) {
     return (
-      <section className="py-8 sm:py-12 bg-gray-50 font-inter antialiased flex items-center justify-center min-h-[calc(100vh-120px)]">
-        <FaSpinner className="animate-spin text-green-600 text-4xl" />
-        <p className="ml-3 text-lg text-gray-700">Loading shipment statuses...</p>
+      <section className="py-8 sm:py-12 bg-gray-50 font-inter antialiased flex flex-col items-center justify-center min-h-[calc(100vh-120px)]">
+        <FaSpinner className="animate-spin text-green-600 text-3xl sm:text-4xl" />
+        <p className="mt-3 text-sm sm:text-base text-gray-700">Loading shipment statuses...</p>
       </section>
     );
   }
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 bg-gray-50 font-inter antialiased flex flex-col items-center justify-center min-h-[calc(100vh-120px)]">
-        <p className="text-red-600 mb-4">Error: {error}</p>
+      <section className="py-8 sm:py-12 bg-gray-50 font-inter antialiased flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-4">
+        <p className="text-red-600 mb-4 text-center text-sm sm:text-base">Error: {error}</p>
         <button
-          className="px-4 py-2 bg-green-600 text-white rounded"
+          className="px-4 py-2 bg-green-600 text-white rounded text-sm sm:text-base hover:bg-green-700 transition"
           onClick={() => fetchStatuses()}
         >
           Retry
@@ -139,38 +139,38 @@ export default function ManageShipmentStatusMain() {
   }
 
   return (
-    <div className="p-4 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="font-bold text-[20px] lg:text-[28px]">Manage Shipment Statuses</h1>
+    <div className="p-2 sm:p-4 space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h1 className="font-bold text-[18px] sm:text-[20px] lg:text-[28px]">Manage Shipment Statuses</h1>
         <button
           onClick={() => handleOpenModal('create')}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 text-white px-3 sm:px-4 py-2 rounded hover:bg-green-700 transition text-sm sm:text-base"
         >
           <FaPlus /> Add Status
         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow-xl">
+      {/* Desktop Table View */}
+      <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-xl">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Name
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Code
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Description
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Category
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Color
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -178,19 +178,19 @@ export default function ManageShipmentStatusMain() {
           <tbody className="bg-white divide-y divide-gray-200">
             {statuses.map((status) => (
               <tr key={status._id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {status.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {status.code}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                <td className="px-4 lg:px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
                   {status.description}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
                   {status.category}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <div
                       className="w-6 h-6 rounded border border-gray-300"
@@ -199,17 +199,17 @@ export default function ManageShipmentStatusMain() {
                     <span className="text-sm text-gray-500">{status.color}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleOpenModal('edit', status)}
-                      className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                      className="text-blue-600 hover:text-blue-900 flex items-center gap-1 text-xs sm:text-sm"
                     >
                       <FaEdit /> Edit
                     </button>
                     <button
                       onClick={() => handleDelete(status._id)}
-                      className="text-red-600 hover:text-red-900 flex items-center gap-1"
+                      className="text-red-600 hover:text-red-900 flex items-center gap-1 text-xs sm:text-sm"
                     >
                       <FaTrash /> Delete
                     </button>
@@ -224,68 +224,122 @@ export default function ManageShipmentStatusMain() {
         )}
       </div>
 
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {statuses.length === 0 ? (
+          <div className="p-6 text-center text-gray-500 bg-white rounded-lg">No shipment statuses found.</div>
+        ) : (
+          statuses.map((status) => (
+            <div key={status._id} className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase">Name</p>
+                  <p className="text-sm font-bold text-gray-900">{status.name}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Code</p>
+                    <p className="text-sm text-gray-700">{status.code}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Category</p>
+                    <p className="text-sm text-gray-700 capitalize">{status.category}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase">Description</p>
+                  <p className="text-sm text-gray-700">{status.description}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase">Color</p>
+                  <div
+                    className="w-6 h-6 rounded border border-gray-300"
+                    style={{ backgroundColor: status.color }}
+                  />
+                  <span className="text-xs text-gray-500">{status.color}</span>
+                </div>
+                <div className="flex gap-2 pt-2 border-t border-gray-200">
+                  <button
+                    onClick={() => handleOpenModal('edit', status)}
+                    className="flex-1 flex items-center justify-center gap-1 bg-blue-50 text-blue-600 py-2 rounded text-xs font-medium hover:bg-blue-100 transition"
+                  >
+                    <FaEdit /> Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(status._id)}
+                    className="flex-1 flex items-center justify-center gap-1 bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition"
+                  >
+                    <FaTrash /> Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* Modal for Create/Edit */}
       <BasicModal isOpen={!!modalType} onClose={handleCloseModal}>
-        <div className="space-y-4">
-          <h2 className="text-lg font-bold">
+        <div className="space-y-3 sm:space-y-4 max-h-[90vh] overflow-y-auto">
+          <h2 className="text-lg sm:text-xl font-bold">
             {modalType === 'create' ? 'Create New Status' : 'Edit Status'}
           </h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-2 sm:px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="e.g., Delivered"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Code</label>
             <input
               type="text"
               name="code"
               value={formData.code}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-2 sm:px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="e.g., DELIVERED"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-2 sm:px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="Optional description"
               rows="3"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Color</label>
               <input
                 type="color"
                 name="color"
                 value={formData.color}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-2 sm:px-3 py-2 text-sm border border-gray-300 rounded-md"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-2 sm:px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               >
                 <option value="pending">Pending</option>
                 <option value="processing">Processing</option>
@@ -297,16 +351,16 @@ export default function ManageShipmentStatusMain() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-3 sm:pt-4 border-t border-gray-200">
             <button
               onClick={handleCloseModal}
-              className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+              className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              className="px-3 sm:px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
             >
               Save
             </button>

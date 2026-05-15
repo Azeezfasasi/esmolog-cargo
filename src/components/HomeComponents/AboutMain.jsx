@@ -4,6 +4,34 @@ import Image from 'next/image';
 
 function AboutMain() {
   return (
+    <>
+    <div className="relative w-full overflow-hidden bg-gradient-to-r from-green-700 to-green-600 py-14 md:py-16">
+      <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_top,white_0%,transparent_55%)]" />
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-start gap-3">
+          <p className="inline-flex items-center gap-2 text-white/90 text-sm uppercase tracking-widest">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+              {/* mail icon */}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 4h16v16H4z" opacity="0" />
+                <path d="M4 4h16v16H4z" />
+                <path d="m22 6-10 7L2 6" />
+              </svg>
+            </span>
+            About Us
+          </p>
+
+          <h2 className="text-3xl text-white md:text-4xl font-extrabold">
+            Your Trusted Partner in Global Logistics
+          </h2>
+
+          <div className="h-1 w-20 rounded-full bg-white/60" />
+          <p className="text-white/85">
+            At ESMOLOG Cargo and Logistics, we are dedicated to providing efficient, reliable, and customer-focused logistics solutions that connect businesses and markets across the globe. With a commitment to excellence and a passion for innovation, we strive to revolutionize the logistics industry and deliver unparalleled service to our clients worldwide.
+          </p>
+        </div>
+      </div>
+    </div>
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white font-inter">
       <div className="max-w-7xl mx-auto text-center">
         {/* Main Headline */}
@@ -146,7 +174,7 @@ function AboutMain() {
           <p className="text-lg font-semibold text-gray-700 mb-6">
             Ready to experience a new standard in logistics? Let&apos;s get your cargo moving.
           </p>
-          <Link href="/app/requestquote" className="inline-flex items-center px-8 py-4 bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:-translate-y-1" >
+          <Link href="/request-quote" className="inline-flex items-center px-8 py-4 bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:-translate-y-1" >
             Request Quote
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
@@ -155,6 +183,7 @@ function AboutMain() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 

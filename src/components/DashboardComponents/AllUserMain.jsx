@@ -241,7 +241,7 @@ function AllUserMain() {
   return (
     <section className="py-16 px-2 sm:px-3 lg:px-4 bg-gray-100 font-inter overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8">
           Manage Users
         </h2>
 
@@ -257,32 +257,34 @@ function AllUserMain() {
         )}
 
         {users && users.length > 0 ? (
-          <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg p-6">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {users.map((user) => (
                   <React.Fragment key={user._id}>
                     <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {editingUserId === user._id ? (
                           <input
                             type="text"
@@ -294,7 +296,7 @@ function AllUserMain() {
                           user.name
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {editingUserId === user._id ? (
                           <input
                             type="email"
@@ -306,7 +308,7 @@ function AllUserMain() {
                           user.email
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {editingUserId === user._id ? (
                           <select
                             value={editRole}
@@ -322,7 +324,7 @@ function AllUserMain() {
                           user.role
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
                           user.isDisabled ? 'bg-red-100 text-red-800' :
                           user.isSuspended ? 'bg-orange-100 text-orange-800' :
@@ -331,9 +333,9 @@ function AllUserMain() {
                           {user.isDisabled ? 'Disabled' : user.isSuspended ? 'Suspended' : 'Active'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         {editingUserId === user._id ? (
-                          <div className="flex justify-end space-x-2">
+                          <div className="flex justify-end space-x-2 text-xs sm:text-sm">
                             <button
                               onClick={handleSaveEdit}
                               className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
@@ -350,7 +352,7 @@ function AllUserMain() {
                             </button>
                           </div>
                         ) : (
-                          <div className="flex justify-end space-x-2">
+                          <div className="flex justify-end space-x-2 text-xs sm:text-sm flex-wrap gap-1">
                             <button
                               onClick={() => handleEditClick(user)}
                               className="text-indigo-600 hover:text-indigo-900"
@@ -366,7 +368,7 @@ function AllUserMain() {
                             </button>
                             <button
                               onClick={() => handleToggleDisable(user._id, user.isDisabled)}
-                              className={`text-sm px-2 py-1 rounded-md ${
+                              className={`text-xs px-1 py-0.5 rounded-md whitespace-nowrap ${
                                 user.isDisabled ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-red-500 text-white hover:bg-red-600'
                               } disabled:opacity-50`}
                               disabled={toggleDisableUserMutation.isPending}
@@ -375,7 +377,7 @@ function AllUserMain() {
                             </button>
                             <button
                               onClick={() => handleToggleSuspend(user._id, user.isSuspended)}
-                              className={`text-sm px-2 py-1 rounded-md ${
+                              className={`text-xs px-1 py-0.5 rounded-md whitespace-nowrap ${
                                 user.isSuspended ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-orange-500 text-white hover:bg-orange-600'
                               } disabled:opacity-50`}
                               disabled={toggleSuspendUserMutation.isPending}
@@ -388,7 +390,7 @@ function AllUserMain() {
                     </tr>
                     {editingUserId === user._id && (
                       <tr>
-                        <td colSpan="5" className="px-6 py-4 text-sm text-gray-700 bg-gray-50">
+                        <td colSpan="5" className="px-4 lg:px-6 py-4 text-sm text-gray-700 bg-gray-50">
                           <div className="space-y-4">
                             <div>
                               <label htmlFor="editGender" className="block text-sm font-medium text-gray-700 mb-1">
@@ -458,7 +460,77 @@ function AllUserMain() {
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {users.map((user) => (
+                <div key={user._id} className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Name</p>
+                      <p className="text-sm font-bold text-gray-900">{user.name}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Email</p>
+                        <p className="text-xs text-gray-700 truncate">{user.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Role</p>
+                        <p className="text-sm text-gray-700">{user.role}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
+                      <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
+                        user.isDisabled ? 'bg-red-100 text-red-800' :
+                        user.isSuspended ? 'bg-orange-100 text-orange-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
+                        {user.isDisabled ? 'Disabled' : user.isSuspended ? 'Suspended' : 'Active'}
+                      </span>
+                    </div>
+                    <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
+                      <button
+                        onClick={() => handleEditClick(user)}
+                        className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(user._id)}
+                        className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
+                        disabled={deleteUserMutation.isPending}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        onClick={() => handleToggleDisable(user._id, user.isDisabled)}
+                        className={`flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap ${
+                          user.isDisabled ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-red-500 text-white hover:bg-red-600'
+                        }`}
+                        disabled={toggleDisableUserMutation.isPending}
+                      >
+                        {user.isDisabled ? 'Enable' : 'Disable'}
+                      </button>
+                      <button
+                        onClick={() => handleToggleSuspend(user._id, user.isSuspended)}
+                        className={`flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap ${
+                          user.isSuspended ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-orange-500 text-white hover:bg-orange-600'
+                        }`}
+                        disabled={toggleSuspendUserMutation.isPending}
+                      >
+                        {user.isSuspended ? 'Unsuspend' : 'Suspend'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           <p className="text-center text-gray-600">No users to manage.</p>
         )}

@@ -200,9 +200,9 @@ function ManageBlogPosts() {
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-100 font-inter">
+    <section className="py-16 px-2 sm:px-3 lg:px-4 bg-gray-100 font-inter">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8">
           Manage Blog Posts
         </h2>
 
@@ -218,35 +218,37 @@ function ManageBlogPosts() {
         )}
 
         {blogPosts && blogPosts.length > 0 ? (
-          <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Author
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg p-6">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Title
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Author
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {blogPosts.map((blog) => (
                   <React.Fragment key={blog._id}>
                     <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {editingBlogId === blog._id ? (
                           <input
                             type="text"
@@ -258,7 +260,7 @@ function ManageBlogPosts() {
                           blog.blogTitle
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {editingBlogId === blog._id ? (
                           <select
                             value={editCategory}
@@ -275,13 +277,13 @@ function ManageBlogPosts() {
                           blog.category
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {blog.sentBy ? blog.sentBy.name : 'Unknown'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {formatDate(blog.date)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
                           blog.status === 'published' ? 'bg-green-100 text-green-800' :
                           blog.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
@@ -290,9 +292,9 @@ function ManageBlogPosts() {
                           {blog.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         {editingBlogId === blog._id ? (
-                          <div className="flex justify-end space-x-2">
+                          <div className="flex justify-end space-x-2 text-xs sm:text-sm">
                             <button
                               onClick={handleSaveEdit}
                               className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
@@ -309,7 +311,7 @@ function ManageBlogPosts() {
                             </button>
                           </div>
                         ) : (
-                          <div className="flex justify-end space-x-2">
+                          <div className="flex justify-end space-x-2 text-xs sm:text-sm flex-wrap gap-1">
                             <button
                               onClick={() => handleEditClick(blog)}
                               className="text-indigo-600 hover:text-indigo-900"
@@ -325,7 +327,7 @@ function ManageBlogPosts() {
                             </button>
                             <button
                               onClick={() => handleChangeStatus(blog._id, blog.status)}
-                              className={`text-sm px-2 py-1 rounded-md ${
+                              className={`text-xs px-2 py-1 rounded-md whitespace-nowrap ${
                                 blog.status === 'published'
                                   ? 'bg-yellow-500 text-white hover:bg-yellow-600'
                                   : 'bg-green-500 text-white hover:bg-green-600'
@@ -340,7 +342,7 @@ function ManageBlogPosts() {
                     </tr>
                     {editingBlogId === blog._id && (
                       <tr>
-                        <td colSpan="6" className="px-6 py-4 text-sm text-gray-700 bg-gray-50">
+                        <td colSpan="6" className="px-4 lg:px-6 py-4 text-sm text-gray-700 bg-gray-50">
                           <label htmlFor="editDescription" className="block text-sm font-medium text-gray-700 mb-1">
                             Description
                           </label>
@@ -358,7 +360,74 @@ function ManageBlogPosts() {
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {blogPosts.map((blog) => (
+                <div key={blog._id} className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Title</p>
+                      <p className="text-sm font-bold text-gray-900">{blog.blogTitle}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Category</p>
+                        <p className="text-sm text-gray-700">{blog.category}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Author</p>
+                        <p className="text-sm text-gray-700">{blog.sentBy ? blog.sentBy.name : 'Unknown'}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Date</p>
+                        <p className="text-sm text-gray-700">{formatDate(blog.date)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
+                        <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
+                          blog.status === 'published' ? 'bg-green-100 text-green-800' :
+                          blog.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {blog.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
+                      <button
+                        onClick={() => handleEditClick(blog)}
+                        className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(blog._id)}
+                        className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
+                        disabled={deleteBlogMutation.isPending}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => handleChangeStatus(blog._id, blog.status)}
+                      className={`w-full text-xs py-2 rounded font-medium transition disabled:opacity-50 ${
+                        blog.status === 'published'
+                          ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                          : 'bg-green-500 text-white hover:bg-green-600'
+                      }`}
+                      disabled={changeStatusMutation.isPending}
+                    >
+                      {blog.status === 'published' ? 'Set Draft' : 'Publish'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           <p className="text-center text-gray-600">No blog posts to manage.</p>
         )}
