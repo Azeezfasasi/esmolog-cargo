@@ -305,7 +305,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
         </div>
 
         {/* Logout button */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+        {/* <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
           <button 
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
@@ -315,7 +315,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
             </svg>
             <span>Logout</span>
           </button>
-        </div>
+        </div> */}
       </nav>
     </div>
   ) : null
