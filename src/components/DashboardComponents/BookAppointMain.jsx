@@ -38,9 +38,8 @@ function BookAppointmentMain() {
   // Mutation for booking an appointment
   const bookAppointmentMutation = useMutation({
     mutationFn: async (appointmentData) => {
-      // NEW LOGIC: Choose endpoint based on authentication status
-      const endpoint = isAuthenticated ? `${API_BASE_URL}/appointments/authenticated` : `${API_BASE_URL}/appointments`;
-      const response = await axios.post(endpoint, appointmentData);
+      // Use the standard appointments endpoint for all users
+      const response = await axios.post(`${API_BASE_URL}/appointments`, appointmentData);
       return response.data;
     },
     onSuccess: (data) => {
@@ -142,10 +141,10 @@ function BookAppointmentMain() {
                 Book Another Appointment
               </button>
               <button
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/dashboard/myappointments')}
                 className="px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition duration-200"
               >
-                Go to Home
+                Go to My Appointments
               </button>
             </div>
           </div>

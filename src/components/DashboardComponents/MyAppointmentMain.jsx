@@ -25,7 +25,7 @@ const formatDateForDisplay = (dateString) => {
 
 function MyAppointmentMain() {
   const queryClient = useQueryClient();
-  const { isAuthenticated, isLoading: authLoading } = useProfile(); // Only need isAuthenticated for this component
+  const { isAuthenticated, isLoading: authLoading, user } = useProfile(); // Get user info to filter appointments
 
   // State for reschedule modal
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
@@ -53,12 +53,20 @@ function MyAppointmentMain() {
   } = useQuery({
     queryKey: ['myAppointments'], // Unique key for fetching user's appointments
     queryFn: async () => {
-      // This endpoint fetches appointments for the authenticated user
-      const response = await axios.get(`${API_BASE_URL}/appointments/my-appointments`);
-      return response.data.sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate)); // Sort by date
+      // Fetch all appointments and filter by current user's email
+      const response = await axios.get(`${API_BASE_URL}/appointments`);
+      const allAppointments = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+      
+      // Filter appointments for the current user
+      const userEmail = user?.email;
+      const userAppointments = userEmail 
+        ? allAppointments.filter(apt => apt.email?.toLowerCase() === userEmail.toLowerCase())
+        : [];
+      
+      return userAppointments.sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate)); // Sort by date
     },
     staleTime: 5 * 60 * 1000,
-    enabled: isAuthenticated, // Only run if authenticated
+    enabled: isAuthenticated && !!user?.email, // Only run if authenticated and user email is available
   });
 
   // Mutation for rescheduling an appointment
