@@ -12,6 +12,8 @@ export default function ManageShipmentStatusMain() {
   const [error, setError] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [formData, setFormData] = useState({
     name: '',
     code: '',
@@ -138,6 +140,12 @@ export default function ManageShipmentStatusMain() {
     );
   }
 
+  // Pagination logic
+  const totalPages = Math.ceil(statuses.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedStatuses = statuses.slice(startIndex, endIndex);
+
   return (
     <div className="p-2 sm:p-4 space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -176,7 +184,7 @@ export default function ManageShipmentStatusMain() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {statuses.map((status) => (
+            {paginatedStatuses.map((status) => (
               <tr key={status._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {status.name}
@@ -229,7 +237,7 @@ export default function ManageShipmentStatusMain() {
         {statuses.length === 0 ? (
           <div className="p-6 text-center text-gray-500 bg-white rounded-lg">No shipment statuses found.</div>
         ) : (
-          statuses.map((status) => (
+          paginatedStatuses.map((status) => (
             <div key={status._id} className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
               <div className="space-y-3">
                 <div>
@@ -277,6 +285,46 @@ export default function ManageShipmentStatusMain() {
           ))
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {statuses.length > 0 && (
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4 p-3 sm:p-4 bg-white rounded-lg border border-gray-200">
+          <p className="text-sm text-gray-600">
+            Showing {startIndex + 1} to {Math.min(endIndex, statuses.length)} of {statuses.length} statuses
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Previous
+            </button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-2 py-1 text-sm rounded transition ${
+                    currentPage === page
+                      ? 'bg-green-600 text-white'
+                      : 'border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal for Create/Edit */}
       <BasicModal isOpen={!!modalType} onClose={handleCloseModal}>

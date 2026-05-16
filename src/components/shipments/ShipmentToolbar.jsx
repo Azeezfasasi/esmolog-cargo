@@ -63,6 +63,21 @@ const ShipmentToolbar = ({
           )}
         </select>
 
+        <select
+          value={selectedStatus}
+          onChange={(e) => onStatusChange(e.target.value)}
+          className="border border-gray-300 rounded px-3 py-2 sm:py-1 text-sm w-full sm:w-auto flex-1 sm:flex-initial"
+        >
+          <option value="">All Statuses</option>
+          {Array.isArray(statuses) && statuses.length > 0 ? (
+            statuses.map((status) => (
+              <option key={status._id || status} value={status.name || status}>
+                {status.name || status}
+              </option>
+            ))
+          ) : null}
+        </select>
+
         <Button variant="outline" onClick={onExport}>
           <Download className="mr-2 h-4 w-4" /> Export
         </Button>
