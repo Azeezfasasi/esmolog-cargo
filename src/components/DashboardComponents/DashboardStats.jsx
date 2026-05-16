@@ -65,7 +65,10 @@ const DashboardStats = () => {
       {
         queryKey: ['shipmentCount'],
         queryFn: () => fetchData(`${API_BASE_URL}/shipments`),
-        select: (data) => data.length,
+        select: (data) => {
+          const shipmentsData = Array.isArray(data) ? data : (data?.data || []);
+          return Array.isArray(shipmentsData) ? shipmentsData.length : 0;
+        },
         staleTime: 5 * 60 * 1000,
         cacheTime: 10 * 60 * 1000,
       },
