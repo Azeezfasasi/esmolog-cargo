@@ -123,11 +123,11 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
                       <Link href="/dashboard/allshipments" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Manage Shipments</Link>
                     </li>
                     ) : null}
-                    {currentUser?.role === 'admin' || currentUser?.role === 'employee' ? (
+                    {/* {currentUser?.role === 'admin' || currentUser?.role === 'employee' ? (
                     <li>
                       <Link href="https://mail.zoho.com" target='_blank' rel="noopener noreferrer" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Access Zohomail</Link>
                     </li>
-                    ) : null}
+                    ) : null} */}
                     {currentUser?.role === 'admin' || currentUser?.role === 'employee' ? (
                     <li>
                       <Link href="/dashboard/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Profile</Link>
