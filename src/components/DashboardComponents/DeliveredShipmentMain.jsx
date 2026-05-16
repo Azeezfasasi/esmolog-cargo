@@ -76,23 +76,23 @@ export default function DeliveredShipmentsMain({ token }) {
     setError(null);
     try {
       const authToken = token || localStorage.getItem('token');
-      console.log('DeliveredShipmentsMain: fetching shipments, token present?', !!authToken);
+      // console.log('DeliveredShipmentsMain: fetching shipments, token present?', !!authToken);
       const res = await axios.get(`${API_BASE_URL}/shipments`, authToken ? {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       } : undefined);
-      console.log('DeliveredShipmentsMain: fetch response', res.data);
+      // console.log('DeliveredShipmentsMain: fetch response', res.data);
       // API returns { success, data: shipments[], pagination }
       const shipmentsData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
       const sorted = shipmentsData.sort((a, b) => getTimestamp(b) - getTimestamp(a));
-      console.log('DeliveredShipmentsMain: fetched shipments count', sorted.length);
-      console.log('DeliveredShipmentsMain: filtering for status "Delivered"', selectedStatus);
+      // console.log('DeliveredShipmentsMain: fetched shipments count', sorted.length);
+      // console.log('DeliveredShipmentsMain: filtering for status "Delivered"', selectedStatus);
       setShipments(sorted);
       // apply current filters to freshly fetched data using current UI state
       const applied = applyFilters({ shipmentsList: sorted, status: selectedStatus, facility: selectedFacility, term: searchQuery });
-      console.log('DeliveredShipmentsMain: filtered shipments count', applied.length);
-      console.log('DeliveredShipmentsMain: filtered shipments', applied);
+      // console.log('DeliveredShipmentsMain: filtered shipments count', applied.length);
+      // console.log('DeliveredShipmentsMain: filtered shipments', applied);
       setFilteredShipments(applied);
     } catch (err) {
       console.error('Failed to fetch shipments:', err);

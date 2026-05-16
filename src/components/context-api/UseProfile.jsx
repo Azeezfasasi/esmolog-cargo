@@ -37,10 +37,10 @@ export const ProfileProvider = ({ children }) => {
       const { token: receivedToken, user } = res.data; // Renamed to avoid confusion with state 'token'
       
       // --- START: CRITICAL LOGS FOR LOGIN SUCCESS ---
-      console.log('--- ProfileContext Login Success ---');
-      console.log('Received token from backend:', receivedToken);
-      console.log('Type of received token:', typeof receivedToken);
-      console.log('Length of received token:', receivedToken ? receivedToken.length : 'N/A');
+      // console.log('--- ProfileContext Login Success ---');
+      // console.log('Received token from backend:', receivedToken);
+      // console.log('Type of received token:', typeof receivedToken);
+      // console.log('Length of received token:', receivedToken ? receivedToken.length : 'N/A');
       // --- END: CRITICAL LOGS FOR LOGIN SUCCESS ---
 
       if (typeof window !== 'undefined') {
@@ -71,10 +71,10 @@ export const ProfileProvider = ({ children }) => {
       const { token: receivedToken, user } = res.data; // Renamed
       
       // --- START: CRITICAL LOGS FOR REGISTER SUCCESS ---
-      console.log('--- ProfileContext Register Success ---');
-      console.log('Received token from backend:', receivedToken);
-      console.log('Type of received token:', typeof receivedToken);
-      console.log('Length of received token:', receivedToken ? receivedToken.length : 'N/A');
+      // console.log('--- ProfileContext Register Success ---');
+      // console.log('Received token from backend:', receivedToken);
+      // console.log('Type of received token:', typeof receivedToken);
+      // console.log('Length of received token:', receivedToken ? receivedToken.length : 'N/A');
       // --- END: CRITICAL LOGS FOR REGISTER SUCCESS ---
 
       if (typeof window !== 'undefined') {
@@ -87,7 +87,7 @@ export const ProfileProvider = ({ children }) => {
       setToken(receivedToken);
       setCurrentUser(user);
       
-      console.log('Token stored in localStorage and state after registration.');
+      // console.log('Token stored in localStorage and state after registration.');
       return { success: true, message: res.data.message, user };
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
@@ -126,10 +126,10 @@ export const ProfileProvider = ({ children }) => {
     const currentTokenInLocalStorage = localStorage.getItem('token'); // Get fresh from localStorage
     
     // --- START: CRITICAL LOGS FOR CHECK AUTH STATUS ---
-    console.log('--- ProfileContext checkAuthStatus ---');
-    console.log('Token from localStorage for checkAuthStatus:', currentTokenInLocalStorage);
-    console.log('Type of token:', typeof currentTokenInLocalStorage);
-    console.log('Length of token:', currentTokenInLocalStorage ? currentTokenInLocalStorage.length : 'N/A');
+    // console.log('--- ProfileContext checkAuthStatus ---');
+    // console.log('Token from localStorage for checkAuthStatus:', currentTokenInLocalStorage);
+    // console.log('Type of token:', typeof currentTokenInLocalStorage);
+    // console.log('Length of token:', currentTokenInLocalStorage ? currentTokenInLocalStorage.length : 'N/A');
     // --- END: CRITICAL LOGS FOR CHECK AUTH STATUS ---
 
     if (!currentTokenInLocalStorage) { 
@@ -143,7 +143,7 @@ export const ProfileProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${currentTokenInLocalStorage}`;
       const res = await axios.get(`${API_BASE_URL}/auth/me`);
       setCurrentUser(res.data.user);
-      console.log('Auth check successful. User:', res.data.user.email);
+      // console.log('Auth check successful. User:', res.data.user.email);
     } catch (err) {
       console.error("Authentication check failed on refresh:", err);
       logout();

@@ -57,7 +57,7 @@ export default function AllShipmentsMain({ token }) {
         
         // Set statuses - handle both array and object response
         const statusesData = Array.isArray(statusesRes.data) ? statusesRes.data : (statusesRes.data?.data || []);
-        console.log('Fetched statuses:', statusesData);
+        // console.log('Fetched statuses:', statusesData);
         setStatuses(statusesData);
       } catch (err) {
         console.error('Error fetching facilities/statuses:', err);
@@ -91,17 +91,17 @@ export default function AllShipmentsMain({ token }) {
     setError(null);
     try {
       const authToken = token || localStorage.getItem('token');
-      console.log('AllShipmentsMain: fetching shipments, token present?', !!authToken);
+      // console.log('AllShipmentsMain: fetching shipments, token present?', !!authToken);
       const res = await axios.get(`${API_BASE_URL}/shipments`, authToken ? {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       } : undefined);
-      console.log('AllShipmentsMain: fetch response status', res.status);
+      // console.log('AllShipmentsMain: fetch response status', res.status);
       // Extract shipments from response (handles both array and object with data property)
       const shipmentsData = res.data?.data || res.data || [];
       const sorted = Array.isArray(shipmentsData) ? shipmentsData.sort((a, b) => getTimestamp(b) - getTimestamp(a)) : [];
-      console.log('AllShipmentsMain: fetched shipments count', sorted.length);
+      // console.log('AllShipmentsMain: fetched shipments count', sorted.length);
       setShipments(sorted);
       // apply current filters to freshly fetched data using current UI state
       const applied = applyFilters({ shipmentsList: sorted, status: selectedStatus, facility: selectedFacility, term: searchQuery });
