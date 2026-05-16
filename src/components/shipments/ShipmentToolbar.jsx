@@ -1,7 +1,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Download, Search } from "lucide-react";
+import { Download, Search, Filter } from "lucide-react";
 
 // The props have been updated to match the parent component
 const ShipmentToolbar = ({
@@ -16,7 +16,8 @@ const ShipmentToolbar = ({
   statuses = [],
 }) => {
   return (
-    <div className="flex flex-col gap-3 sm:gap-4 p-2 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl shadow">
+    <div className="relative flex flex-col gap-3 sm:gap-4 p-2 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl border border-orange-200 shadow-sm">
+      <div className="absolute -top-3 left-4 right-4 h-1 rounded-full bg-gradient-to-r from-orange-600 via-orange-600 to-orange-500 opacity-20" />
       <div className="flex items-center gap-2 w-full">
         <Search className="text-gray-500 flex-shrink-0" />
         <Input
@@ -58,39 +59,6 @@ const ShipmentToolbar = ({
               <option value="Calgary">Calgary</option>
               <option value="Edmonton">Edmonton</option>
               <option value="United Kingdom">United Kingdom</option>
-            </>
-          )}
-        </select>
-
-        <select
-          value={selectedStatus}
-          onChange={(e) => onStatusChange(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-2 sm:py-1 text-sm w-full sm:w-[200px] flex-1 sm:flex-initial"
-        >
-          <option value="">All Statuses</option>
-          {Array.isArray(statuses) && statuses.length > 0 ? (
-            statuses.map((status) => (
-              status.isActive && (
-                <option key={status._id} value={status.code || status.name.toLowerCase()}>
-                  {status.name}
-                </option>
-              )
-            ))
-          ) : (
-            // Fallback static list
-            <>
-              <option value="pending">Pending</option>
-              <option value="in-transit">In Transit</option>
-              <option value="delivered">Delivered</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="processing">Processing</option>
-              <option value="out-for-delivery">Out For Delivery</option>
-              <option value="pickup-scheduled">Pickup Scheduled</option>
-              <option value="picked-up">Picked Up</option>
-              <option value="arrived-at-hub">Arrived at Hub</option>
-              <option value="departed-from-hub">Departed from Hub</option>
-              <option value="on-hold">On Hold</option>
-              <option value="customs-clearance">Customs Clearance</option>
             </>
           )}
         </select>

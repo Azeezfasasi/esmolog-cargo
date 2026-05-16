@@ -96,11 +96,65 @@ export default function EditShipmentModal({ shipment, onClose, onSave }) {
   };
 
   return (
-    <div className='h-[500px] overflow-y-auto'>
-      <div className="space-y-3">
-        <h2 className="text-lg font-semibold">Edit Shipment</h2>
-        
-        <label>Sender Name</label>
+    <div className="h-[500px] overflow-y-auto px-2 sm:px-4">
+      <div className="sticky top-0 bg-white/80 backdrop-blur border-b -mx-2 sm:-mx-4 px-2 sm:px-4 py-4 z-10">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Edit Shipment</h2>
+            <p className="text-sm text-gray-500">Update shipment details, items and notes.</p>
+          </div>
+          <div className="hidden sm:flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-50 to-blue-50 border px-3 py-2">
+            <span className="inline-flex h-2 w-2 rounded-full bg-green-500" />
+            <span className="text-xs font-medium text-gray-700">In progress</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Sender Name</label>
+            <input type="text" name="senderName" placeholder="Sender Name" value={formData.senderName} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Sender Phone Number</label>
+            <input type="tel" name="senderPhone" placeholder="Sender Phone Number" value={formData.senderPhone} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Sender Email Address</label>
+            <input type="email" name="senderEmail" placeholder="Sender Email Address" value={formData.senderEmail} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Sender Home Address</label>
+            <input type="text" name="senderAddress" placeholder="Sender Home Address" value={formData.senderAddress} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Receiver Name</label>
+            <input type='text' name="recipientName" placeholder="Receiver Name" value={formData.recipientName} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Receiver Email Address</label>
+            <input type="email" name="receiverEmail" placeholder="Receiver Email Address" value={formData.receiverEmail} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Receiver Phone Number</label>
+            <input type="tel" name="recipientPhone" placeholder="Receiver Phone Number" value={formData.recipientPhone} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Receiver Address</label>
+            <input type="text" name="recipientAddress" placeholder="Receiver Home Address" value={formData.recipientAddress} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
+          </div>
+        </div>
+
         <input type="text" name="senderName" placeholder="Sender Name" value={formData.senderName} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
         
         <label>Sender Phone Number</label>
@@ -241,8 +295,12 @@ export default function EditShipmentModal({ shipment, onClose, onSave }) {
           <label>Notes</label>
           <textarea name="notes" placeholder="Additional Details" value={formData.notes} onChange={handleChange} className='w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600' />
           <div className="flex justify-end space-x-2 mt-5">
-            <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button variant="outline" onClick={handleSubmit}>Save Changes</Button>
+            <Button variant="outline" onClick={onClose} className="bg-orange-500 text-white hover:bg-orange-600">
+              Cancel
+            </Button>
+            <Button variant="outline" onClick={handleSubmit} className="bg-green-600 text-white hover:bg-green-700">
+              Save Changes
+            </Button>
           </div>
         </div>
       </div>

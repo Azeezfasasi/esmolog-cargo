@@ -32,17 +32,17 @@ function UserDashboardStats() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link href="/app/trackshipment"
+          <Link href="/dashboard/trackshipment"
             className="bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-xl shadow text-center"
           >
             📦 Track a Shipment
           </Link>
-          <Link href="/app/account/myshipments"
+          <Link href="/dashboard/myshipments"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl shadow text-center"
           >
             🚚 View My Shipments
           </Link>
-          <Link href="/app/account/profile"
+          <Link href="/dashboard/profile"
             className="bg-gray-700 hover:bg-gray-800 text-white px-6 py-4 rounded-xl shadow text-center"
           >
             👤 Manage Profile

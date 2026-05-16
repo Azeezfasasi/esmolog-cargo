@@ -144,6 +144,14 @@ export default function HeaderSection() {
                     >
                       Manage Shipments
                     </Link>
+                    <Link href="https://mail.zoho.com"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      onClick={() => setAccountDropdownOpen(false)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Access Zohomail
+                    </Link>
                     <button
                       onClick={() => {
                         localStorage.removeItem('token');
@@ -208,6 +216,14 @@ export default function HeaderSection() {
                       onClick={() => setAccountDropdownOpen(false)}
                     >
                       Manage Shipments
+                    </Link>
+                    <Link href="https://mail.zoho.com"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      onClick={() => setAccountDropdownOpen(false)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Access Zohomail
                     </Link>
                     <button
                       onClick={() => {

@@ -11,17 +11,21 @@ import React from 'react'
 import { useProfile } from '@/components/context-api/ProfileContext'
 
 export default function Page() {
-  const { isAdmin, isEmployee, isClient } = useProfile();
+  const { isAdmin, isEmployee, isClient, isAgent } = useProfile();
 
   return (
     <>
-      {(isAdmin || isEmployee) && <AdminWelcome />}
-      <DashboardStats />
-      <UserRolesChart />
-      <ShipmentChart />
-      <QuoteChart />
-      <AppointmentStatusChart />
-      {isClient && <UserDashboardStats />}
+      {(isClient || isAgent )&& <UserDashboardStats />}
+      {(isAdmin || isEmployee) && 
+        <>
+        <AdminWelcome />
+        <DashboardStats />
+        <UserRolesChart />
+        <ShipmentChart />
+        <QuoteChart />
+        <AppointmentStatusChart />
+        </>
+      }
     </>
   )
 }

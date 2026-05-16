@@ -22,9 +22,25 @@ export default function DeliveredShipmentsMain({ token }) {
   const [modalType, setModalType] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFacility, setSelectedFacility] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('Delivered');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [statuses, setStatuses] = useState([]);
+
+  // Fetch statuses on mount
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/shipment-statuses`);
+        const statusesData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        setStatuses(statusesData);
+      } catch (err) {
+        console.error('Error fetching statuses:', err);
+        setStatuses([]);
+      }
+    };
+    fetchStatuses();
+  }, []);
 
   const getTimestamp = (item) => {
     return new Date(
@@ -42,7 +58,7 @@ export default function DeliveredShipmentsMain({ token }) {
     const list = Array.isArray(shipmentsList) ? shipmentsList : [];
     const q = (term || '').toLowerCase();
     return list.filter((s) => {
-      const matchesStatus = !status || s.status === status;
+      const matchesStatus = !status || s.status?.toLowerCase() === status.toLowerCase();
       const facilityName = (s.shipmentFacility || s.shipmentfacility || s.facility || '').toString();
       const matchesFacility = !facility || facilityName === facility;
       const matchesSearch = !q || (
@@ -60,18 +76,23 @@ export default function DeliveredShipmentsMain({ token }) {
     setError(null);
     try {
       const authToken = token || localStorage.getItem('token');
-      console.log('AllShipmentsMain: fetching shipments, token present?', !!authToken);
+      console.log('DeliveredShipmentsMain: fetching shipments, token present?', !!authToken);
       const res = await axios.get(`${API_BASE_URL}/shipments`, authToken ? {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       } : undefined);
-      console.log('AllShipmentsMain: fetch response status', res.status);
-      const sorted = Array.isArray(res.data) ? res.data.sort((a, b) => getTimestamp(b) - getTimestamp(a)) : [];
-      console.log('AllShipmentsMain: fetched shipments count', sorted.length);
+      console.log('DeliveredShipmentsMain: fetch response', res.data);
+      // API returns { success, data: shipments[], pagination }
+      const shipmentsData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      const sorted = shipmentsData.sort((a, b) => getTimestamp(b) - getTimestamp(a));
+      console.log('DeliveredShipmentsMain: fetched shipments count', sorted.length);
+      console.log('DeliveredShipmentsMain: filtering for status "Delivered"', selectedStatus);
       setShipments(sorted);
       // apply current filters to freshly fetched data using current UI state
       const applied = applyFilters({ shipmentsList: sorted, status: selectedStatus, facility: selectedFacility, term: searchQuery });
+      console.log('DeliveredShipmentsMain: filtered shipments count', applied.length);
+      console.log('DeliveredShipmentsMain: filtered shipments', applied);
       setFilteredShipments(applied);
     } catch (err) {
       console.error('Failed to fetch shipments:', err);
@@ -113,20 +134,20 @@ export default function DeliveredShipmentsMain({ token }) {
 
   const handleSearch = (searchTerm) => {
     setSearchQuery(searchTerm);
-    const applied = applyFilters({ term: searchTerm });
+    const applied = applyFilters({ shipmentsList: shipments, status: selectedStatus, facility: selectedFacility, term: searchTerm });
     setFilteredShipments(applied);
   };
 
 
   const handleFilter = (status) => {
     setSelectedStatus(status);
-    const applied = applyFilters({ status });
+    const applied = applyFilters({ shipmentsList: shipments, status, facility: selectedFacility, term: searchQuery });
     setFilteredShipments(applied);
   };
 
   const handleFacilityChange = (facility) => {
     setSelectedFacility(facility);
-    const applied = applyFilters({ facility });
+    const applied = applyFilters({ shipmentsList: shipments, status: selectedStatus, facility, term: searchQuery });
     setFilteredShipments(applied);
   };
 
@@ -219,7 +240,6 @@ export default function DeliveredShipmentsMain({ token }) {
       <ShipmentToolbar
         searchQuery={searchQuery}
         onSearch={handleSearch}
-        onStatusChange={handleFilter}
         onFacilityChange={handleFacilityChange}
         selectedFacility={selectedFacility}
         facilities={facilities}
@@ -284,6 +304,7 @@ export default function DeliveredShipmentsMain({ token }) {
           shipment={selectedShipment}
           onClose={() => closeModal(false)}
           onStatusChange={handleStatusChange}
+          statuses={statuses}
           />
         </BasicModal>
         )}

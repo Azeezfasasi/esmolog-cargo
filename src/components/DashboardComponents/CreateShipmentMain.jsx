@@ -47,6 +47,10 @@ export default function CreateShipmentForm({ token }) {
   // State for the new item input
   const [newItem, setNewItem] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  
+  // State for sender selection mode (select vs manual)
+  const [senderMode, setSenderMode] = useState('select'); // 'select' or 'manual'
+  const [manualSenderId, setManualSenderId] = useState('');
 
   // Fetch users for the sender dropdown
   const {
@@ -141,6 +145,9 @@ export default function CreateShipmentForm({ token }) {
       }));
       // Reset the new item input field
       setNewItem('');
+      // Reset sender mode
+      setSenderMode('select');
+      setManualSenderId('');
     },
     onError: (err) => {
       setSubmitting(false);
@@ -180,11 +187,51 @@ export default function CreateShipmentForm({ token }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.sender) {
-      return toast.error('Please select a sender');
+    
+    // Determine which sender value to use
+    let senderId = senderMode === 'select' ? form.sender : manualSenderId;
+    let senderEmail = '';
+    
+    if (!senderId || senderId.trim() === '') {
+      return toast.error('Please select a sender or enter a sender email');
     }
+    
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    // If manual mode
+    if (senderMode === 'manual') {
+      if (emailPattern.test(senderId.trim())) {
+        // It's an email format
+        senderEmail = senderId.trim();
+        
+        // Check if this email exists in the database
+        const foundUser = users?.find(user => user.email === senderEmail);
+        
+        if (foundUser) {
+          // Email exists, use user ID
+          senderId = foundUser._id;
+        } else {
+          // Email doesn't exist in database, send as external email
+          // Set sender to null and use senderEmail field
+          senderId = null;
+        }
+      } else {
+        // Treat it as a MongoDB ID
+        senderEmail = '';
+      }
+    } else {
+      // Select mode - get the email of the selected user
+      const selectedUser = users?.find(u => u._id === senderId);
+      senderEmail = selectedUser?.email || '';
+    }
+    
     setSubmitting(true);
-    mutation.mutate(form);
+    const submitData = {
+      ...form,
+      sender: senderId,
+      senderEmail: senderEmail || form.senderEmail // Use manual email if provided
+    };
+    mutation.mutate(submitData);
   };
 
   return (
@@ -202,30 +249,91 @@ export default function CreateShipmentForm({ token }) {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Assign Sender</label>
-          {isLoadingUsers ? (
-            <div className="flex items-center text-gray-600">
-              <FaSpinner className="animate-spin mr-2" /> Loading users...
-            </div>
-          ) : isErrorUsers ? (
-            <div className="flex items-center text-red-600">
-              <FaTimesCircle className="mr-2" /> Error loading users: {usersError?.message}
-            </div>
-          ) : (
-            <select
-              name="sender"
-              value={form.sender}
-              onChange={handleChange}
-              className="w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600"
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium mb-3 text-gray-800">Assign Sender</label>
+          
+          {/* Professional Tab Toggle */}
+          <div className="flex flex-col md:flex-row gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() => {
+                setSenderMode('select');
+                setManualSenderId('');
+              }}
+              className={`flex-1 py-2 px-4 font-medium rounded transition-all border-2 ${
+                senderMode === 'select'
+                  ? 'bg-green-600 text-white border-green-600 shadow-md'
+                  : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
+              }`}
             >
-              <option value="">Select user</option>
-              {users && users.map((user) => (
-                <option key={user._id} value={user._id}>
-                  {user.fullName} ({user.email})
-                </option>
-              ))}
-            </select>
+              Select Existing User
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSenderMode('manual');
+                setForm(prev => ({ ...prev, sender: '' }));
+              }}
+              className={`flex-1 py-2 px-4 font-medium rounded transition-all border-2 ${
+                senderMode === 'manual'
+                  ? 'bg-green-600 text-white border-green-600 shadow-md'
+                  : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
+              }`}
+            >
+              Enter Manual ID
+            </button>
+          </div>
+
+          {/* Select Existing User Option */}
+          {senderMode === 'select' && (
+            <div className="border border-green-600 rounded-lg p-4 bg-green-50">
+              {isLoadingUsers ? (
+                <div className="flex items-center text-gray-600">
+                  <FaSpinner className="animate-spin mr-2" /> Loading users...
+                </div>
+              ) : isErrorUsers ? (
+                <div className="flex items-center text-red-600">
+                  <FaTimesCircle className="mr-2" /> Error loading users: {usersError?.message}
+                </div>
+              ) : (
+                <select
+                  name="sender"
+                  value={form.sender}
+                  onChange={handleChange}
+                  className="w-full border border-green-600 rounded p-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                >
+                  <option value="">Select a user from the system</option>
+                  {users && users.map((user) => (
+                    <option key={user._id} value={user._id}>
+                      {user.fullName} ({user.email})
+                    </option>
+                  ))}
+                </select>
+              )}
+              <p className="text-xs text-gray-600 mt-2">
+                Choose an existing user to assign as the sender for this shipment.
+              </p>
+            </div>
+          )}
+
+          {/* Manual Sender Email Option */}
+          {senderMode === 'manual' && (
+            <div className="border border-green-600 rounded-lg p-4 bg-green-50">
+              <input
+                type="text"
+                value={manualSenderId}
+                onChange={(e) => setManualSenderId(e.target.value)}
+                placeholder="Enter sender email address (e.g., user@example.com)"
+                className="w-full border border-green-600 rounded p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <p className="text-xs text-gray-600 mt-2">
+                Enter the sender&apos;s email address. The system will automatically:
+              </p>
+              <ul className="text-xs text-gray-600 mt-1 ml-2 list-disc">
+                <li>Link to their account if the email exists in the system</li>
+                <li>Send a confirmation email if the address is external or not registered</li>
+              </ul>
+            </div>
           )}
         </div>
 

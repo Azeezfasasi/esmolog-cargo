@@ -67,7 +67,7 @@ const useNotifications = () => {
                 title: 'Shipment Status Updated',
                 message: `Tracking #${shipment.trackingNumber}: Status changed to "${history.status}"${history.location ? ` - ${history.location}` : ''}`,
                 time: new Date(history.timestamp).toLocaleDateString(),
-                link: '/dashboard/myshipments',
+                link: '/dashboard/allshipments',
                 icon: '📦',
               }));
             }).slice(0, 5)); // Limit to 5 most recent

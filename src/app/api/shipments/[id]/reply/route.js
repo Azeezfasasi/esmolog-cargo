@@ -4,7 +4,7 @@ import connectDB from '@/lib/db';
 import Shipment from '@/server/models/Shipment';
 import { ObjectId } from 'mongodb';
 import { sendMail } from '@/server/utils/mailer';
-import { shipmentCreatedClient, shipmentCreatedAdmin } from '@/server/emailTemplates/shipmentTemplates';
+import { shipmentReplyClient, shipmentReplyAdmin } from '@/server/emailTemplates/shipmentTemplates';
 
 function isValidObjectId(id) {
   return ObjectId.isValid(id);
@@ -69,39 +69,94 @@ export async function POST(request, { params }) {
       );
     }
 
+    // Get client name and email with fallback to shipment fields
+    const clientName = updatedShipment.sender?.fullName || updatedShipment.senderName || 'Client';
+    const clientEmail = updatedShipment.sender?.email || updatedShipment.senderEmail;
+
     // Send confirmation email to client
     try {
-      const userEmailContent = shipmentCreatedClient({
-        name: updatedShipment.sender.fullName,
-        shipmentId: updatedShipment._id,
-        message: body.message.trim(),
-        timestamp: replyTimestamp.toISOString()
-      });
-      await sendMail(
-        updatedShipment.sender.email,
-        'Your Shipment Has a New Reply',
-        userEmailContent,
-        null,
-        null,
-        'shipment-reply'
-      );
-    } catch (emailError) {
-      // Replace with a robust logger in production, e.g., winston
-      // logger.error('Error sending email to client:', emailError);
-      console.error('Error sending email to client:', emailError);
+      if (!clientEmail) {
+        console.warn('⚠️ Client email not found, skipping client notification');
+      } else {
+        const userEmailContent = shipmentReplyClient({
+          senderName: clientName,
+          trackingNumber: updatedShipment.trackingNumber,
+          message: body.message.trim(),
+          timestamp: replyTimestamp.toISOString()
+        });
+        await sendMail(
+          clientEmail,
+          'Your Shipment Has a New Reply',
+          userEmailContent,
+          null,
+          null,
+          'shipment-reply'
+        );
+        console.log(`✅ CLIENT CONFIRMATION EMAIL SENT to ${clientEmail}`);
+      }
+    } catch (userEmailError) {
+      console.error(`❌ FAILED TO SEND CLIENT EMAIL to ${clientEmail || updatedShipment.senderEmail}:`, userEmailError.message);
     }
 
     // Send notification email to all admin and employee users
-    const adminUsers = await User.find({ role: { $in: ['admin', 'employee'] } }).select('email fullName -_id');
-    for (const user of adminUsers) {
-      await sendMail(
-        user.email,
-        'New Shipment Reply',
-        `A new reply has been added to shipment ${updatedShipment._id}.`,
-        null,
-        null,
-        'shipment-reply'
-      );
+    try {
+      // Import User model
+      const { default: User } = await import('@/server/models/User');
+
+      // Find all admin and employee users
+      const adminUsers = await User.find({
+        role: { $in: ['admin', 'employee'] }
+      }).select('email fullName -_id');
+
+      if (!adminUsers || adminUsers.length === 0) {
+        console.warn('⚠️ No admin or employee users found to send notification.');
+      } else {
+        // Get unique email addresses
+        const adminEmails = [...new Set(adminUsers.map(u => u.email).filter(Boolean))];
+
+        console.log(`📧 SENDING ADMIN NOTIFICATION TO ${adminEmails.length} ADMIN USERS:`, adminEmails);
+
+        const adminClientName = updatedShipment.sender?.fullName || updatedShipment.senderName || 'Unknown';
+        const adminClientEmail = updatedShipment.sender?.email || updatedShipment.senderEmail || 'unknown@example.com';
+
+        const adminEmailContent = shipmentReplyAdmin({
+          shipmentId: updatedShipment._id,
+          clientName: adminClientName,
+          clientEmail: adminClientEmail,
+          message: body.message.trim(),
+          timestamp: replyTimestamp.toISOString()
+        });
+
+        // Send to each admin user
+        let successCount = 0;
+        let failureCount = 0;
+
+        for (const adminEmail of adminEmails) {
+          try {
+            const replyToEmail = updatedShipment.sender?.email || updatedShipment.senderEmail || adminClientEmail;
+            
+            await sendMail(
+              adminEmail,
+              `New Reply on Shipment ${updatedShipment._id}`,
+              adminEmailContent,
+              null,
+              replyToEmail,
+              'shipment-reply'
+            );
+            console.log(`✅ ADMIN NOTIFICATION EMAIL SENT to ${adminEmail}`);
+            successCount++;
+          } catch (emailError) {
+            console.error(`❌ FAILED TO SEND ADMIN EMAIL to ${adminEmail}:`, emailError.message);
+            failureCount++;
+          }
+        }
+
+        console.log(
+          `📊 ADMIN NOTIFICATION SUMMARY: ${successCount} sent successfully, ${failureCount} failed`
+        );
+      }
+    } catch (adminEmailError) {
+      console.error(`❌ ERROR SENDING ADMIN NOTIFICATIONS:`, adminEmailError.message);
     }
 
     return NextResponse.json({

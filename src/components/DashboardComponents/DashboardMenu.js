@@ -63,7 +63,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
       href: '/dashboard/programme',
       label: 'Shipments Management',
       icon: 'Users',
-      roles: ['admin'],
+      roles: ['admin', 'employee'],
       children: [
         { href: '/dashboard/allshipments', label: 'All Shipments', roles: ['admin', 'employee', 'agent'] },
         { href: '/dashboard/myshipments', label: 'My Shipments', roles: ['admin', 'employee', 'agent'] },
@@ -106,15 +106,25 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
         { href: '/dashboard/bookappointment', label: 'Book Appointment', roles: ['admin'] },
       ]
     },
+
+    // Client and Agent specific links
+    { href: '/dashboard/myshipments', label: 'My Shipments', icon: 'Users', roles: ['client', 'agent'] },
+    { href: '/dashboard/trackshipment', label: 'Track Shipment', icon: 'Users', roles: ['client', 'agent'] },
+    { href: '/dashboard/bookappointment', label: 'Book Appointment', icon: 'Users', roles: ['client', 'agent'] },
+    { href: '/dashboard/myappointments', label: 'My Appointments', icon: 'Users', roles: ['client', 'agent'] },
+    { href: '/gallery', label: 'View Gallery Images', icon: 'Users', roles: ['client', 'agent'] },
+    { href: '/blog', label: 'Read Our Blogs', icon: 'Users', roles: ['client', 'agent'] },
+    { href: '/request-quote', label: 'Request Quote', icon: 'Users', roles: ['client', 'agent'] },
+
     {
       href: '/dashboard/all-newsletter',
       label: 'Newsletter Management',
       icon: 'Newsletter',
-      roles: ['admin', 'employee'],
+      roles: ['admin'],
       children: [
-        { href: '/dashboard/sendnewsletter', label: 'Send Newsletter', roles: ['admin', 'employee'] },
-        { href: '/dashboard/allnewsletter', label: 'All Newsletters', roles: ['admin', 'employee'] },
-        { href: '/dashboard/newslettersubscribers', label: 'Subscribers', roles: ['admin', 'employee'] },
+        { href: '/dashboard/sendnewsletter', label: 'Send Newsletter', roles: ['admin'] },
+        { href: '/dashboard/allnewsletter', label: 'All Newsletters', roles: ['admin'] },
+        { href: '/dashboard/newslettersubscribers', label: 'Subscribers', roles: ['admin'] },
       ]
     },
     {
@@ -138,7 +148,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
         { href: '/dashboard/changeuserpassword', label: 'Change User Password', roles: ['admin'] }
       ]
     },
-    { href: '/dashboard/profile', label: 'Profile', icon: 'dashboard', roles: ['admin'] },
+    { href: '/dashboard/profile', label: 'Profile', icon: 'dashboard', roles: ['admin', 'employee', 'agent', 'client'] },
     { href: '/dashboard/view-email-logs', label: 'Email Logs', icon: 'dashboard', roles: ['admin'] },
     {
       href: '/dashboard/home',

@@ -213,21 +213,21 @@ function MyShipmentsMain() {
 
   const renderPaginationButtons = () => {
     return (
-      <nav className="flex items-center justify-between">
+      <nav className="flex items-center justify-between gap-2 sm:gap-4">
         <button
           onClick={() => paginate(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <LuChevronLeft className="h-4 w-4" />
         </button>
         <div>
-          <span className="text-sm font-medium text-gray-700">Page {currentPage} of {totalPages}</span>
+          <span className="text-xs sm:text-sm font-medium text-gray-700">Page {currentPage} of {totalPages}</span>
         </div>
         <button
           onClick={() => paginate(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <LuChevronRight className="h-4 w-4" />
         </button>
@@ -254,10 +254,10 @@ function MyShipmentsMain() {
   
   if (!shipments || shipments.length === 0) {
     return (
-      <div className="p-6 bg-gray-100 min-h-screen font-sans">
+      <div className="p-3 sm:p-6 bg-gray-100 min-h-screen font-sans">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-extrabold text-gray-800 mb-8 text-center">My Shipments</h2>
-          <div className="text-center text-lg text-gray-500 p-8 bg-white rounded-xl shadow-xl">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6 sm:mb-8 text-center">My Shipments</h2>
+          <div className="text-center text-lg text-gray-500 p-6 sm:p-8 bg-white rounded-xl shadow-xl">
             You have no shipments to display.
           </div>
         </div>
@@ -266,28 +266,29 @@ function MyShipmentsMain() {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen font-sans">
+    <div className="p-3 sm:p-6 bg-gray-100 min-h-screen font-sans">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-gray-800 mb-8 text-center">My Shipments</h2>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6 sm:mb-8 text-center">My Shipments</h2>
 
         {/* Search Bar */}
         <div className="mb-6 flex justify-end">
           <div className="relative w-full max-w-sm">
             <input
               type="text"
-              placeholder="Search by Tracking #, Name, or Destination..."
+              placeholder="Search by Tracking #..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 sm:px-4 py-2 pl-8 sm:pl-10 text-sm border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <LuSearch className="h-5 w-5 text-gray-400" />
+            <div className="absolute inset-y-0 left-0 flex items-center pl-2 sm:pl-3 pointer-events-none">
+              <LuSearch className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             </div>
           </div>
         </div>
 
-        {/* Shipment Table */}
-        <div className="overflow-x-auto bg-white rounded-xl shadow-xl">
+        {/* Shipment Table - Hidden on mobile, Card view on mobile */}
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-xl">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -334,7 +335,6 @@ function MyShipmentsMain() {
                         shipment.status === 'picked-up' ? 'bg-purple-100 text-purple-800' :
                         shipment.status === 'arrived-at-hub' ? 'bg-violet-100 text-violet-800' :
                         shipment.status === 'departed-from-hub' ? 'bg-indigo-100 text-indigo-800' :
-                        shipment.status === 'picked-up' ? 'bg-purple-100 text-purple-800' :
                         shipment.status === 'on-hold' ? 'bg-pink-100 text-pink-800' :
                         shipment.status === 'customs-clearance' ? 'bg-cyan-100 text-cyan-800' :
                         shipment.status === 'Awaiting Pickup' ? 'bg-fuchsia-100 text-fuchsia-800' :
@@ -349,12 +349,10 @@ function MyShipmentsMain() {
                     {new Date(shipment.shipmentDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
-                    <div className="flex flex-wrap gap-2">
-                      <button onClick={() => handleView(shipment)} className="bg-green-50 text-green-600 hover:text-reen-700 transition-colors flex flex-row items-center justify-start gap-1 border border-solid border-green-600 p-1 cursor-pointer rounded-md">
-                        <LuEye className="w-4 h-4" />
-                        View
-                      </button>
-                    </div>
+                    <button onClick={() => handleView(shipment)} className="bg-green-50 text-green-600 hover:text-green-700 transition-colors flex flex-row items-center justify-start gap-1 border border-solid border-green-600 p-1 cursor-pointer rounded-md">
+                      <LuEye className="w-4 h-4" />
+                      View
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -362,6 +360,59 @@ function MyShipmentsMain() {
           </table>
           {filteredShipments.length === 0 && (
             <div className="p-6 text-center text-gray-500">No shipments found.</div>
+          )}
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="md:hidden space-y-4">
+          {currentShipments.length === 0 ? (
+            <div className="p-6 text-center text-gray-500 bg-white rounded-lg">No shipments found.</div>
+          ) : (
+            currentShipments.map((shipment) => (
+              <div key={shipment._id} className="bg-white rounded-lg shadow-md p-4 border-l-4 border-green-500">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-start gap-2">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Tracking Number</p>
+                      <p className="text-sm font-bold text-gray-900">{shipment.trackingNumber}</p>
+                    </div>
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap capitalize
+                      ${shipment.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                        shipment.status === 'in-transit' ? 'bg-yellow-100 text-yellow-800' :
+                        shipment.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                        shipment.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                        shipment.status === 'pending' ? 'bg-red-100 text-red-800' :
+                        'bg-gray-100 text-gray-800' }`}>
+                      {shipment.status}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Recipient</p>
+                      <p className="text-gray-800 font-medium">{shipment.recipientName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Destination</p>
+                      <p className="text-gray-800 font-medium">{shipment.destination}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Shipment Date</p>
+                    <p className="text-sm text-gray-700">{new Date(shipment.shipmentDate).toLocaleDateString()}</p>
+                  </div>
+
+                  <button 
+                    onClick={() => handleView(shipment)} 
+                    className="w-full mt-3 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-md flex items-center justify-center gap-2 text-sm transition-colors"
+                  >
+                    <LuEye className="w-4 h-4" />
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))
           )}
         </div>
 

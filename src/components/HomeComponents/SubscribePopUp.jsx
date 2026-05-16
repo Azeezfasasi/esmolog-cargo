@@ -23,7 +23,7 @@ export const SubscribePopUp = () => {
   return (
     <>
       {open && (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999999]'>
           <div className='bg-white rounded-lg shadow-lg p-8 max-w-md w-full'>
             <div className='flex flex-col items-center'>
                 <Image src="/img/esmologtrans.png" alt="Newsletter image" width={120} height={120} />

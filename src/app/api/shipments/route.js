@@ -77,6 +77,7 @@ export async function POST(request) {
 
     if (!body.trackingNumber) errors.push('Tracking number is required');
     if (!body.senderName) errors.push('Sender name is required');
+    if (!body.senderEmail) errors.push('Sender email is required');
     if (!body.recipientName) errors.push('Recipient name is required');
     if (!body.origin) errors.push('Origin is required');
     if (!body.destination) errors.push('Destination is required');
@@ -141,30 +142,44 @@ export async function POST(request) {
     // Save to database
     await newShipment.save();
 
+    console.log('📨 SHIPMENT CREATION RECEIVED:', {
+      timestamp: new Date().toISOString(),
+      trackingNumber: newShipment.trackingNumber,
+      senderName: newShipment.senderName,
+      senderEmail: newShipment.senderEmail,
+      isExternalEmail: !body.sender, // True if no sender user ID (external email)
+      origin: newShipment.origin,
+      destination: newShipment.destination
+    });
+
     // Send confirmation email to client
     try {
-      const userEmailContent = shipmentCreatedClient({
-        senderName: newShipment.senderName,
-        trackingNumber: newShipment.trackingNumber,
-        origin: newShipment.origin,
-        destination: newShipment.destination,
-        weight: newShipment.weight,
-        shipmentType: newShipment.shipmentType,
-        createdDate: newShipment.shipmentDate
-      });
+      if (!newShipment.senderEmail) {
+        console.warn('⚠️ SKIPPING CLIENT EMAIL: No sender email provided');
+      } else {
+        const userEmailContent = shipmentCreatedClient({
+          senderName: newShipment.senderName,
+          trackingNumber: newShipment.trackingNumber,
+          origin: newShipment.origin,
+          destination: newShipment.destination,
+          weight: newShipment.weight,
+          shipmentType: newShipment.shipmentType,
+          createdDate: newShipment.shipmentDate
+        });
 
-      await sendMail(
-        newShipment.senderEmail || body.senderEmail,
-        `Shipment Created - Tracking #${newShipment.trackingNumber}`,
-        userEmailContent,
-        null,
-        null,
-        'shipment'
-      );
+        await sendMail(
+          newShipment.senderEmail,
+          `Shipment Created - Tracking #${newShipment.trackingNumber}`,
+          userEmailContent,
+          null,
+          null,
+          'shipment'
+        );
 
-      console.log(`✅ CLIENT CONFIRMATION EMAIL SENT to ${newShipment.senderEmail}`);
+        console.log(`✅ CLIENT CONFIRMATION EMAIL SENT to ${newShipment.senderEmail}`);
+      }
     } catch (userEmailError) {
-      console.error(`❌ FAILED TO SEND CLIENT EMAIL:`, userEmailError.message);
+      console.error(`❌ FAILED TO SEND CLIENT EMAIL to ${newShipment.senderEmail}:`, userEmailError.message);
     }
 
     // Send notification email to all admin and employee users
@@ -173,10 +188,13 @@ export async function POST(request) {
         role: { $in: ['admin', 'employee'] }
       }).select('email fullName -_id');
 
-      if (adminUsers && adminUsers.length > 0) {
+      if (!adminUsers || adminUsers.length === 0) {
+        console.warn('⚠️ No admin or employee users found to send notification.');
+      } else {
+        // Get unique email addresses
         const adminEmails = [...new Set(adminUsers.map(u => u.email).filter(Boolean))];
 
-        console.log(`📧 SENDING ADMIN NOTIFICATION TO ${adminEmails.length} ADMIN USERS`);
+        console.log(`📧 SENDING ADMIN NOTIFICATION TO ${adminEmails.length} ADMIN USERS:`, adminEmails);
 
         const adminEmailContent = shipmentCreatedAdmin({
           senderName: newShipment.senderName,
@@ -211,7 +229,7 @@ export async function POST(request) {
           }
         }
 
-        console.log(`📊 ADMIN NOTIFICATION SUMMARY: ${successCount} sent, ${failureCount} failed`);
+        console.log(`📊 ADMIN NOTIFICATION SUMMARY: ${successCount} sent successfully, ${failureCount} failed`);
       }
     } catch (adminEmailError) {
       console.error(`❌ ERROR SENDING ADMIN NOTIFICATIONS:`, adminEmailError.message);

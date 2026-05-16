@@ -38,7 +38,7 @@ export default function ChangeStatusModal({ shipment, onClose, onStatusChange, s
 
   return (
     <div className="space-y-5">
-      <h2 className="text-lg font-semibold text-gray-900">Change Shipment Status</h2>
+      <h2 className="text-lg font-semibold text-orange-600">Change Shipment Status</h2>
       <p className="text-sm text-gray-600">
         Update the status and location for the selected shipment:
       </p>
@@ -69,7 +69,7 @@ export default function ChangeStatusModal({ shipment, onClose, onStatusChange, s
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-700">Location (Optional)</label>
         <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
@@ -100,7 +100,7 @@ export default function ChangeStatusModal({ shipment, onClose, onStatusChange, s
         <Button 
           onClick={handleChangeStatus} 
           disabled={!status || loading}
-          className="bg-green-600 text-white hover:bg-blue-700"
+          className="bg-green-600 text-white hover:bg-orange-500"
         >
           {loading ? 'Updating...' : 'Update Status & Location'}
         </Button>

@@ -1,8 +1,9 @@
+
 'use client';
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Pencil, Download, Mail, Eye, Trash2, FileText, Printer, Truck, RefreshCcw, QrCode } from 'lucide-react';
+import { Pencil, Mail, Eye, Trash2, RefreshCcw, QrCode } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -10,7 +11,10 @@ export default function ShipmentTable({ shipments, onActionClick }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   // filter out shipments with delivered status (case-insensitive)
-  const visibleShipments = shipments.filter(s => String(s.status).toLowerCase() !== 'delivered');
+  const visibleShipments = Array.isArray(shipments)
+    ? shipments.filter((s) => String(s?.status ?? '').trim().toLowerCase() !== 'delivered')
+    : [];
+
 
   const totalPages = Math.ceil(visibleShipments.length / ITEMS_PER_PAGE) || 1;
   const paginated = visibleShipments.slice(
@@ -19,11 +23,13 @@ export default function ShipmentTable({ shipments, onActionClick }) {
   );
 
   return (
-    <div className="rounded-lg sm:rounded-xl border bg-white shadow-md overflow-hidden">
+    <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+      {/* Header glow */}
+      <div className="h-1 w-full bg-gradient-to-r from-green-600 via-green-400 to-green-800" />
       {/* Desktop Table View */}
-      <div className="hidden md:block overflow-x-auto">
-      <table className="w-full text-sm text-left">
-        <thead className="bg-blue-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase">
+      <div className="hidden lg:block overflow-x-auto">
+      <table className="min-w-[900px] w-full text-sm text-left">
+        <thead className="bg-green-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase">
           <tr>
             <th className="p-2 sm:p-3 text-xs sm:text-sm">#</th>
             <th className="p-2 sm:p-3 text-xs sm:text-sm">Tracking No</th>
@@ -181,6 +187,12 @@ export default function ShipmentTable({ shipments, onActionClick }) {
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => onActionClick(shipment, 'status')} className='text-xs h-8'>
                   <RefreshCcw size={14} className="mr-1" />Status
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => onActionClick(shipment, 'reply')} className='cursor-pointer hover:bg-green-100'>
+                  <Mail size={16} /> Reply
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => onActionClick(shipment, 'delete')} className='cursor-pointer hover:bg-red-100'>
+                  <Trash2 size={16} className="text-red-500" /> Delete
                 </Button>
               </div>
             </div>

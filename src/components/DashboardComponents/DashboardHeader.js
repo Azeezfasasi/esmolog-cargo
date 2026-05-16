@@ -69,28 +69,32 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
 
           <div className="flex items-center gap-4">
             {/* Notification Button */}
-            <button 
-              aria-label="Notifications"
-              onClick={() => setNotificationOpen(true)}
-              className="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-700 relative transition-colors duration-200"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-              </svg>
-              {unreadCount > 0 && (
-                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </span>
-              )}
-            </button>
+            {currentUser?.role === 'admin' && (
+              <>
+                <button 
+                  aria-label="Notifications"
+                  onClick={() => setNotificationOpen(true)}
+                  className="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-700 relative transition-colors duration-200"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                  </svg>
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </button>
 
-            {/* Notification Modal */}
-            <NotificationModal 
-              isOpen={notificationOpen}
-              onClose={() => setNotificationOpen(false)}
-              notifications={notifications}
-              unreadCount={unreadCount}
-            />
+                {/* Notification Modal */}
+                <NotificationModal 
+                  isOpen={notificationOpen}
+                  onClose={() => setNotificationOpen(false)}
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                />
+              </>
+            )}
 
             <div className="relative" ref={dropdownRef}>
               <button
@@ -116,12 +120,17 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
                     </li>
                     {currentUser?.role === 'admin' || currentUser?.role === 'employee' ? (
                     <li>
-                      <Link href="/dashboard/all-programmes" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Manage Programmes</Link>
+                      <Link href="/dashboard/allshipments" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Manage Shipments</Link>
                     </li>
                     ) : null}
                     {currentUser?.role === 'admin' || currentUser?.role === 'employee' ? (
                     <li>
-                      <Link href="/dashboard/my-profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Profile</Link>
+                      <Link href="https://mail.zoho.com" target='_blank' rel="noopener noreferrer" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Access Zohomail</Link>
+                    </li>
+                    ) : null}
+                    {currentUser?.role === 'admin' || currentUser?.role === 'employee' ? (
+                    <li>
+                      <Link href="/dashboard/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Profile</Link>
                     </li>
                     ) : null}
                     <li>

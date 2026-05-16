@@ -303,9 +303,207 @@ const shipmentDeliveredClient = (shipmentData) => {
   return getEmailLayout(content);
 };
 
+/**
+ * Shipment reply email for client
+ */
+const shipmentReplyClient = (shipmentData) => {
+  const { senderName, trackingNumber, message, timestamp } = shipmentData;
+
+  const content = `
+    ${getEmailHeader('New Reply on Your Shipment', `Tracking #${trackingNumber}`)}
+    
+    <div class="email-body">
+      <p class="greeting">Hi ${senderName},</p>
+      
+      <p class="content">
+        There's a new reply on your shipment with <span class="highlight">ESMOLOG Worldwide Cargo and Logistics</span>.
+      </p>
+
+      <div class="success-box">
+        <strong>💬 New Message</strong><br>
+        A team member has replied to your shipment tracking.
+      </div>
+
+      <p style="font-weight: bold; margin-top: 20px; color: #1abc9c;">Message:</p>
+      <div class="info-box">
+        <p>${message}</p>
+      </div>
+
+      <p style="font-weight: bold; margin-top: 20px; color: #1abc9c;">Reply Details:</p>
+      <div class="info-box">
+        <div class="info-row">
+          <span class="info-label">Tracking #:</span>
+          <span class="info-value" style="font-weight: bold; color: #e74c3c;">${trackingNumber}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Replied:</span>
+          <span class="info-value">${formatDateForEmail(timestamp)}</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p style="text-align: center; margin: 25px 0;">
+        <a href="https://esmologworldwide.com/track-shipment?tracking=${trackingNumber}" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+          View Shipment
+        </a>
+      </p>
+
+      <p class="content">
+        Log in to your account to view all messages and updates related to your shipment.
+      </p>
+
+      <p style="margin-top: 30px; color: #555;">Best regards,</p>
+      <p style="font-weight: bold; color: #e74c3c; margin: 5px 0;">The ESMOLOG Worldwide Cargo and Logistics Team</p>
+    </div>
+
+    ${getEmailFooter()}
+  `;
+
+  return getEmailLayout(content);
+};
+
+/**
+ * Shipment reply notification for admin
+ */
+const shipmentReplyAdmin = (shipmentData) => {
+  const { shipmentId, clientName, clientEmail, message, timestamp } = shipmentData;
+
+  const content = `
+    ${getEmailHeader('New Reply on Shipment', `Shipment #${shipmentId}`)}
+    
+    <div class="email-body">
+      <p class="greeting">Admin Alert - New Shipment Reply</p>
+      
+      <p class="content">
+        A new reply has been added to a shipment tracking.
+      </p>
+
+      <p style="font-weight: bold; margin-top: 20px; color: #1abc9c;">Client Details:</p>
+      <div class="info-box">
+        <div class="info-row">
+          <span class="info-label">Name:</span>
+          <span class="info-value">${clientName}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email:</span>
+          <span class="info-value"><a href="mailto:${clientEmail}" style="color: #e74c3c; text-decoration: none;">${clientEmail}</a></span>
+        </div>
+      </div>
+
+      <p style="font-weight: bold; margin-top: 20px; color: #1abc9c;">Reply Details:</p>
+      <div class="info-box">
+        <div class="info-row">
+          <span class="info-label">Shipment ID:</span>
+          <span class="info-value" style="font-weight: bold; color: #e74c3c;">${shipmentId}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Time:</span>
+          <span class="info-value">${formatDateForEmail(timestamp)}</span>
+        </div>
+      </div>
+
+      <p style="font-weight: bold; margin-top: 20px; color: #1abc9c;">Message:</p>
+      <div class="info-box">
+        <p>${message}</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <p style="text-align: center; margin: 25px 0;">
+        <a href="https://esmologworldwide.com/dashboard/allshipments" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+          Manage Shipment
+        </a>
+      </p>
+    </div>
+
+    ${getEmailFooter()}
+  `;
+
+  return getEmailLayout(content);
+};
+
+/**
+ * Shipment status update admin notification
+ */
+const shipmentStatusUpdateAdmin = (shipmentData) => {
+  const { shipmentId, clientName, clientEmail, status, location, timestamp } = shipmentData;
+
+  const statusEmojis = {
+    'pending': '⏳',
+    'in-transit': '🚚',
+    'in-warehouse': '📦',
+    'out-for-delivery': '🚗',
+    'delivered': '✅',
+    'cancelled': '❌',
+    'on-hold': '⚠️'
+  };
+
+  const statusEmoji = statusEmojis[status?.toLowerCase()] || '📫';
+
+  const content = `
+    ${getEmailHeader('Shipment Status Updated', `${statusEmoji} ${status}`)}
+    
+    <div class="email-body">
+      <p class="greeting">Admin Alert - Status Update</p>
+      
+      <p class="content">
+        A shipment status has been updated in the system.
+      </p>
+
+      <p style="font-weight: bold; margin-top: 20px; color: #1abc9c;">Client Details:</p>
+      <div class="info-box">
+        <div class="info-row">
+          <span class="info-label">Name:</span>
+          <span class="info-value">${clientName}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email:</span>
+          <span class="info-value"><a href="mailto:${clientEmail}" style="color: #e74c3c; text-decoration: none;">${clientEmail}</a></span>
+        </div>
+      </div>
+
+      <p style="font-weight: bold; margin-top: 20px; color: #1abc9c;">Status Update Details:</p>
+      <div class="info-box">
+        <div class="info-row">
+          <span class="info-label">Shipment ID:</span>
+          <span class="info-value" style="font-weight: bold; color: #e74c3c;">${shipmentId}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">New Status:</span>
+          <span class="info-value">${status}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Location:</span>
+          <span class="info-value">${location || 'Not specified'}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Updated:</span>
+          <span class="info-value">${formatDateForEmail(timestamp)}</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p style="text-align: center; margin: 25px 0;">
+        <a href="https://esmologworldwide.com/dashboard/allshipments" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+          Manage Shipment
+        </a>
+      </p>
+    </div>
+
+    ${getEmailFooter()}
+  `;
+
+  return getEmailLayout(content);
+};
+
 module.exports = {
   shipmentCreatedClient,
   shipmentCreatedAdmin,
   shipmentStatusUpdateClient,
-  shipmentDeliveredClient
+  shipmentStatusUpdateAdmin,
+  shipmentDeliveredClient,
+  shipmentReplyClient,
+  shipmentReplyAdmin
 };
