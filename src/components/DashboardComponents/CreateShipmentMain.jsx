@@ -9,7 +9,7 @@ import { API_BASE_URL } from '@/config/Api';
 
 const generateTrackingNumber = () => {
   const rand = Math.floor(10000000000 + Math.random() * 90000000000);
-  return `CAR${rand}`;
+  return `OSM${rand}`;
 };
 
 export default function CreateShipmentForm({ token }) {
@@ -247,6 +247,7 @@ export default function CreateShipmentForm({ token }) {
             readOnly
             className="w-full border border-solid border-green-600 rounded p-2 focus:outline-none focus:ring focus:ring-green-600"
           />
+          <span className='text-green-800'>Auto generated</span>
         </div>
 
         <div className="md:col-span-2">
