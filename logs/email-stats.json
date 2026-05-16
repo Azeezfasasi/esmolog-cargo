@@ -1,0 +1,15 @@
+{
+  "totalSent": 2,
+  "totalFailed": 0,
+  "byType": {
+    "contact-form": {
+      "sent": 2,
+      "failed": 0
+    }
+  },
+  "byStatus": {
+    "success": 2,
+    "failed": 0
+  },
+  "lastUpdated": "2026-05-16T06:00:25.702Z"
+}

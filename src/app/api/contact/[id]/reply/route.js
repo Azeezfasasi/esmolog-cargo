@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth';
 import connectDB from '@/lib/db';
+import { sendMail } from '@/server/utils/mailer';
 
 export async function POST(request, { params }) {
   try {
@@ -48,7 +49,32 @@ export async function POST(request, { params }) {
 
     await contact.save();
 
-    // TODO: Send email to contact.email with the reply
+    // Send email to contact.email with the reply
+    try {
+      const htmlContent = `
+        <h2>${subject}</h2>
+        <div>${replyContent}</div>
+        <hr />
+        <p style="font-size: 12px; color: #999;">
+          Sent by: ${authResult.user?.name || 'Admin'}<br />
+          Time: ${new Date().toISOString()}
+        </p>
+      `;
+      
+      await sendMail(
+        contact.email,
+        `Re: ${subject}`,
+        htmlContent,
+        null,
+        null,
+        'contact-reply'
+      );
+
+      console.log(`✅ Contact reply email sent to ${contact.email} for contact ID: ${id}`);
+    } catch (emailError) {
+      console.error(`❌ Failed to send contact reply email to ${contact.email}:`, emailError.message);
+      // Don't fail the entire request if email fails, but log it
+    }
 
     return NextResponse.json(
       {

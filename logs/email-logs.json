@@ -1,0 +1,31 @@
+{
+  "logs": [
+    {
+      "id": "email_1778911225324_wlt5cdi1h",
+      "timestamp": "2026-05-16T06:00:25.322Z",
+      "to": "hayzedboy20@gmail.com",
+      "subject": "We Received Your Message",
+      "emailType": "contact-form",
+      "success": true,
+      "messageId": "<202605160600.43240735507@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-05-16T06:00:25.324Z"
+    },
+    {
+      "id": "email_1778911225699_gre2p1zj5",
+      "timestamp": "2026-05-16T06:00:25.698Z",
+      "to": "info@esmologworldwide.com",
+      "subject": "New Contact Form Submission from Azeez Fasasi - Requires Response",
+      "emailType": "contact-form",
+      "success": true,
+      "messageId": "<202605160600.77422710757@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-05-16T06:00:25.699Z"
+    }
+  ],
+  "lastUpdated": "2026-05-16T06:00:25.699Z"
+}

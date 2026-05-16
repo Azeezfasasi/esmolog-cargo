@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
 import { Newsletter, Subscriber } from '@/server/models/Newsletter';
+import { sendMail } from '@/server/utils/mailer';
 
 export async function POST(request) {
   try {
@@ -34,15 +35,55 @@ export async function POST(request) {
 
     await newNewsletter.save();
 
-    // TODO: Integrate actual email sending service (SendGrid, Mailgun, etc.)
-    // For now, we just save the newsletter to database
-    // Get count of active subscribers
-    const subscriberCount = await Subscriber.countDocuments({ isSubscribed: true });
+    // Get active subscribers
+    const subscribers = await Subscriber.find({ isSubscribed: true }).select('email name -_id');
+    
+    if (!subscribers || subscribers.length === 0) {
+      return NextResponse.json(
+        {
+          message: 'Newsletter created but no active subscribers found',
+          newsletter: newNewsletter,
+          subscriberCount: 0
+        },
+        { status: 201 }
+      );
+    }
+
+    // Send newsletter to all active subscribers
+    let successCount = 0;
+    let failureCount = 0;
+
+    console.log(`📧 SENDING NEWSLETTER TO ${subscribers.length} SUBSCRIBERS`);
+
+    for (const subscriber of subscribers) {
+      try {
+        // Send the newsletter content to each subscriber
+        await sendMail(
+          subscriber.email,
+          subject,
+          content,
+          null,
+          null,
+          'newsletter'
+        );
+
+        console.log(`✅ NEWSLETTER SENT to ${subscriber.email}`);
+        successCount++;
+      } catch (emailError) {
+        console.error(`❌ FAILED TO SEND NEWSLETTER to ${subscriber.email}:`, emailError.message);
+        failureCount++;
+      }
+    }
+
+    console.log(`📊 NEWSLETTER SEND SUMMARY: ${successCount} sent successfully, ${failureCount} failed`);
 
     return NextResponse.json(
       {
-        message: `Newsletter sent successfully to ${subscriberCount} subscribers!`,
+        message: `Newsletter sent successfully to ${successCount}/${subscribers.length} subscribers!`,
         newsletter: newNewsletter,
+        subscriberCount: subscribers.length,
+        sentCount: successCount,
+        failedCount: failureCount
       },
       { status: 201 }
     );

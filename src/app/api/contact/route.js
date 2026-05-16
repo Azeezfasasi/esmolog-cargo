@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth';
 import connectDB from '@/lib/db';
+import { sendMail } from '@/server/utils/mailer';
+import { contactFormSubmissionClient, contactFormSubmissionAdmin } from '@/server/emailTemplates/notificationTemplates';
 
 export async function GET(request) {
   try {
@@ -42,6 +44,13 @@ export async function POST(request) {
       );
     }
 
+    console.log('📨 CONTACT FORM SUBMISSION RECEIVED:', {
+      timestamp: new Date().toISOString(),
+      name,
+      email,
+      message: message.substring(0, 50)
+    });
+
     // Connect to database
     await connectDB();
 
@@ -65,6 +74,92 @@ export async function POST(request) {
     });
 
     await contactMessage.save();
+
+    console.log('✅ CONTACT MESSAGE SAVED TO DATABASE:', {
+      id: contactMessage._id,
+      email: contactMessage.email,
+      name: contactMessage.name,
+      createdAt: contactMessage.createdAt
+    });
+
+    // Send confirmation email to user
+    try {
+      const userEmailContent = contactFormSubmissionClient({
+        name,
+        email,
+        message
+      });
+
+      await sendMail(
+        email,
+        'We Received Your Message',
+        userEmailContent,
+        null,
+        null,
+        'contact-form'
+      );
+
+      console.log(`✅ USER CONFIRMATION EMAIL SENT to ${email}`);
+    } catch (userEmailError) {
+      console.error(`❌ FAILED TO SEND USER EMAIL to ${email}:`, userEmailError.message);
+    }
+
+    // Send notification email to all admin and employee users
+    try {
+      // Import User model
+      const { default: User } = await import('@/server/models/User');
+
+      // Find all admin and employee users
+      const adminUsers = await User.find({
+        role: { $in: ['admin', 'employee'] }
+      }).select('email fullName -_id');
+
+      if (!adminUsers || adminUsers.length === 0) {
+        console.warn('⚠️ No admin or employee users found to send notification.');
+      } else {
+        // Get unique email addresses
+        const adminEmails = [...new Set(adminUsers.map(u => u.email).filter(Boolean))];
+
+        console.log(`📧 SENDING ADMIN NOTIFICATION TO ${adminEmails.length} ADMIN USERS:`, adminEmails);
+
+        const adminEmailContent = contactFormSubmissionAdmin({
+          name,
+          email,
+          phoneNumber,
+          message,
+          createdAt: contactMessage.createdAt
+        });
+
+        // Send to each admin user
+        let successCount = 0;
+        let failureCount = 0;
+
+        for (const adminEmail of adminEmails) {
+          try {
+            await sendMail(
+              adminEmail,
+              `New Contact Form Submission from ${name} - Requires Response`,
+              adminEmailContent,
+              null,
+              email, // Reply-to sender's email
+              'contact-form'
+            );
+
+            console.log(`✅ ADMIN NOTIFICATION EMAIL SENT to ${adminEmail}`);
+            successCount++;
+          } catch (emailError) {
+            console.error(`❌ FAILED TO SEND ADMIN EMAIL to ${adminEmail}:`, emailError.message);
+            failureCount++;
+          }
+        }
+
+        console.log(
+          `📊 ADMIN NOTIFICATION SUMMARY: ${successCount} sent successfully, ${failureCount} failed`
+        );
+      }
+    } catch (adminEmailError) {
+      console.error(`❌ ERROR SENDING ADMIN NOTIFICATIONS:`, adminEmailError.message);
+    }
 
     return NextResponse.json(
       { 

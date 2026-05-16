@@ -4,6 +4,7 @@ import connectDB from '@/lib/db';
 import PrayerRequest from '@/server/models/PrayerRequest';
 import Shipment from '@/server/models/Shipment';
 import { Subscriber } from '@/server/models/Newsletter';
+import User from '@/server/models/User';
 
 /**
  * GET /api/notifications
@@ -44,12 +45,21 @@ export async function GET(request) {
       .limit(10)
       .lean();
 
+    // Fetch recent user changes (registrations in last 24 hours)
+    const users = await User.find({
+      createdAt: { $gte: oneDayAgo }
+    })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
+
     return NextResponse.json({
       success: true,
       data: {
         prayerRequests,
         shipments,
         subscribers,
+        users
       },
     }, { status: 200 });
   } catch (error) {

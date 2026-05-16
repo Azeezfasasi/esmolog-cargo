@@ -3,6 +3,8 @@ import { requireAuth } from '@/lib/auth';
 import connectDB from '@/lib/db';
 import Shipment from '@/server/models/Shipment';
 import { ObjectId } from 'mongodb';
+import { sendMail } from '@/server/utils/mailer';
+import { shipmentCreatedClient, shipmentCreatedAdmin } from '@/server/emailTemplates/shipmentTemplates';
 
 function isValidObjectId(id) {
   return ObjectId.isValid(id);
@@ -40,6 +42,9 @@ export async function POST(request, { params }) {
       );
     }
 
+    // Generate a single timestamp for reply and email
+    const replyTimestamp = new Date();
+
     // Add reply to shipment
     const updatedShipment = await Shipment.findByIdAndUpdate(
       id,
@@ -48,7 +53,7 @@ export async function POST(request, { params }) {
           replies: {
             message: body.message.trim(),
             user: authResult.user?.userId || null,
-            timestamp: new Date(),
+            timestamp: replyTimestamp,
           },
         },
       },
@@ -64,12 +69,49 @@ export async function POST(request, { params }) {
       );
     }
 
+    // Send confirmation email to client
+    try {
+      const userEmailContent = shipmentCreatedClient({
+        name: updatedShipment.sender.fullName,
+        shipmentId: updatedShipment._id,
+        message: body.message.trim(),
+        timestamp: replyTimestamp.toISOString()
+      });
+      await sendMail(
+        updatedShipment.sender.email,
+        'Your Shipment Has a New Reply',
+        userEmailContent,
+        null,
+        null,
+        'shipment-reply'
+      );
+    } catch (emailError) {
+      // Replace with a robust logger in production, e.g., winston
+      // logger.error('Error sending email to client:', emailError);
+      console.error('Error sending email to client:', emailError);
+    }
+
+    // Send notification email to all admin and employee users
+    const adminUsers = await User.find({ role: { $in: ['admin', 'employee'] } }).select('email fullName -_id');
+    for (const user of adminUsers) {
+      await sendMail(
+        user.email,
+        'New Shipment Reply',
+        `A new reply has been added to shipment ${updatedShipment._id}.`,
+        null,
+        null,
+        'shipment-reply'
+      );
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Reply added successfully',
       data: updatedShipment,
     });
   } catch (error) {
+    // Replace with a robust logger in production, e.g., winston
+    // logger.error('Error adding reply:', error);
     console.error('Error adding reply:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to add reply', details: error.message },

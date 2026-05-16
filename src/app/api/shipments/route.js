@@ -4,6 +4,8 @@ import connectDB from '@/lib/db';
 import Shipment from '@/server/models/Shipment';
 import User from '@/server/models/User';
 import { generateQRCode } from '@/lib/qrcode';
+import { sendMail } from '@/server/utils/mailer';
+import { shipmentCreatedClient, shipmentCreatedAdmin } from '@/server/emailTemplates/shipmentTemplates';
 
 /**
  * GET /api/shipments
@@ -138,6 +140,82 @@ export async function POST(request) {
 
     // Save to database
     await newShipment.save();
+
+    // Send confirmation email to client
+    try {
+      const userEmailContent = shipmentCreatedClient({
+        senderName: newShipment.senderName,
+        trackingNumber: newShipment.trackingNumber,
+        origin: newShipment.origin,
+        destination: newShipment.destination,
+        weight: newShipment.weight,
+        shipmentType: newShipment.shipmentType,
+        createdDate: newShipment.shipmentDate
+      });
+
+      await sendMail(
+        newShipment.senderEmail || body.senderEmail,
+        `Shipment Created - Tracking #${newShipment.trackingNumber}`,
+        userEmailContent,
+        null,
+        null,
+        'shipment'
+      );
+
+      console.log(`✅ CLIENT CONFIRMATION EMAIL SENT to ${newShipment.senderEmail}`);
+    } catch (userEmailError) {
+      console.error(`❌ FAILED TO SEND CLIENT EMAIL:`, userEmailError.message);
+    }
+
+    // Send notification email to all admin and employee users
+    try {
+      const adminUsers = await User.find({
+        role: { $in: ['admin', 'employee'] }
+      }).select('email fullName -_id');
+
+      if (adminUsers && adminUsers.length > 0) {
+        const adminEmails = [...new Set(adminUsers.map(u => u.email).filter(Boolean))];
+
+        console.log(`📧 SENDING ADMIN NOTIFICATION TO ${adminEmails.length} ADMIN USERS`);
+
+        const adminEmailContent = shipmentCreatedAdmin({
+          senderName: newShipment.senderName,
+          senderEmail: newShipment.senderEmail,
+          trackingNumber: newShipment.trackingNumber,
+          origin: newShipment.origin,
+          destination: newShipment.destination,
+          weight: newShipment.weight,
+          shipmentType: newShipment.shipmentType,
+          items: newShipment.items
+        });
+
+        let successCount = 0;
+        let failureCount = 0;
+
+        for (const adminEmail of adminEmails) {
+          try {
+            await sendMail(
+              adminEmail,
+              `New Shipment Created - Tracking #${newShipment.trackingNumber}`,
+              adminEmailContent,
+              null,
+              newShipment.senderEmail,
+              'shipment'
+            );
+
+            console.log(`✅ ADMIN NOTIFICATION EMAIL SENT to ${adminEmail}`);
+            successCount++;
+          } catch (emailError) {
+            console.error(`❌ FAILED TO SEND ADMIN EMAIL to ${adminEmail}:`, emailError.message);
+            failureCount++;
+          }
+        }
+
+        console.log(`📊 ADMIN NOTIFICATION SUMMARY: ${successCount} sent, ${failureCount} failed`);
+      }
+    } catch (adminEmailError) {
+      console.error(`❌ ERROR SENDING ADMIN NOTIFICATIONS:`, adminEmailError.message);
+    }
 
     return NextResponse.json(
       {

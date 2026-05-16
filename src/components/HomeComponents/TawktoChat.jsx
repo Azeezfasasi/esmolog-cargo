@@ -32,7 +32,7 @@ const TawkToChat = () => {
     const s0 = document.getElementsByTagName("script")[0]; // Get the first script tag in the document
 
     s1.async = true; // Load asynchronously
-    s1.src = 'https://embed.tawk.to/68933c97ddd4a01926701df8/1j1vi9c20'; // Your Tawk.to widget URL
+    s1.src = 'https://embed.tawk.to/6a07660198f1241c34cac6d8/1jomed00b'; // Your Tawk.to widget URL
     s1.charset = 'UTF-8';
     s1.setAttribute('crossorigin', '*'); // Allow cross-origin loading
 

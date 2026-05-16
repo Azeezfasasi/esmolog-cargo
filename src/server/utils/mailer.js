@@ -2,13 +2,27 @@
  * Email Mailer Utility
  * Handles sending emails via Brevo (Sendinblue) API
  * Supports both HTML and plain text emails
+ * Includes comprehensive logging of all email sends
  */
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: '.env.local' });
+} else {
+  require('dotenv').config();
+}
+
+if (!process.env.BREVO_API_KEY) {
+  throw new Error('BREVO_API_KEY is not set in the environment. Please configure it.');
+}
+
+console.log('BREVO_API_KEY:', process.env.BREVO_API_KEY); // Debug log to verify environment variable
+
 const axios = require('axios');
+const { logEmail } = require('./emailLogger');
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
-const BREVO_SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || 'noreply@esmologworldwide.com';
-const BREVO_SENDER_NAME = process.env.BREVO_SENDER_NAME || 'ESMOLOG Worldwide Cargo and Logistics';
+const BREVO_SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || 'info@esmologworldwide.com';
+const BREVO_SENDER_NAME = process.env.BREVO_SENDER_NAME || 'ESMOLOG Worldwide';
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
 /**
@@ -18,9 +32,10 @@ const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
  * @param {string} htmlContent - HTML email content
  * @param {string} textContent - Plain text email content (optional)
  * @param {string} replyTo - Reply-to email address (optional)
+ * @param {string} emailType - Type of email for logging (optional, default: 'general')
  * @returns {Promise<Object>} - Response from Brevo API
  */
-const sendMail = async (to, subject, htmlContent, textContent = null, replyTo = null) => {
+const sendMail = async (to, subject, htmlContent, textContent = null, replyTo = null, emailType = 'general') => {
   try {
     // Validate required parameters
     if (!to || !subject || !htmlContent) {
@@ -66,7 +81,25 @@ const sendMail = async (to, subject, htmlContent, textContent = null, replyTo = 
       }
     );
 
+    console.log('📧 Sending email with the following details:', {
+      to,
+      subject,
+      htmlContent,
+      textContent,
+      replyTo
+    });
+
     console.log(`✅ Email sent successfully to ${recipient}:`, {
+      messageId: response.data.messageId,
+      timestamp: new Date().toISOString()
+    });
+
+    // Log the successful email send
+    logEmail({
+      to: recipient,
+      subject,
+      emailType,
+      success: true,
       messageId: response.data.messageId,
       timestamp: new Date().toISOString()
     });
@@ -86,6 +119,16 @@ const sendMail = async (to, subject, htmlContent, textContent = null, replyTo = 
       subject
     });
 
+    // Log the failed email send
+    logEmail({
+      to,
+      subject,
+      emailType,
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+
     throw new Error(`Failed to send email to ${to}: ${error.message}`);
   }
 };
@@ -95,9 +138,10 @@ const sendMail = async (to, subject, htmlContent, textContent = null, replyTo = 
  * @param {string[]} recipients - Array of recipient email addresses
  * @param {string} subject - Email subject
  * @param {string} htmlContent - HTML email content
+ * @param {string} emailType - Type of email for logging (optional, default: 'general')
  * @returns {Promise<Array>} - Array of send results
  */
-const sendMailToMultiple = async (recipients, subject, htmlContent) => {
+const sendMailToMultiple = async (recipients, subject, htmlContent, emailType = 'general') => {
   try {
     if (!Array.isArray(recipients) || recipients.length === 0) {
       throw new Error('Recipients must be a non-empty array');
@@ -106,7 +150,7 @@ const sendMailToMultiple = async (recipients, subject, htmlContent) => {
     const results = [];
     for (const recipient of recipients) {
       try {
-        const result = await sendMail(recipient, subject, htmlContent);
+        const result = await sendMail(recipient, subject, htmlContent, null, null, emailType);
         results.push(result);
       } catch (err) {
         console.warn(`Failed to send email to ${recipient}:`, err.message);
@@ -150,5 +194,8 @@ module.exports = {
   sendMailToMultiple,
   stripHtmlTags,
   BREVO_SENDER_EMAIL,
-  BREVO_SENDER_NAME
+  BREVO_SENDER_NAME,
+  // Export email logger functions
+  logEmail,
+  emailLogger: require('./emailLogger')
 };
