@@ -909,7 +909,46 @@
       "userId": null,
       "metadata": {},
       "loggedAt": "2026-06-05T20:01:19.453Z"
+    },
+    {
+      "id": "email_1780691042238_mehhc68v8",
+      "timestamp": "2026-06-05T20:24:02.237Z",
+      "to": "hayzedboy20@gmail.com",
+      "subject": "Shipment Created - Tracking #OSM13448365450",
+      "emailType": "shipment",
+      "success": true,
+      "messageId": "<202606052024.59001965358@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-05T20:24:02.238Z"
+    },
+    {
+      "id": "email_1780691042709_v4zbfm7sf",
+      "timestamp": "2026-06-05T20:24:02.708Z",
+      "to": "fas.azeez@gmail.com",
+      "subject": "New Shipment Created - Tracking #OSM13448365450",
+      "emailType": "shipment",
+      "success": true,
+      "messageId": "<202606052024.99211259938@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-05T20:24:02.709Z"
+    },
+    {
+      "id": "email_1780691043077_ycobmjtv0",
+      "timestamp": "2026-06-05T20:24:03.076Z",
+      "to": "info@esmologworldwide.com",
+      "subject": "New Shipment Created - Tracking #OSM13448365450",
+      "emailType": "shipment",
+      "success": true,
+      "messageId": "<202606052024.18362604296@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-05T20:24:03.077Z"
     }
   ],
-  "lastUpdated": "2026-06-05T20:01:19.453Z"
+  "lastUpdated": "2026-06-05T20:24:03.077Z"
 }
