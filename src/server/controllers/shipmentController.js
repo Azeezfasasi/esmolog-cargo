@@ -2,6 +2,9 @@ const Shipment = require('../models/Shipment');
 const sendMail = require('../utils/mailer');
 const User = require('../models/User');
 const QRCode = require('qrcode');
+const { sendSMS, sendBulkSMS } = require('../utils/smsService');
+const { getTemplate } = require('../utils/smsTemplates');
+const SMSLog = require('../models/SMSLog');
 
 // Helper function to generate and save QR code for a shipment
 const generateQRCodeForShipment = async (shipment) => {
@@ -232,6 +235,240 @@ const sendAdminNotification = async (shipment, subject, adminBody, reqUser = nul
   }
 };
 
+// Helper function to send SMS to sender and recipient
+const sendShipmentSMS = async (shipment, eventType, metadata = {}) => {
+  try {
+    console.log('[SMS DEBUG] Starting sendShipmentSMS for:', shipment.trackingNumber, 'Event:', eventType);
+    console.log('[SMS DEBUG] Shipment data:', {
+      trackingNumber: shipment.trackingNumber,
+      senderPhone: shipment.senderPhone,
+      recipientPhone: shipment.recipientPhone,
+      senderName: shipment.senderName,
+      recipientName: shipment.recipientName,
+    });
+
+    const phones = [];
+    const recipients = [];
+
+    // Add sender phone if available
+    if (shipment.senderPhone) {
+      console.log('[SMS DEBUG] Adding sender phone:', shipment.senderPhone);
+      phones.push(shipment.senderPhone);
+      recipients.push({ phone: shipment.senderPhone, type: 'sender', name: shipment.senderName });
+    } else {
+      console.log('[SMS DEBUG] ⚠️ Sender phone NOT available');
+    }
+
+    // Add recipient phone if available
+    if (shipment.recipientPhone) {
+      console.log('[SMS DEBUG] Adding recipient phone:', shipment.recipientPhone);
+      phones.push(shipment.recipientPhone);
+      recipients.push({ phone: shipment.recipientPhone, type: 'receiver', name: shipment.recipientName });
+    } else {
+      console.log('[SMS DEBUG] ⚠️ Recipient phone NOT available');
+    }
+
+    if (phones.length === 0) {
+      console.error('[SMS ERROR] No phone numbers available for shipment:', shipment.trackingNumber);
+      return;
+    }
+
+    console.log('[SMS DEBUG] Found', phones.length, 'phone numbers to send to');
+
+    // Generate SMS messages based on event type
+    let messageTemplate = null;
+
+    switch (eventType) {
+      case 'SHIPMENT_CREATED':
+        console.log('[SMS DEBUG] Processing SHIPMENT_CREATED event');
+        // Send different messages to sender and recipient
+        for (const recipient of recipients) {
+          if (recipient.type === 'sender') {
+            console.log('[SMS DEBUG] Generating message for sender');
+            messageTemplate = getTemplate('SHIPMENT_CREATED_SENDER', {
+              trackingNumber: shipment.trackingNumber,
+              recipientName: shipment.recipientName,
+              origin: shipment.origin,
+              destination: shipment.destination,
+            });
+          } else {
+            console.log('[SMS DEBUG] Generating message for recipient');
+            messageTemplate = getTemplate('SHIPMENT_CREATED_RECIPIENT', {
+              trackingNumber: shipment.trackingNumber,
+              senderName: shipment.senderName,
+              origin: shipment.origin,
+              destination: shipment.destination,
+            });
+          }
+
+          if (messageTemplate) {
+            console.log('[SMS DEBUG] Sending to', recipient.type, ':', recipient.phone);
+            console.log('[SMS DEBUG] Message:', messageTemplate);
+            const result = await sendSMS(recipient.phone, messageTemplate);
+            console.log('[SMS DEBUG] SMS result:', result);
+            await logSMS(shipment._id, shipment.trackingNumber, recipient.phone, messageTemplate, result, eventType, recipient.type);
+          } else {
+            console.error('[SMS ERROR] Failed to generate template for', eventType);
+          }
+        }
+        break;
+
+      case 'SHIPMENT_STATUS_UPDATED':
+        console.log('[SMS DEBUG] Processing SHIPMENT_STATUS_UPDATED event');
+        messageTemplate = getTemplate('SHIPMENT_STATUS_UPDATED', {
+          trackingNumber: shipment.trackingNumber,
+          newStatus: shipment.status,
+          location: metadata.location || 'Unknown',
+        });
+
+        if (messageTemplate) {
+          console.log('[SMS DEBUG] Message:', messageTemplate);
+          for (const recipient of recipients) {
+            console.log('[SMS DEBUG] Sending status update to', recipient.type, ':', recipient.phone);
+            const result = await sendSMS(recipient.phone, messageTemplate);
+            console.log('[SMS DEBUG] SMS result:', result);
+            await logSMS(shipment._id, shipment.trackingNumber, recipient.phone, messageTemplate, result, eventType, recipient.type);
+          }
+        } else {
+          console.error('[SMS ERROR] Failed to generate template for', eventType);
+        }
+        break;
+
+      case 'SHIPMENT_OUT_FOR_DELIVERY':
+        console.log('[SMS DEBUG] Processing SHIPMENT_OUT_FOR_DELIVERY event');
+        messageTemplate = getTemplate('SHIPMENT_OUT_FOR_DELIVERY', {
+          trackingNumber: shipment.trackingNumber,
+          estimatedDeliveryTime: metadata.estimatedDeliveryTime || 'Today',
+        });
+
+        if (messageTemplate) {
+          console.log('[SMS DEBUG] Message:', messageTemplate);
+          for (const recipient of recipients) {
+            console.log('[SMS DEBUG] Sending to', recipient.type, ':', recipient.phone);
+            const result = await sendSMS(recipient.phone, messageTemplate);
+            console.log('[SMS DEBUG] SMS result:', result);
+            await logSMS(shipment._id, shipment.trackingNumber, recipient.phone, messageTemplate, result, eventType, recipient.type);
+          }
+        }
+        break;
+
+      case 'SHIPMENT_DELIVERED':
+        console.log('[SMS DEBUG] Processing SHIPMENT_DELIVERED event');
+        messageTemplate = getTemplate('SHIPMENT_DELIVERED', {
+          trackingNumber: shipment.trackingNumber,
+          deliveryDate: new Date().toLocaleDateString(),
+        });
+
+        if (messageTemplate) {
+          console.log('[SMS DEBUG] Message:', messageTemplate);
+          for (const recipient of recipients) {
+            console.log('[SMS DEBUG] Sending to', recipient.type, ':', recipient.phone);
+            const result = await sendSMS(recipient.phone, messageTemplate);
+            console.log('[SMS DEBUG] SMS result:', result);
+            await logSMS(shipment._id, shipment.trackingNumber, recipient.phone, messageTemplate, result, eventType, recipient.type);
+          }
+        }
+        break;
+
+      case 'SHIPMENT_DELAYED':
+        console.log('[SMS DEBUG] Processing SHIPMENT_DELAYED event');
+        messageTemplate = getTemplate('SHIPMENT_DELAYED', {
+          trackingNumber: shipment.trackingNumber,
+          reason: metadata.reason || 'Unforeseen circumstances',
+        });
+
+        if (messageTemplate) {
+          console.log('[SMS DEBUG] Message:', messageTemplate);
+          for (const recipient of recipients) {
+            console.log('[SMS DEBUG] Sending to', recipient.type, ':', recipient.phone);
+            const result = await sendSMS(recipient.phone, messageTemplate);
+            console.log('[SMS DEBUG] SMS result:', result);
+            await logSMS(shipment._id, shipment.trackingNumber, recipient.phone, messageTemplate, result, eventType, recipient.type);
+          }
+        }
+        break;
+
+      case 'SHIPMENT_CANCELLED':
+        console.log('[SMS DEBUG] Processing SHIPMENT_CANCELLED event');
+        messageTemplate = getTemplate('SHIPMENT_CANCELLED', {
+          trackingNumber: shipment.trackingNumber,
+          reason: metadata.reason || 'Cancelled by request',
+        });
+
+        if (messageTemplate) {
+          console.log('[SMS DEBUG] Message:', messageTemplate);
+          for (const recipient of recipients) {
+            console.log('[SMS DEBUG] Sending to', recipient.type, ':', recipient.phone);
+            const result = await sendSMS(recipient.phone, messageTemplate);
+            console.log('[SMS DEBUG] SMS result:', result);
+            await logSMS(shipment._id, shipment.trackingNumber, recipient.phone, messageTemplate, result, eventType, recipient.type);
+          }
+        }
+        break;
+
+      case 'SHIPMENT_EXCEPTION':
+        console.log('[SMS DEBUG] Processing SHIPMENT_EXCEPTION event');
+        messageTemplate = getTemplate('SHIPMENT_EXCEPTION', {
+          trackingNumber: shipment.trackingNumber,
+          issue: metadata.issue || 'An issue has occurred',
+        });
+
+        if (messageTemplate) {
+          console.log('[SMS DEBUG] Message:', messageTemplate);
+          for (const recipient of recipients) {
+            console.log('[SMS DEBUG] Sending to', recipient.type, ':', recipient.phone);
+            const result = await sendSMS(recipient.phone, messageTemplate);
+            console.log('[SMS DEBUG] SMS result:', result);
+            await logSMS(shipment._id, shipment.trackingNumber, recipient.phone, messageTemplate, result, eventType, recipient.type);
+          }
+        }
+        break;
+
+      default:
+        console.log('[SMS DEBUG] Unknown event type:', eventType);
+    }
+
+    console.log(`[SMS SUCCESS] Shipment notifications sent for ${shipment.trackingNumber}:`, eventType);
+  } catch (error) {
+    console.error('[SMS CRITICAL ERROR] Error sending shipment SMS:', error);
+    console.error('[SMS STACK TRACE]', error.stack);
+  }
+};
+
+// Helper function to log SMS in database
+const logSMS = async (shipmentId, trackingNumber, phoneNumber, message, result, eventType, recipientType) => {
+  try {
+    console.log('[SMS LOG] Logging SMS:', {
+      trackingNumber,
+      phoneNumber,
+      status: result.success ? 'sent' : 'failed',
+      eventType,
+      recipientType,
+      messageId: result.messageId,
+      error: result.error,
+    });
+
+    const smsLog = new SMSLog({
+      shipmentId,
+      trackingNumber,
+      phoneNumber,
+      message,
+      status: result.success ? 'sent' : 'failed',
+      eventType,
+      recipientType,
+      messageId: result.messageId,
+      apiResponse: result.data,
+      error: result.error,
+    });
+
+    const savedLog = await smsLog.save();
+    console.log('[SMS LOG SUCCESS] SMS logged to database:', savedLog._id);
+  } catch (error) {
+    console.error('[SMS LOG ERROR] Error logging SMS to database:', error.message);
+    console.error('[SMS LOG STACK]', error.stack);
+  }
+};
+
 // 1. Fetch all shipments (Admin/Agent/Employee)
 exports.getAllShipments = async (req, res) => {
   try {
@@ -335,6 +572,23 @@ exports.createShipment = async (req, res) => {
     const adminBody = `A new shipment has been created in the system`;
     await sendAdminNotification(savedShipment, adminSubject, adminBody, req.user); // Pass req.user for audit trail below
     
+    // --- SMS NOTIFICATION: SHIPMENT CREATED (Sender & Recipient) ---
+    console.log('[SHIPMENT CREATE] Calling sendShipmentSMS for:', savedShipment.trackingNumber);
+    console.log('[SHIPMENT CREATE] Shipment object:', {
+      trackingNumber: savedShipment.trackingNumber,
+      senderPhone: savedShipment.senderPhone,
+      recipientPhone: savedShipment.recipientPhone,
+      senderName: savedShipment.senderName,
+      recipientName: savedShipment.recipientName,
+    });
+    try {
+      await sendShipmentSMS(savedShipment, 'SHIPMENT_CREATED');
+      console.log('[SHIPMENT CREATE] sendShipmentSMS completed for:', savedShipment.trackingNumber);
+    } catch (smsError) {
+      console.error('[SHIPMENT CREATE] ERROR in sendShipmentSMS:', smsError.message);
+      console.error('[SHIPMENT CREATE] SMS Error Stack:', smsError.stack);
+    }
+    
     res.status(201).json(savedShipment);
   } catch (err) {
     console.error('Error creating shipment:', err); // Added detailed logging
@@ -368,6 +622,21 @@ exports.editShipment = async (req, res) => {
     const adminSubject = `Shipment Updated: #${updatedShipment.trackingNumber}`;
     const adminBody = `Shipment details for #${updatedShipment.trackingNumber} have been updated in the system`;
     await sendAdminNotification(updatedShipment, adminSubject, adminBody, req.user);
+    
+    // --- SMS NOTIFICATION: SHIPMENT UPDATED (Sender & Recipient) ---
+    console.log('[SHIPMENT EDIT] Calling sendShipmentSMS for:', updatedShipment.trackingNumber);
+    console.log('[SHIPMENT EDIT] Shipment object:', {
+      trackingNumber: updatedShipment.trackingNumber,
+      senderPhone: updatedShipment.senderPhone,
+      recipientPhone: updatedShipment.recipientPhone,
+    });
+    try {
+      await sendShipmentSMS(updatedShipment, 'SHIPMENT_STATUS_UPDATED', { location: updatedShipment.origin });
+      console.log('[SHIPMENT EDIT] sendShipmentSMS completed for:', updatedShipment.trackingNumber);
+    } catch (smsError) {
+      console.error('[SHIPMENT EDIT] ERROR in sendShipmentSMS:', smsError.message);
+      console.error('[SHIPMENT EDIT] SMS Error Stack:', smsError.stack);
+    }
     
     res.json(updatedShipment);
   } catch (err) {
@@ -432,6 +701,17 @@ exports.changeShipmentStatus = async (req, res) => {
     const adminSubject = `Status Changed for Shipment: #${updatedShipment.trackingNumber} to ${updatedShipment.status}`;
     const adminBody = `The status of shipment #${updatedShipment.trackingNumber} has been updated to <strong>${updatedShipment.status}</strong>`;
     await sendAdminNotification(updatedShipment, adminSubject, adminBody, req.user);
+    
+    // --- SMS NOTIFICATION: STATUS CHANGED (Sender & Recipient) ---
+    console.log('[SHIPMENT STATUS CHANGE] Calling sendShipmentSMS for:', updatedShipment.trackingNumber, 'New Status:', updatedShipment.status);
+    console.log('[SHIPMENT STATUS CHANGE] Location:', location);
+    try {
+      await sendShipmentSMS(updatedShipment, 'SHIPMENT_STATUS_UPDATED', { location });
+      console.log('[SHIPMENT STATUS CHANGE] sendShipmentSMS completed for:', updatedShipment.trackingNumber);
+    } catch (smsError) {
+      console.error('[SHIPMENT STATUS CHANGE] ERROR in sendShipmentSMS:', smsError.message);
+      console.error('[SHIPMENT STATUS CHANGE] SMS Error Stack:', smsError.stack);
+    }
     
     res.json(updatedShipment);
   } catch (err) {
@@ -515,6 +795,48 @@ exports.replyToShipment = async (req, res) => {
     const adminBody = `A new reply has been posted on shipment #${shipment.trackingNumber} by ${req.user.email}. <br />
     <strong>Message:</strong> "${message}" <br />`;
     await sendAdminNotification(shipment, adminSubject, adminBody, req.user);
+
+    // --- SMS NOTIFICATION: NEW REPLY (Sender & Recipient) ---
+    console.log('[SHIPMENT REPLY] Calling SMS notification for:', shipment.trackingNumber);
+    const phones = [];
+    const recipients = [];
+
+    if (shipment.senderPhone) {
+      console.log('[SHIPMENT REPLY] Adding sender phone:', shipment.senderPhone);
+      phones.push(shipment.senderPhone);
+      recipients.push({ phone: shipment.senderPhone, type: 'sender' });
+    } else {
+      console.log('[SHIPMENT REPLY] ⚠️ Sender phone NOT available');
+    }
+
+    if (shipment.recipientPhone && shipment.recipientPhone !== shipment.senderPhone) {
+      console.log('[SHIPMENT REPLY] Adding recipient phone:', shipment.recipientPhone);
+      phones.push(shipment.recipientPhone);
+      recipients.push({ phone: shipment.recipientPhone, type: 'receiver' });
+    } else {
+      console.log('[SHIPMENT REPLY] ⚠️ Recipient phone NOT available or same as sender');
+    }
+
+    if (phones.length > 0) {
+      const replyMessage = `[${shipment.trackingNumber}] New update: ${message.substring(0, 100)}${message.length > 100 ? '...' : ''} Track: cargorealmandlogistics.com`;
+      console.log('[SHIPMENT REPLY] Sending SMS to', phones.length, 'recipients');
+      
+      try {
+        for (const recipient of recipients) {
+          console.log('[SHIPMENT REPLY] Sending to', recipient.type, ':', recipient.phone);
+          const result = await sendSMS(recipient.phone, replyMessage);
+          console.log('[SHIPMENT REPLY] SMS result:', result);
+          await logSMS(shipment._id, shipment.trackingNumber, recipient.phone, replyMessage, result, 'SHIPMENT_REPLY', recipient.type);
+        }
+        
+        console.log('[SHIPMENT REPLY] All SMS sent for:', shipment.trackingNumber);
+      } catch (smsError) {
+        console.error('[SHIPMENT REPLY] ERROR in SMS sending:', smsError.message);
+        console.error('[SHIPMENT REPLY] SMS Error Stack:', smsError.stack);
+      }
+    } else {
+      console.log('[SHIPMENT REPLY] ⚠️ No phone numbers available for SMS notification');
+    }
 
     res.json(shipment);
   } catch (err) {

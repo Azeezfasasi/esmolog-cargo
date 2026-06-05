@@ -1,5 +1,5 @@
 {
-  "totalSent": 41,
+  "totalSent": 70,
   "totalFailed": 0,
   "byType": {
     "contact-form": {
@@ -7,7 +7,7 @@
       "failed": 0
     },
     "shipment-status-update": {
-      "sent": 18,
+      "sent": 25,
       "failed": 0
     },
     "shipment-reply": {
@@ -19,13 +19,13 @@
       "failed": 0
     },
     "shipment": {
-      "sent": 2,
+      "sent": 24,
       "failed": 0
     }
   },
   "byStatus": {
-    "success": 41,
+    "success": 70,
     "failed": 0
   },
-  "lastUpdated": "2026-05-16T14:06:00.670Z"
+  "lastUpdated": "2026-06-05T20:01:19.455Z"
 }

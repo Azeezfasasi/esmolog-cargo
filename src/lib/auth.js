@@ -52,7 +52,15 @@ export async function getUserFromCookie() {
 
 export async function requireAuth(request, allowedRoles = []) {
   const cookieStore = cookies();
-  const token = cookieStore.get('token')?.value;
+  let token = cookieStore.get('token')?.value;
+  
+  // If no token in cookies, check Authorization header
+  if (!token) {
+    const authHeader = request.headers.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    }
+  }
   
   if (!token) {
     return { error: 'Authentication required', status: 401 };

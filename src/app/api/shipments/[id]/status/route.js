@@ -5,10 +5,36 @@ import Shipment from '@/server/models/Shipment';
 import { ObjectId } from 'mongodb';
 import { sendMail } from '@/server/utils/mailer';
 import { shipmentStatusUpdateClient, shipmentStatusUpdateAdmin } from '@/server/emailTemplates/shipmentTemplates';
+import { sendSMS } from '@/server/utils/smsService';
+import { getTemplate } from '@/server/utils/smsTemplates';
+import SMSLog from '@/server/models/SMSLog';
 
 function isValidObjectId(id) {
   return ObjectId.isValid(id);
 }
+
+// Helper function to log SMS to database
+const logSMSToDB = async (shipmentId, trackingNumber, phoneNumber, message, result, eventType, recipientType) => {
+  try {
+    const smsLog = new SMSLog({
+      shipmentId,
+      trackingNumber,
+      phoneNumber,
+      message,
+      status: result.success ? 'sent' : 'failed',
+      eventType,
+      recipientType,
+      messageId: result.messageId,
+      apiResponse: result.data,
+      error: result.error,
+      creditsCost: result.data?.data?.cost || 0,
+    });
+    await smsLog.save();
+    console.log('[SMS LOG] Saved to database:', smsLog._id);
+  } catch (error) {
+    console.error('[SMS LOG ERROR]:', error.message);
+  }
+};
 
 /**
  * PATCH /api/shipments/[id]/status
@@ -181,6 +207,53 @@ export async function PATCH(request, { params }) {
       }
     } catch (adminEmailError) {
       console.error(`❌ ERROR SENDING ADMIN NOTIFICATIONS:`, adminEmailError.message);
+    }
+
+    // --- SMS NOTIFICATION: STATUS UPDATED (Sender & Recipient) ---
+    try {
+      console.log('[SHIPMENT STATUS API] Sending SMS for status update:', updatedShipment.trackingNumber);
+      
+      const phones = [];
+      const recipients = [];
+
+      if (updatedShipment.senderPhone) {
+        phones.push(updatedShipment.senderPhone);
+        recipients.push({ phone: updatedShipment.senderPhone, type: 'sender' });
+      }
+
+      if (updatedShipment.recipientPhone) {
+        phones.push(updatedShipment.recipientPhone);
+        recipients.push({ phone: updatedShipment.recipientPhone, type: 'receiver' });
+      }
+
+      if (phones.length > 0) {
+        const messageTemplate = getTemplate('SHIPMENT_STATUS_UPDATED', {
+          trackingNumber: updatedShipment.trackingNumber,
+          newStatus: body.status,
+          location: body.location || 'Unknown',
+        });
+
+        if (messageTemplate) {
+          for (const recipient of recipients) {
+            try {
+              const result = await sendSMS(recipient.phone, messageTemplate);
+              await logSMSToDB(
+                updatedShipment._id,
+                updatedShipment.trackingNumber,
+                recipient.phone,
+                messageTemplate,
+                result,
+                'SHIPMENT_STATUS_UPDATED',
+                recipient.type
+              );
+            } catch (smsError) {
+              console.error('[SHIPMENT STATUS API] Error sending SMS:', smsError.message);
+            }
+          }
+        }
+      }
+    } catch (smsError) {
+      console.error('[SHIPMENT STATUS API] Error in SMS sending:', smsError.message);
     }
 
     return NextResponse.json({

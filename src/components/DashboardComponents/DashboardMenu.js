@@ -149,6 +149,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
       ]
     },
     { href: '/dashboard/profile', label: 'Profile', icon: 'dashboard', roles: ['admin', 'employee', 'agent', 'client'] },
+    { href: '/dashboard/sms-dash', label: 'SMS Dashboard', icon: 'dashboard', roles: ['admin'] },
     { href: '/dashboard/view-email-logs', label: 'Email Logs', icon: 'dashboard', roles: ['admin'] },
     {
       href: '/dashboard/home',

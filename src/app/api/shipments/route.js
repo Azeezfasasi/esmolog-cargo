@@ -6,6 +6,32 @@ import User from '@/server/models/User';
 import { generateQRCode } from '@/lib/qrcode';
 import { sendMail } from '@/server/utils/mailer';
 import { shipmentCreatedClient, shipmentCreatedAdmin } from '@/server/emailTemplates/shipmentTemplates';
+import { sendSMS } from '@/server/utils/smsService';
+import { getTemplate } from '@/server/utils/smsTemplates';
+import SMSLog from '@/server/models/SMSLog';
+
+// Helper function to log SMS to database
+const logSMSToDB = async (shipmentId, trackingNumber, phoneNumber, message, result, eventType, recipientType) => {
+  try {
+    const smsLog = new SMSLog({
+      shipmentId,
+      trackingNumber,
+      phoneNumber,
+      message,
+      status: result.success ? 'sent' : 'failed',
+      eventType,
+      recipientType,
+      messageId: result.messageId,
+      apiResponse: result.data,
+      error: result.error,
+      creditsCost: result.data?.data?.cost || 0,
+    });
+    await smsLog.save();
+    console.log('[SMS LOG] Saved to database:', smsLog._id);
+  } catch (error) {
+    console.error('[SMS LOG ERROR]:', error.message);
+  }
+};
 
 /**
  * GET /api/shipments
@@ -71,6 +97,14 @@ export async function POST(request) {
     await connectDB();
 
     const body = await request.json();
+
+    console.log('[API SHIPMENT] Full request body received:', {
+      trackingNumber: body.trackingNumber,
+      senderPhone: body.senderPhone,
+      recipientPhone: body.recipientPhone,
+      senderName: body.senderName,
+      recipientName: body.recipientName,
+    });
 
     // Validate required fields
     const errors = [];
@@ -233,6 +267,77 @@ export async function POST(request) {
       }
     } catch (adminEmailError) {
       console.error(`❌ ERROR SENDING ADMIN NOTIFICATIONS:`, adminEmailError.message);
+    }
+
+    // --- SMS NOTIFICATION: SHIPMENT CREATED (Sender & Recipient) ---
+    try {
+      console.log('[SHIPMENT API CREATE] Calling sendShipmentSMS for:', newShipment.trackingNumber);
+      console.log('[SHIPMENT API CREATE] Shipment data:', {
+        trackingNumber: newShipment.trackingNumber,
+        senderPhone: newShipment.senderPhone,
+        recipientPhone: newShipment.recipientPhone,
+        senderName: newShipment.senderName,
+        recipientName: newShipment.recipientName,
+      });
+
+      const phones = [];
+      const recipients = [];
+
+      // Add sender phone if available
+      if (newShipment.senderPhone) {
+        console.log('[SHIPMENT API CREATE] Adding sender phone:', newShipment.senderPhone);
+        phones.push(newShipment.senderPhone);
+        recipients.push({ phone: newShipment.senderPhone, type: 'sender', name: newShipment.senderName });
+      } else {
+        console.log('[SHIPMENT API CREATE] ⚠️ Sender phone NOT available');
+      }
+
+      // Add recipient phone if available
+      if (newShipment.recipientPhone) {
+        console.log('[SHIPMENT API CREATE] Adding recipient phone:', newShipment.recipientPhone);
+        phones.push(newShipment.recipientPhone);
+        recipients.push({ phone: newShipment.recipientPhone, type: 'receiver', name: newShipment.recipientName });
+      } else {
+        console.log('[SHIPMENT API CREATE] ⚠️ Recipient phone NOT available');
+      }
+
+      if (phones.length === 0) {
+        console.warn('[SHIPMENT API CREATE] No phone numbers available for SMS');
+      } else {
+        for (const recipient of recipients) {
+          try {
+            const messageTemplate = getTemplate('SHIPMENT_CREATED_SENDER', {
+              trackingNumber: newShipment.trackingNumber,
+              recipientName: newShipment.recipientName,
+              origin: newShipment.origin,
+              destination: newShipment.destination,
+            });
+
+            if (messageTemplate) {
+              console.log('[SHIPMENT API CREATE] Sending SMS to', recipient.type, ':', recipient.phone);
+              const result = await sendSMS(recipient.phone, messageTemplate);
+              console.log('[SHIPMENT API CREATE] SMS result:', result);
+              // Log to database
+              await logSMSToDB(
+                newShipment._id,
+                newShipment.trackingNumber,
+                recipient.phone,
+                messageTemplate,
+                result,
+                'SHIPMENT_CREATED_SENDER',
+                recipient.type
+              );
+            } else {
+              console.error('[SHIPMENT API CREATE] Failed to generate SMS template');
+            }
+          } catch (smsError) {
+            console.error('[SHIPMENT API CREATE] Error sending SMS to', recipient.type, ':', smsError.message);
+          }
+        }
+      }
+    } catch (smsError) {
+      console.error('[SHIPMENT API CREATE] Error in SMS sending:', smsError.message);
+      console.error('[SHIPMENT API CREATE] SMS Error Stack:', smsError.stack);
     }
 
     return NextResponse.json(
