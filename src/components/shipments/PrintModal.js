@@ -2,7 +2,6 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
 
 export default function PrintModalContent({ shipment, onClose }) {
   const printRef = useRef();
@@ -264,8 +263,7 @@ export default function PrintModalContent({ shipment, onClose }) {
           {shipment ? (
             <>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                <Image
-                  width={200} height={80}
+                <img
                   src="/img/esmologtrans.png"
                   alt="Logo"
                   style={{ maxWidth: '250px', maxHeight: '70px', objectFit: 'contain' }}
@@ -279,8 +277,7 @@ export default function PrintModalContent({ shipment, onClose }) {
                 </div>
                 {shipment.qrCodeUrl && (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Image
-                      width={150} height={150}
+                    <img
                       src={shipment.qrCodeUrl}
                       alt="Shipment QR Code"
                       style={{ width: '150px', height: '150px', objectFit: 'contain' }}

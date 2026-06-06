@@ -13,7 +13,6 @@ import { API_BASE_URL } from '@/config/Api';
 import BasicModal from '@/components/ui/BasicModal';
 import DeleteConfirmationModal from '../shipments/DeleteConfirmationModal';
 import { FaSpinner } from 'react-icons/fa';
-import Image from 'next/image';
 
 export default function AllShipmentsMain({ token }) {
   const [shipments, setShipments] = useState([]);
@@ -362,7 +361,7 @@ export default function AllShipmentsMain({ token }) {
                     <p className="text-sm text-gray-600 mb-2">Tracking Number: <strong>{selectedShipment.trackingNumber}</strong></p>
                     {selectedShipment.qrCodeUrl ? (
                         <div className="flex justify-center mb-4">
-                            <Image width={200} height={200} src={selectedShipment.qrCodeUrl} alt="QR Code" style={{width: '200px', height: '200px'}} className="border border-gray-300 rounded" />
+                            <img src={selectedShipment.qrCodeUrl} alt="QR Code" style={{width: '200px', height: '200px'}} className="border border-gray-300 rounded" />
                         </div>
                     ) : (
                         <div className="flex justify-center mb-4 bg-gray-100 p-8 rounded">

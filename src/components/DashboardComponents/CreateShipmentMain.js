@@ -6,6 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { FaSpinner, FaTimesCircle, FaPlus, FaTrash, FaUser, FaEnvelope, FaPhone } from 'react-icons/fa'; 
 import { API_BASE_URL } from '@/config/Api';
+import { MapIcon, MapPin } from 'lucide-react';
 
 const generateTrackingNumber = () => {
   const rand = Math.floor(10000000000 + Math.random() * 90000000000);
@@ -248,6 +249,20 @@ export default function CreateShipmentForm({ token }) {
           <p className="text-xs sm:text-sm text-gray-600 ml-10 sm:ml-14">Fill in the details to create and track your shipment</p>
         </div>
 
+        {/* add infomation about the mandatory and optional fields in a professional way */}
+        <div className="bg-green-50 p-3 w-fit border border-green-400 rounded-lg mb-6 sm:mb-8">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <span className="text-red-600 text-lg">*</span>
+              <span className="text-xs sm:text-sm text-gray-600">Required Fields</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-red-600 text-lg">(●)</span>
+              <span className="text-xs sm:text-sm text-gray-600">Optional Fields</span>
+            </div>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Tracking Number */}
           <div className="bg-white rounded-lg shadow p-3 sm:p-6">
@@ -366,7 +381,7 @@ export default function CreateShipmentForm({ token }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
-                    <FaUser className="text-gray-500 flex-shrink-0" /> Sender Name
+                    <FaUser className="text-gray-500 flex-shrink-0" /> Sender Name <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
                   </label>
                   <input
                     type="text"
@@ -380,7 +395,7 @@ export default function CreateShipmentForm({ token }) {
 
                 <div>
                   <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
-                    <FaPhone className="text-gray-500 flex-shrink-0" /> Phone Number
+                    <FaPhone className="text-gray-500 flex-shrink-0" /> Phone Number <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
                   </label>
                   <input
                     type="text"
@@ -394,7 +409,7 @@ export default function CreateShipmentForm({ token }) {
 
                 <div>
                   <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
-                    <FaEnvelope className="text-gray-500 flex-shrink-0" /> Email Address
+                    <FaEnvelope className="text-gray-500 flex-shrink-0" /> Email Address <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
                   </label>
                   <input
                     type="email"
@@ -407,7 +422,9 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Address</label>
+                  <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
+                    <MapPin className="text-gray-500 flex-shrink-0 w-4 h-4" /> Address <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
+                  </label>
                   <input
                     type="text"
                     name="senderAddress"
@@ -432,7 +449,7 @@ export default function CreateShipmentForm({ token }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
-                    <FaUser className="text-gray-500 flex-shrink-0" /> Receiver Name
+                    <FaUser className="text-gray-500 flex-shrink-0" /> Receiver Name <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
                   </label>
                   <input
                     type="text"
@@ -446,7 +463,7 @@ export default function CreateShipmentForm({ token }) {
 
                 <div>
                   <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
-                    <FaPhone className="text-gray-500 flex-shrink-0" /> Phone Number
+                    <FaPhone className="text-gray-500 flex-shrink-0" /> Receiver Phone Number <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
                   </label>
                   <input
                     type="text"
@@ -460,7 +477,7 @@ export default function CreateShipmentForm({ token }) {
 
                 <div>
                   <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
-                    <FaEnvelope className="text-gray-500 flex-shrink-0" /> Email Address
+                    <FaEnvelope className="text-gray-500 flex-shrink-0" /> Receiver Email Address <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
                   </label>
                   <input
                     type="email"
@@ -473,7 +490,8 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Address</label>
+                  <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
+                    <MapPin className="text-gray-500 flex-shrink-0 w-4 h-4" /> Receiver Address <span className='text-red-600 text-[20px] md:text-[22px]'>*</span></label>
                   <textarea
                     name="recipientAddress"
                     value={form.recipientAddress}
@@ -498,7 +516,9 @@ export default function CreateShipmentForm({ token }) {
             <div className="p-3 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Origin</label>
+                  <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
+                    <MapPin className="text-gray-500 flex-shrink-0 w-4 h-4" /> Origin <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
+                  </label>
                   <input
                     type="text"
                     name="origin"
@@ -509,7 +529,9 @@ export default function CreateShipmentForm({ token }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Destination</label>
+                  <label className="text-xs sm:text-sm font-medium mb-2 text-gray-700 flex items-center gap-2">
+                    <MapPin className="text-gray-500 flex-shrink-0 w-4 h-4" /> Destination <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
+                  </label>
                   <input
                     type="text"
                     name="destination"
@@ -532,7 +554,9 @@ export default function CreateShipmentForm({ token }) {
             <div className="p-3 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Weight (kg)</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                    Weight (kg) <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
+                  </label>
                   <input
                     type="number"
                     name="weight"
@@ -544,7 +568,9 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Shipment Type</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                    Shipment Type <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
+                  </label>
                   <select
                     name="shipmentType" 
                     value={form.shipmentType} 
@@ -561,7 +587,9 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Shipment Purpose</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                    Shipment Purpose <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
+                  </label>
                   <select
                     name="shipmentPurpose" 
                     value={form.shipmentPurpose} 
@@ -579,7 +607,9 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Shipment Facility</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                    Shipment Facility <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
+                  </label>
                   <select
                     name="shipmentFacility" 
                     value={form.shipmentFacility} 
@@ -606,7 +636,9 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Shipment Date</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                    Shipment Date <span className='text-red-600 text-[20px] md:text-[22px]'>*</span>
+                  </label>
                   <input
                     type="date"
                     name="shipmentDate"
@@ -617,7 +649,8 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Delivery Date</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                    Delivery Date <span className='text-red-600 text-[20px] md:text-[22px]'>*</span></label>
                   <input
                     type="date"
                     name="deliveryDate"
@@ -628,7 +661,8 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Shipping Cost (₦)</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                    Shipping Cost (₦) <span className='text-red-600'>(Optional)</span></label>
                   <input
                     type="text"
                     name="cost"
@@ -645,13 +679,15 @@ export default function CreateShipmentForm({ token }) {
           {/* Dimensions Section */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <div className="bg-indigo-600 text-white px-3 sm:px-6 py-3 sm:py-4">
-              <h2 className="text-lg sm:text-2xl font-bold">Dimensions (Optional)</h2>
+              <h2 className="text-lg sm:text-2xl font-bold">Dimensions</h2>
             </div>
             
             <div className="p-3 sm:p-6">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Length</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">
+                    Length <span className='text-red-600'>(Optional)</span>
+                  </label>
                   <input
                     type="number"
                     name="length"
@@ -663,7 +699,9 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Width</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">
+                    Width <span className='text-red-600'>(Optional)</span>
+                  </label>
                   <input
                     type="number"
                     name="width"
@@ -675,7 +713,9 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Height</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">
+                    Height <span className='text-red-600'>(Optional)</span>
+                  </label>
                   <input
                     type="number"
                     name="height"
@@ -687,7 +727,9 @@ export default function CreateShipmentForm({ token }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Breadth</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">
+                    Breadth <span className='text-red-600'>(Optional)</span>
+                  </label>
                   <input
                     type="number"
                     name="breadth"
@@ -700,7 +742,9 @@ export default function CreateShipmentForm({ token }) {
               </div>
               
               <div className="mt-3 sm:mt-4">
-                <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Volume</label>
+                <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                  Volume <span className='text-red-600'>(Optional)</span>
+                </label>
                 <input
                   type="number"
                   name="volume"
@@ -720,6 +764,9 @@ export default function CreateShipmentForm({ token }) {
             </div>
             
             <div className="p-3 sm:p-6">
+              <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">
+                  Item Name <span className='text-red-600'>(Optional)</span>
+              </label>
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <input
                   type="text"
@@ -766,7 +813,9 @@ export default function CreateShipmentForm({ token }) {
             
             <div className="p-3 sm:p-6 space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Shipment Pieces</label>
+                <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                  Shipment Pieces <span className='text-red-600'>(Optional)</span>
+                </label>
                 <textarea
                   name="shipmentPieces"
                   value={form.shipmentPieces}
@@ -778,7 +827,9 @@ export default function CreateShipmentForm({ token }) {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Notes & Comments</label>
+                <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">
+                  Notes & Comments <span className='text-red-600'>(Optional)</span>
+                </label>
                 <textarea
                   name="notes"
                   value={form.notes}
