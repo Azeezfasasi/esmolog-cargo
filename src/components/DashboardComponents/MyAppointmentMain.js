@@ -53,20 +53,14 @@ function MyAppointmentMain() {
   } = useQuery({
     queryKey: ['myAppointments'], // Unique key for fetching user's appointments
     queryFn: async () => {
-      // Fetch all appointments and filter by current user's email
-      const response = await axios.get(`${API_BASE_URL}/appointments`);
-      const allAppointments = Array.isArray(response.data) ? response.data : (response.data?.data || []);
-      
-      // Filter appointments for the current user
-      const userEmail = user?.email;
-      const userAppointments = userEmail 
-        ? allAppointments.filter(apt => apt.email?.toLowerCase() === userEmail.toLowerCase())
-        : [];
+      // Fetch only the current user's appointments from the dedicated endpoint
+      const response = await axios.get(`${API_BASE_URL}/appointments/my`);
+      const userAppointments = Array.isArray(response.data) ? response.data : [];
       
       return userAppointments.sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate)); // Sort by date
     },
     staleTime: 5 * 60 * 1000,
-    enabled: isAuthenticated && !!user?.email, // Only run if authenticated and user email is available
+    enabled: isAuthenticated, // Only run if authenticated
   });
 
   // Mutation for rescheduling an appointment

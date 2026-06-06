@@ -64,7 +64,7 @@ export async function POST(request) {
     const galleryImage = await Gallery.create({
       imageUrl: uploadResult.secure_url,
       caption: caption || '',
-      uploadedBy: user.userId,
+      uploadedBy: user._id,
       publicId: uploadResult.public_id,
       status: 'active',
     });

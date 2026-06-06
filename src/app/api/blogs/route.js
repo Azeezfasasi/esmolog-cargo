@@ -52,7 +52,7 @@ export async function POST(request) {
       blogTitle,
       category,
       description,
-      sentBy: authResult.user.userId, // User ID from auth (decoded JWT has userId)
+      sentBy: authResult.user._id, // User ID from auth
       status: 'draft', // Default status is draft
       date: new Date(),
     });

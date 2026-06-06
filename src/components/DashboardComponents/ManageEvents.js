@@ -508,66 +508,206 @@ Please ensure your backend route `/events/admin/all` is configured to allow &apo
             {/* Mobile Card View */}
             <div className="md:hidden space-y-3">
               {events.map((event) => (
-                <div key={event._id} className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase">Title</p>
-                      <p className="text-sm font-bold text-gray-900">{event.eventTitle}</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
+                <React.Fragment key={event._id}>
+                  <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                    <div className="space-y-3">
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase">Category</p>
-                        <p className="text-sm text-gray-700">{event.category}</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Title</p>
+                        {editingEventId === event._id ? (
+                          <input
+                            type="text"
+                            value={editEventTitle}
+                            onChange={(e) => setEditEventTitle(e.target.value)}
+                            className="w-full p-2 border rounded text-sm"
+                          />
+                        ) : (
+                          <p className="text-sm font-bold text-gray-900">{event.eventTitle}</p>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Category</p>
+                          {editingEventId === event._id ? (
+                            <select
+                              value={editCategory}
+                              onChange={(e) => setEditCategory(e.target.value)}
+                              className="w-full p-2 border rounded text-xs bg-white"
+                            >
+                              <option value="">Choose Category</option>
+                              <option value="Shipment">Shipment</option>
+                              <option value="Cargo">Cargo</option>
+                              <option value="International Travel">International Travel</option>
+                            </select>
+                          ) : (
+                            <p className="text-sm text-gray-700">{event.category}</p>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Location</p>
+                          {editingEventId === event._id ? (
+                            <input
+                              type="text"
+                              value={editLocation}
+                              onChange={(e) => setEditLocation(e.target.value)}
+                              className="w-full p-2 border rounded text-xs"
+                            />
+                          ) : (
+                            <p className="text-sm text-gray-700">{event.location || 'N/A'}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Date</p>
+                          {editingEventId === event._id ? (
+                            <input
+                              type="date"
+                              value={editDate}
+                              onChange={(e) => setEditDate(e.target.value)}
+                              className="w-full p-2 border rounded text-xs"
+                            />
+                          ) : (
+                            <p className="text-sm text-gray-700">{formatDate(event.date)}</p>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Time</p>
+                          {editingEventId === event._id ? (
+                            <input
+                              type="time"
+                              value={editTime}
+                              onChange={(e) => setEditTime(e.target.value)}
+                              className="w-full p-2 border rounded text-xs"
+                            />
+                          ) : (
+                            <p className="text-sm text-gray-700">{event.time || 'N/A'}</p>
+                          )}
+                        </div>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase">Location</p>
-                        <p className="text-sm text-gray-700">{event.location || 'N/A'}</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
+                        <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
+                          event.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
+                          event.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {event.status}
+                        </span>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase">Date</p>
-                        <p className="text-sm text-gray-700">{formatDate(event.date)}</p>
+                      {editingEventId === event._id && (
+                        <div className="space-y-3 pt-2 border-t border-gray-200">
+                          <div>
+                            <label htmlFor="editDescriptionMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                              Description
+                            </label>
+                            <textarea
+                              id="editDescriptionMobile"
+                              value={editDescription}
+                              onChange={(e) => setEditDescription(e.target.value)}
+                              rows="3"
+                              className="w-full p-2 border rounded text-sm resize-y"
+                            ></textarea>
+                          </div>
+                          <div className="grid grid-cols-1 gap-3">
+                            <div>
+                              <label htmlFor="editDurationMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                                Duration
+                              </label>
+                              <input
+                                type="text"
+                                id="editDurationMobile"
+                                value={editDuration}
+                                onChange={(e) => setEditDuration(e.target.value)}
+                                className="w-full p-2 border rounded text-sm"
+                              />
+                            </div>
+                            <div>
+                              <label htmlFor="editAddressMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                                Address
+                              </label>
+                              <input
+                                type="text"
+                                id="editAddressMobile"
+                                value={editAddress}
+                                onChange={(e) => setEditAddress(e.target.value)}
+                                className="w-full p-2 border rounded text-sm"
+                              />
+                            </div>
+                            <div>
+                              <label htmlFor="editOrganizerMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                                Organizer
+                              </label>
+                              <input
+                                type="text"
+                                id="editOrganizerMobile"
+                                value={editOrganizer}
+                                onChange={(e) => setEditOrganizer(e.target.value)}
+                                className="w-full p-2 border rounded text-sm"
+                              />
+                            </div>
+                            <div>
+                              <label htmlFor="editCoOrganizerMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                                Co-Organizer
+                              </label>
+                              <input
+                                type="text"
+                                id="editCoOrganizerMobile"
+                                value={editCoOrganizer}
+                                onChange={(e) => setEditCoOrganizer(e.target.value)}
+                                className="w-full p-2 border rounded text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
+                        {editingEventId === event._id ? (
+                          <>
+                            <button
+                              onClick={handleSaveEdit}
+                              className="flex-1 min-w-[70px] bg-green-500 text-white py-2 rounded text-xs font-medium hover:bg-green-600 transition disabled:opacity-50"
+                              disabled={editEventMutation.isPending}
+                            >
+                              {editEventMutation.isPending ? 'Saving...' : 'Save'}
+                            </button>
+                            <button
+                              onClick={() => setEditingEventId(null)}
+                              className="flex-1 min-w-[70px] bg-gray-300 text-gray-800 py-2 rounded text-xs font-medium hover:bg-gray-400 transition disabled:opacity-50"
+                              disabled={editEventMutation.isPending}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleEditClick(event)}
+                              className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(event._id)}
+                              className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
+                              disabled={deleteEventMutation.isPending}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase">Time</p>
-                        <p className="text-sm text-gray-700">{event.time || 'N/A'}</p>
-                      </div>
+                      {!editingEventId && (
+                        <button
+                          onClick={() => handleChangeStatus(event._id, event.status)}
+                          className="w-full bg-blue-600 text-white text-xs py-2 rounded font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                          disabled={changeStatusMutation.isPending}
+                        >
+                          Change Status
+                        </button>
+                      )}
                     </div>
-                    <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
-                      <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
-                        event.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
-                        event.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {event.status}
-                      </span>
-                    </div>
-                    <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
-                      <button
-                        onClick={() => handleEditClick(event)}
-                        className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(event._id)}
-                        className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
-                        disabled={deleteEventMutation.isPending}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => handleChangeStatus(event._id, event.status)}
-                      className="w-full bg-blue-600 text-white text-xs py-2 rounded font-medium hover:bg-blue-700 transition disabled:opacity-50"
-                      disabled={changeStatusMutation.isPending}
-                    >
-                      Change Status
-                    </button>
                   </div>
-                </div>
+                </React.Fragment>
               ))}
             </div>
           </>

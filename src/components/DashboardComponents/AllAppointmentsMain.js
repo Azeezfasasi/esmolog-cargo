@@ -348,87 +348,342 @@ Please ensure your backend route `/appointments` is configured to allow &apos;pa
         )}
 
         {appointments && appointments.length > 0 ? (
-          <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Time
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Booked By
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {appointments.map((appointment) => (
-                  <React.Fragment key={appointment._id}>
-                    <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg p-6">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Time
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Booked By
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {appointments.map((appointment) => (
+                    <React.Fragment key={appointment._id}>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {editingAppointmentId === appointment._id ? (
+                            <input
+                              type="text"
+                              value={editName}
+                              onChange={(e) => setEditName(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            appointment.name
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {editingAppointmentId === appointment._id ? (
+                            <input
+                              type="email"
+                              value={editEmail}
+                              onChange={(e) => setEditEmail(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            appointment.email
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {editingAppointmentId === appointment._id ? (
+                            <input
+                              type="date"
+                              value={editAppointmentDate}
+                              onChange={(e) => setEditAppointmentDate(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            formatDateForDisplay(appointment.appointmentDate)
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {editingAppointmentId === appointment._id ? (
+                            <input
+                              type="time"
+                              value={editAppointmentTime}
+                              onChange={(e) => setEditAppointmentTime(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            appointment.appointmentTime
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
+                            appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            appointment.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                            appointment.status === 'rescheduled' ? 'bg-purple-100 text-purple-800' :
+                            appointment.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {appointment.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {appointment.bookedBy ? appointment.bookedBy.name : 'Visitor'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          {editingAppointmentId === appointment._id ? (
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={handleSaveEdit}
+                                className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                                disabled={updateAppointmentMutation.isPending}
+                              >
+                                {updateAppointmentMutation.isPending ? 'Saving...' : 'Save'}
+                              </button>
+                              <button
+                                onClick={() => setEditingAppointmentId(null)}
+                                className="text-gray-600 hover:text-gray-900"
+                                disabled={updateAppointmentMutation.isPending}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={() => handleEditClick(appointment)}
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(appointment._id)}
+                                className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                disabled={deleteAppointmentMutation.isPending}
+                              >
+                                Delete
+                              </button>
+                              <button
+                                onClick={() => handleRescheduleClick(appointment)}
+                                className="text-green-600 hover:text-green-900 disabled:opacity-50"
+                                disabled={rescheduleAppointmentMutation.isPending}
+                              >
+                                Reschedule
+                              </button>
+                              <button
+                                onClick={() => handleCancelClick(appointment._id)}
+                                className="text-gray-600 hover:text-gray-900 disabled:opacity-50"
+                                disabled={cancelAppointmentMutation.isPending || appointment.status === 'cancelled'}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => handleChangeStatus(appointment._id, appointment.status)}
+                                className={`text-sm px-2 py-1 rounded-md ${
+                                  appointment.status === 'pending' ? 'bg-blue-500 text-white hover:bg-blue-600' :
+                                  appointment.status === 'confirmed' ? 'bg-green-500 text-white hover:bg-green-600' :
+                                  appointment.status === 'completed' ? 'bg-red-500 text-white hover:bg-red-600' :
+                                  appointment.status === 'rescheduled' ? 'bg-blue-500 text-white hover:bg-blue-600' :
+                                  'bg-gray-500 text-white hover:bg-gray-600'
+                                } disabled:opacity-50`}
+                                disabled={changeStatusMutation.isPending}
+                              >
+                                {
+                                  appointment.status === 'pending' ? 'Set Confirmed' :
+                                  appointment.status === 'confirmed' ? 'Set Completed' :
+                                  appointment.status === 'completed' ? 'Set Cancelled' :
+                                  appointment.status === 'rescheduled' ? 'Set Confirmed' :
+                                  'Change Status'
+                                }
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                      {editingAppointmentId === appointment._id && (
+                        <tr>
+                          <td colSpan="7" className="px-6 py-4 text-sm text-gray-700 bg-gray-50">
+                            <div className="space-y-4">
+                              <div>
+                                <label htmlFor="editPhoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                                  Phone Number
+                                </label>
+                                <input
+                                  type="text"
+                                  id="editPhoneNumber"
+                                  value={editPhoneNumber}
+                                  onChange={(e) => setEditPhoneNumber(e.target.value)}
+                                  className="w-full p-2 border rounded"
+                                />
+                              </div>
+                              <div>
+                                <label htmlFor="editAddress" className="block text-sm font-medium text-gray-700 mb-1">
+                                  Address
+                                </label>
+                                <input
+                                  type="text"
+                                  id="editAddress"
+                                  value={editAddress}
+                                  onChange={(e) => setEditAddress(e.target.value)}
+                                  className="w-full p-2 border rounded"
+                                />
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label htmlFor="editCountry" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Country
+                                  </label>
+                                  <input
+                                    type="text"
+                                    id="editCountry"
+                                    value={editCountry}
+                                    onChange={(e) => setEditCountry(e.target.value)}
+                                    className="w-full p-2 border rounded"
+                                  />
+                                </div>
+                                <div>
+                                  <label htmlFor="editState" className="block text-sm font-medium text-gray-700 mb-1">
+                                    State
+                                  </label>
+                                  <input
+                                    type="text"
+                                    id="editState"
+                                    value={editState}
+                                    onChange={(e) => setEditState(e.target.value)}
+                                    className="w-full p-2 border rounded"
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <label htmlFor="editMessage" className="block text-sm font-medium text-gray-700 mb-1">
+                                  Message
+                                </label>
+                                <textarea
+                                  id="editMessage"
+                                  value={editMessage}
+                                  onChange={(e) => setEditMessage(e.target.value)}
+                                  rows="3"
+                                  className="w-full p-2 border rounded resize-y"
+                                ></textarea>
+                              </div>
+                              <div>
+                                <label htmlFor="editStatus" className="block text-sm font-medium text-gray-700 mb-1">
+                                  Status
+                                </label>
+                                <select
+                                  id="editStatus"
+                                  value={editStatus}
+                                  onChange={(e) => setEditStatus(e.target.value)}
+                                  className="w-full p-2 border rounded bg-white"
+                                >
+                                  <option value="pending">Pending</option>
+                                  <option value="confirmed">Confirmed</option>
+                                  <option value="cancelled">Cancelled</option>
+                                  <option value="rescheduled">Rescheduled</option>
+                                  <option value="completed">Completed</option>
+                                </select>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {appointments.map((appointment) => (
+                <React.Fragment key={appointment._id}>
+                  <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Name</p>
                         {editingAppointmentId === appointment._id ? (
                           <input
                             type="text"
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
-                            className="w-full p-1 border rounded"
+                            className="w-full p-2 border rounded text-sm"
                           />
                         ) : (
-                          appointment.name
+                          <p className="text-sm font-bold text-gray-900">{appointment.name}</p>
                         )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {editingAppointmentId === appointment._id ? (
-                          <input
-                            type="email"
-                            value={editEmail}
-                            onChange={(e) => setEditEmail(e.target.value)}
-                            className="w-full p-1 border rounded"
-                          />
-                        ) : (
-                          appointment.email
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {editingAppointmentId === appointment._id ? (
-                          <input
-                            type="date"
-                            value={editAppointmentDate}
-                            onChange={(e) => setEditAppointmentDate(e.target.value)}
-                            className="w-full p-1 border rounded"
-                          />
-                        ) : (
-                          formatDateForDisplay(appointment.appointmentDate)
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {editingAppointmentId === appointment._id ? (
-                          <input
-                            type="time"
-                            value={editAppointmentTime}
-                            onChange={(e) => setEditAppointmentTime(e.target.value)}
-                            className="w-full p-1 border rounded"
-                          />
-                        ) : (
-                          appointment.appointmentTime
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Email</p>
+                          {editingAppointmentId === appointment._id ? (
+                            <input
+                              type="email"
+                              value={editEmail}
+                              onChange={(e) => setEditEmail(e.target.value)}
+                              className="w-full p-2 border rounded text-xs"
+                            />
+                          ) : (
+                            <p className="text-xs text-gray-700 truncate">{appointment.email}</p>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Phone</p>
+                          {editingAppointmentId === appointment._id ? (
+                            <input
+                              type="text"
+                              value={editPhoneNumber}
+                              onChange={(e) => setEditPhoneNumber(e.target.value)}
+                              className="w-full p-2 border rounded text-xs"
+                            />
+                          ) : (
+                            <p className="text-xs text-gray-700">{appointment.phoneNumber || 'N/A'}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Date</p>
+                          {editingAppointmentId === appointment._id ? (
+                            <input
+                              type="date"
+                              value={editAppointmentDate}
+                              onChange={(e) => setEditAppointmentDate(e.target.value)}
+                              className="w-full p-2 border rounded text-xs"
+                            />
+                          ) : (
+                            <p className="text-xs text-gray-700">{formatDateForDisplay(appointment.appointmentDate)}</p>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Time</p>
+                          {editingAppointmentId === appointment._id ? (
+                            <input
+                              type="time"
+                              value={editAppointmentTime}
+                              onChange={(e) => setEditAppointmentTime(e.target.value)}
+                              className="w-full p-2 border rounded text-xs"
+                            />
+                          ) : (
+                            <p className="text-xs text-gray-700">{appointment.appointmentTime}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
+                        <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
                           appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                           appointment.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
                           appointment.status === 'rescheduled' ? 'bg-purple-100 text-purple-800' :
@@ -437,156 +692,67 @@ Please ensure your backend route `/appointments` is configured to allow &apos;pa
                         }`}>
                           {appointment.status}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {appointment.bookedBy ? appointment.bookedBy.name : 'Visitor'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {editingAppointmentId === appointment._id ? (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={handleSaveEdit}
-                              className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
-                              disabled={updateAppointmentMutation.isPending}
-                            >
-                              {updateAppointmentMutation.isPending ? 'Saving...' : 'Save'}
-                            </button>
-                            <button
-                              onClick={() => setEditingAppointmentId(null)}
-                              className="text-gray-600 hover:text-gray-900"
-                              disabled={updateAppointmentMutation.isPending}
-                            >
-                              Cancel
-                            </button>
+                      </div>
+                      {editingAppointmentId === appointment._id && (
+                        <div className="space-y-3 pt-2 border-t border-gray-200">
+                          <div>
+                            <label htmlFor="editAddressMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                              Address
+                            </label>
+                            <input
+                              type="text"
+                              id="editAddressMobile"
+                              value={editAddress}
+                              onChange={(e) => setEditAddress(e.target.value)}
+                              className="w-full p-2 border rounded text-sm"
+                            />
                           </div>
-                        ) : (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={() => handleEditClick(appointment)}
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(appointment._id)}
-                              className="text-red-600 hover:text-red-900 disabled:opacity-50"
-                              disabled={deleteAppointmentMutation.isPending}
-                            >
-                              Delete
-                            </button>
-                            <button
-                              onClick={() => handleRescheduleClick(appointment)}
-                              className="text-green-600 hover:text-green-900 disabled:opacity-50"
-                              disabled={rescheduleAppointmentMutation.isPending}
-                            >
-                              Reschedule
-                            </button>
-                            <button
-                              onClick={() => handleCancelClick(appointment._id)}
-                              className="text-gray-600 hover:text-gray-900 disabled:opacity-50"
-                              disabled={cancelAppointmentMutation.isPending || appointment.status === 'cancelled'}
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={() => handleChangeStatus(appointment._id, appointment.status)}
-                              className={`text-sm px-2 py-1 rounded-md ${
-                                appointment.status === 'pending' ? 'bg-blue-500 text-white hover:bg-blue-600' : // Set Confirmed
-                                appointment.status === 'confirmed' ? 'bg-green-500 text-white hover:bg-green-600' : // Set Completed
-                                appointment.status === 'completed' ? 'bg-red-500 text-white hover:bg-red-600' : // Set Cancelled
-                                appointment.status === 'rescheduled' ? 'bg-blue-500 text-white hover:bg-blue-600' : // Set Confirmed (after reschedule)
-                                'bg-gray-500 text-white hover:bg-gray-600' // Default if cancelled
-                              } disabled:opacity-50`}
-                              disabled={changeStatusMutation.isPending}
-                            >
-                              {
-                                appointment.status === 'pending' ? 'Set Confirmed' :
-                                appointment.status === 'confirmed' ? 'Set Completed' :
-                                appointment.status === 'completed' ? 'Set Cancelled' :
-                                appointment.status === 'rescheduled' ? 'Set Confirmed' :
-                                'Change Status' // For 'cancelled' or other unexpected statuses
-                              }
-                            </button>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                    {/* Expanded row for editing additional details */}
-                    {editingAppointmentId === appointment._id && (
-                      <tr>
-                        <td colSpan="7" className="px-6 py-4 text-sm text-gray-700 bg-gray-50">
-                          <div className="space-y-4">
+                          <div className="grid grid-cols-1 gap-3">
                             <div>
-                              <label htmlFor="editPhoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone Number
+                              <label htmlFor="editCountryMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                                Country
                               </label>
                               <input
                                 type="text"
-                                id="editPhoneNumber"
-                                value={editPhoneNumber}
-                                onChange={(e) => setEditPhoneNumber(e.target.value)}
-                                className="w-full p-2 border rounded"
+                                id="editCountryMobile"
+                                value={editCountry}
+                                onChange={(e) => setEditCountry(e.target.value)}
+                                className="w-full p-2 border rounded text-sm"
                               />
                             </div>
                             <div>
-                              <label htmlFor="editAddress" className="block text-sm font-medium text-gray-700 mb-1">
-                                Address
+                              <label htmlFor="editStateMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                                State
                               </label>
                               <input
                                 type="text"
-                                id="editAddress"
-                                value={editAddress}
-                                onChange={(e) => setEditAddress(e.target.value)}
-                                className="w-full p-2 border rounded"
+                                id="editStateMobile"
+                                value={editState}
+                                onChange={(e) => setEditState(e.target.value)}
+                                className="w-full p-2 border rounded text-sm"
                               />
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label htmlFor="editCountry" className="block text-sm font-medium text-gray-700 mb-1">
-                                  Country
-                                </label>
-                                <input
-                                  type="text"
-                                  id="editCountry"
-                                  value={editCountry}
-                                  onChange={(e) => setEditCountry(e.target.value)}
-                                  className="w-full p-2 border rounded"
-                                />
-                              </div>
-                              <div>
-                                <label htmlFor="editState" className="block text-sm font-medium text-gray-700 mb-1">
-                                  State
-                                </label>
-                                <input
-                                  type="text"
-                                  id="editState"
-                                  value={editState}
-                                  onChange={(e) => setEditState(e.target.value)}
-                                  className="w-full p-2 border rounded"
-                                />
-                              </div>
-                            </div>
                             <div>
-                              <label htmlFor="editMessage" className="block text-sm font-medium text-gray-700 mb-1">
+                              <label htmlFor="editMessageMobile" className="block text-xs font-medium text-gray-700 mb-1">
                                 Message
                               </label>
                               <textarea
-                                id="editMessage"
+                                id="editMessageMobile"
                                 value={editMessage}
                                 onChange={(e) => setEditMessage(e.target.value)}
-                                rows="3"
-                                className="w-full p-2 border rounded resize-y"
+                                rows="2"
+                                className="w-full p-2 border rounded text-sm resize-y"
                               ></textarea>
                             </div>
                             <div>
-                              <label htmlFor="editStatus" className="block text-sm font-medium text-gray-700 mb-1">
+                              <label htmlFor="editStatusMobile" className="block text-xs font-medium text-gray-700 mb-1">
                                 Status
                               </label>
                               <select
-                                id="editStatus"
+                                id="editStatusMobile"
                                 value={editStatus}
                                 onChange={(e) => setEditStatus(e.target.value)}
-                                className="w-full p-2 border rounded bg-white"
+                                className="w-full p-2 border rounded text-xs bg-white"
                               >
                                 <option value="pending">Pending</option>
                                 <option value="confirmed">Confirmed</option>
@@ -596,14 +762,87 @@ Please ensure your backend route `/appointments` is configured to allow &apos;pa
                               </select>
                             </div>
                           </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        </div>
+                      )}
+                      <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
+                        {editingAppointmentId === appointment._id ? (
+                          <>
+                            <button
+                              onClick={handleSaveEdit}
+                              className="flex-1 min-w-[70px] bg-blue-500 text-white py-2 rounded text-xs font-medium hover:bg-blue-600 transition disabled:opacity-50"
+                              disabled={updateAppointmentMutation.isPending}
+                            >
+                              {updateAppointmentMutation.isPending ? 'Saving...' : 'Save'}
+                            </button>
+                            <button
+                              onClick={() => setEditingAppointmentId(null)}
+                              className="flex-1 min-w-[70px] bg-gray-300 text-gray-800 py-2 rounded text-xs font-medium hover:bg-gray-400 transition disabled:opacity-50"
+                              disabled={updateAppointmentMutation.isPending}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleEditClick(appointment)}
+                              className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(appointment._id)}
+                              className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
+                              disabled={deleteAppointmentMutation.isPending}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      {!editingAppointmentId && (
+                        <div className="flex gap-2 flex-wrap">
+                          <button
+                            onClick={() => handleRescheduleClick(appointment)}
+                            className="flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap bg-green-500 text-white hover:bg-green-600"
+                            disabled={rescheduleAppointmentMutation.isPending}
+                          >
+                            Reschedule
+                          </button>
+                          <button
+                            onClick={() => handleCancelClick(appointment._id)}
+                            className="flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap bg-gray-500 text-white hover:bg-gray-600"
+                            disabled={cancelAppointmentMutation.isPending || appointment.status === 'cancelled'}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => handleChangeStatus(appointment._id, appointment.status)}
+                            className={`flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap ${
+                              appointment.status === 'pending' ? 'bg-blue-500 text-white hover:bg-blue-600' :
+                              appointment.status === 'confirmed' ? 'bg-green-500 text-white hover:bg-green-600' :
+                              appointment.status === 'completed' ? 'bg-red-500 text-white hover:bg-red-600' :
+                              appointment.status === 'rescheduled' ? 'bg-blue-500 text-white hover:bg-blue-600' :
+                              'bg-gray-500 text-white hover:bg-gray-600'
+                            }`}
+                            disabled={changeStatusMutation.isPending}
+                          >
+                            {
+                              appointment.status === 'pending' ? 'Set Confirmed' :
+                              appointment.status === 'confirmed' ? 'Set Completed' :
+                              appointment.status === 'completed' ? 'Set Cancelled' :
+                              appointment.status === 'rescheduled' ? 'Set Confirmed' :
+                              'Change Status'
+                            }
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </>
         ) : (
           <p className="text-center text-gray-600">No appointments to manage.</p>
         )}

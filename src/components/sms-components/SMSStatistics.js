@@ -29,49 +29,49 @@ export default function SMSStatistics() {
   });
 
   const StatCard = ({ title, value, icon: Icon, color }) => (
-    <div className={`bg-white rounded-lg shadow p-6 border-l-4 ${color}`}>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-gray-600 text-sm font-medium">{title}</p>
-          <p className="text-3xl font-bold mt-2">{value}</p>
+    <div className={`bg-white rounded-lg shadow p-3 sm:p-6 border-l-4 ${color}`}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-gray-600 text-xs sm:text-sm font-medium">{title}</p>
+          <p className="text-xl sm:text-3xl font-bold mt-1 break-words">{value}</p>
         </div>
-        {Icon && <Icon className={`w-8 h-8 ${color.replace('border-', 'text-')}`} />}
+        {Icon && <Icon className={`w-5 h-5 sm:w-8 sm:h-8 flex-shrink-0 ${color.replace('border-', 'text-')}`} />}
       </div>
     </div>
   );
 
-  if (isLoading) return <div className="text-center py-8">Loading statistics...</div>;
-  if (error) return <div className="text-red-600 py-8">Error loading statistics</div>;
+  if (isLoading) return <div className="text-center py-8 text-xs sm:text-base">Loading statistics...</div>;
+  if (error) return <div className="text-red-600 py-8 text-xs sm:text-base">Error loading statistics</div>;
 
   const summary = stats?.summary || {};
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">SMS Statistics</h3>
-        <div className="flex gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
+        <h3 className="text-base sm:text-lg font-semibold mb-4">SMS Statistics</h3>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
+          <div className="flex-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">From</label>
             <input
               type="date"
               value={dateRange.startDate}
               onChange={(e) => setDateRange({ ...dateRange, startDate: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
+          <div className="flex-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">To</label>
             <input
               type="date"
               value={dateRange.endDate}
               onChange={(e) => setDateRange({ ...dateRange, endDate: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm"
             />
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4">
         <StatCard
           title="Total SMS"
           value={summary.total || 0}
@@ -105,12 +105,12 @@ export default function SMSStatistics() {
       </div>
 
       {stats?.byEventType && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h4 className="font-semibold mb-4">SMS by Event Type</h4>
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <h4 className="font-semibold mb-4 text-sm sm:text-base">SMS by Event Type</h4>
           <div className="space-y-2">
             {stats.byEventType.map((item) => (
-              <div key={item._id} className="flex justify-between items-center pb-2 border-b">
-                <span className="text-sm text-gray-700">{item._id}</span>
+              <div key={item._id} className="flex justify-between items-center pb-2 border-b text-xs sm:text-sm">
+                <span className="text-gray-700">{item._id}</span>
                 <span className="font-semibold">{item.count}</span>
               </div>
             ))}

@@ -257,123 +257,230 @@ Please ensure your backend route `/newsletter/subscribers` is configured to allo
         )}
 
         {subscribers && subscribers.length > 0 ? (
-          <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Subscribed
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Joined
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {subscribers.map((subscriber) => (
-                  <React.Fragment key={subscriber._id}>
-                    <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg p-6">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Subscribed
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Joined
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {subscribers.map((subscriber) => (
+                    <React.Fragment key={subscriber._id}>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {editingSubscriberId === subscriber._id ? (
+                            <input
+                              type="text"
+                              value={editName}
+                              onChange={(e) => setEditName(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            subscriber.name || 'N/A'
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {editingSubscriberId === subscriber._id ? (
+                            <input
+                              type="email"
+                              value={editEmail}
+                              onChange={(e) => setEditEmail(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            subscriber.email
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {editingSubscriberId === subscriber._id ? (
+                            <input
+                              type="checkbox"
+                              checked={editIsSubscribed}
+                              onChange={(e) => setEditIsSubscribed(e.target.checked)}
+                              className="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                            />
+                          ) : (
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              subscriber.isSubscribed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                              {subscriber.isSubscribed ? 'Yes' : 'No'}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {formatTimestamp(subscriber.createdAt)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          {editingSubscriberId === subscriber._id ? (
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={handleSaveEdit}
+                                className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                                disabled={editSubscriberMutation.isPending}
+                              >
+                                {editSubscriberMutation.isPending ? 'Saving...' : 'Save'}
+                              </button>
+                              <button
+                                onClick={() => setEditingSubscriberId(null)}
+                                className="text-gray-600 hover:text-gray-900"
+                                disabled={editSubscriberMutation.isPending}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={() => handleEditClick(subscriber)}
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(subscriber._id)}
+                                className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                disabled={deleteSubscriberMutation.isPending}
+                              >
+                                Delete
+                              </button>
+                              <button
+                                onClick={() => handleSendEmailClick(subscriber.email, subscriber._id)}
+                                className="text-green-600 hover:text-green-700 disabled:opacity-50"
+                                disabled={!subscriber.isSubscribed}
+                              >
+                                Send Email
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {subscribers.map((subscriber) => (
+                <React.Fragment key={subscriber._id}>
+                  <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Name</p>
                         {editingSubscriberId === subscriber._id ? (
                           <input
                             type="text"
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
-                            className="w-full p-1 border rounded"
+                            className="w-full p-2 border rounded text-sm"
                           />
                         ) : (
-                          subscriber.name || 'N/A'
+                          <p className="text-sm font-bold text-gray-900">{subscriber.name || 'N/A'}</p>
                         )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Email</p>
                         {editingSubscriberId === subscriber._id ? (
                           <input
                             type="email"
                             value={editEmail}
                             onChange={(e) => setEditEmail(e.target.value)}
-                            className="w-full p-1 border rounded"
+                            className="w-full p-2 border rounded text-sm"
                           />
                         ) : (
-                          subscriber.email
+                          <p className="text-sm text-gray-700">{subscriber.email}</p>
                         )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Subscribed</p>
+                          {editingSubscriberId === subscriber._id ? (
+                            <input
+                              type="checkbox"
+                              checked={editIsSubscribed}
+                              onChange={(e) => setEditIsSubscribed(e.target.checked)}
+                              className="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                            />
+                          ) : (
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              subscriber.isSubscribed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                              {subscriber.isSubscribed ? 'Yes' : 'No'}
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Joined</p>
+                          <p className="text-xs text-gray-700">{formatTimestamp(subscriber.createdAt)}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
                         {editingSubscriberId === subscriber._id ? (
-                          <input
-                            type="checkbox"
-                            checked={editIsSubscribed}
-                            onChange={(e) => setEditIsSubscribed(e.target.checked)}
-                            className="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                          />
-                        ) : (
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            subscriber.isSubscribed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
-                            {subscriber.isSubscribed ? 'Yes' : 'No'}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {formatTimestamp(subscriber.createdAt)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {editingSubscriberId === subscriber._id ? (
-                          <div className="flex justify-end space-x-2">
+                          <>
                             <button
                               onClick={handleSaveEdit}
-                              className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                              className="flex-1 min-w-[70px] bg-blue-500 text-white py-2 rounded text-xs font-medium hover:bg-blue-600 transition disabled:opacity-50"
                               disabled={editSubscriberMutation.isPending}
                             >
                               {editSubscriberMutation.isPending ? 'Saving...' : 'Save'}
                             </button>
                             <button
                               onClick={() => setEditingSubscriberId(null)}
-                              className="text-gray-600 hover:text-gray-900"
+                              className="flex-1 min-w-[70px] bg-gray-300 text-gray-800 py-2 rounded text-xs font-medium hover:bg-gray-400 transition disabled:opacity-50"
                               disabled={editSubscriberMutation.isPending}
                             >
                               Cancel
                             </button>
-                          </div>
+                          </>
                         ) : (
-                          <div className="flex justify-end space-x-2">
+                          <>
                             <button
                               onClick={() => handleEditClick(subscriber)}
-                              className="text-indigo-600 hover:text-indigo-900"
+                              className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleDeleteClick(subscriber._id)}
-                              className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                              className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
                               disabled={deleteSubscriberMutation.isPending}
                             >
                               Delete
                             </button>
                             <button
                               onClick={() => handleSendEmailClick(subscriber.email, subscriber._id)}
-                              className="text-green-600 hover:text-green-700 disabled:opacity-50"
-                              disabled={!subscriber.isSubscribed} // Only send if subscribed
+                              className="flex-1 min-w-[70px] bg-green-50 text-green-600 py-2 rounded text-xs font-medium hover:bg-green-100 transition disabled:opacity-50"
+                              disabled={!subscriber.isSubscribed}
                             >
-                              Send Email
+                              Email
                             </button>
-                          </div>
+                          </>
                         )}
-                      </td>
-                    </tr>
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </div>
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </>
         ) : (
           <p className="text-center text-gray-600">No subscribers to manage.</p>
         )}

@@ -948,7 +948,33 @@
       "userId": null,
       "metadata": {},
       "loggedAt": "2026-06-05T20:24:03.077Z"
+    },
+    {
+      "id": "email_1780724916518_tvjy6581x",
+      "timestamp": "2026-06-06T05:48:36.517Z",
+      "to": "hayzedboy20@gmail.com",
+      "subject": "hi",
+      "emailType": "newsletter",
+      "success": true,
+      "messageId": "<202606060548.74270846165@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-06T05:48:36.518Z"
+    },
+    {
+      "id": "email_1780724916729_kbsqnpcfm",
+      "timestamp": "2026-06-06T05:48:36.729Z",
+      "to": "fas.azeez@gmail.com",
+      "subject": "hi",
+      "emailType": "newsletter",
+      "success": true,
+      "messageId": "<202606060548.52551546065@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-06T05:48:36.729Z"
     }
   ],
-  "lastUpdated": "2026-06-05T20:24:03.077Z"
+  "lastUpdated": "2026-06-06T05:48:36.729Z"
 }

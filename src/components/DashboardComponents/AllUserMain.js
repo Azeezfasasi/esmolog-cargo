@@ -465,69 +465,189 @@ function AllUserMain() {
             {/* Mobile Card View */}
             <div className="md:hidden space-y-3">
               {users.map((user) => (
-                <div key={user._id} className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase">Name</p>
-                      <p className="text-sm font-bold text-gray-900">{user.name}</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
+                <React.Fragment key={user._id}>
+                  <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                    <div className="space-y-3">
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase">Email</p>
-                        <p className="text-xs text-gray-700 truncate">{user.email}</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Name</p>
+                        {editingUserId === user._id ? (
+                          <input
+                            type="text"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            className="w-full p-2 border rounded text-sm"
+                          />
+                        ) : (
+                          <p className="text-sm font-bold text-gray-900">{user.name}</p>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Email</p>
+                          {editingUserId === user._id ? (
+                            <input
+                              type="email"
+                              value={editEmail}
+                              onChange={(e) => setEditEmail(e.target.value)}
+                              className="w-full p-2 border rounded text-xs"
+                            />
+                          ) : (
+                            <p className="text-xs text-gray-700 truncate">{user.email}</p>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Role</p>
+                          {editingUserId === user._id ? (
+                            <select
+                              value={editRole}
+                              onChange={(e) => setEditRole(e.target.value)}
+                              className="w-full p-2 border rounded text-xs bg-white"
+                            >
+                              <option value="admin">Admin</option>
+                              <option value="client">Client</option>
+                              <option value="agent">Agent</option>
+                              <option value="employee">Employee</option>
+                            </select>
+                          ) : (
+                            <p className="text-sm text-gray-700">{user.role}</p>
+                          )}
+                        </div>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase">Role</p>
-                        <p className="text-sm text-gray-700">{user.role}</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
+                        <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
+                          user.isDisabled ? 'bg-red-100 text-red-800' :
+                          user.isSuspended ? 'bg-orange-100 text-orange-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {user.isDisabled ? 'Disabled' : user.isSuspended ? 'Suspended' : 'Active'}
+                        </span>
                       </div>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase">Status</p>
-                      <span className={`inline-flex text-xs px-2 py-1 font-semibold rounded-full capitalize ${
-                        user.isDisabled ? 'bg-red-100 text-red-800' :
-                        user.isSuspended ? 'bg-orange-100 text-orange-800' :
-                        'bg-green-100 text-green-800'
-                      }`}>
-                        {user.isDisabled ? 'Disabled' : user.isSuspended ? 'Suspended' : 'Active'}
-                      </span>
-                    </div>
-                    <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
-                      <button
-                        onClick={() => handleEditClick(user)}
-                        className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(user._id)}
-                        className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
-                        disabled={deleteUserMutation.isPending}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                      <button
-                        onClick={() => handleToggleDisable(user._id, user.isDisabled)}
-                        className={`flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap ${
-                          user.isDisabled ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-red-500 text-white hover:bg-red-600'
-                        }`}
-                        disabled={toggleDisableUserMutation.isPending}
-                      >
-                        {user.isDisabled ? 'Enable' : 'Disable'}
-                      </button>
-                      <button
-                        onClick={() => handleToggleSuspend(user._id, user.isSuspended)}
-                        className={`flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap ${
-                          user.isSuspended ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-orange-500 text-white hover:bg-orange-600'
-                        }`}
-                        disabled={toggleSuspendUserMutation.isPending}
-                      >
-                        {user.isSuspended ? 'Unsuspend' : 'Suspend'}
-                      </button>
+                      {editingUserId === user._id && (
+                        <div className="space-y-3 pt-2 border-t border-gray-200">
+                          <div>
+                            <label htmlFor="editGenderMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                              Gender
+                            </label>
+                            <input
+                              type="text"
+                              id="editGenderMobile"
+                              value={editGender}
+                              onChange={(e) => setEditGender(e.target.value)}
+                              className="w-full p-2 border rounded text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="editPhoneNumberMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                              Phone Number
+                            </label>
+                            <input
+                              type="text"
+                              id="editPhoneNumberMobile"
+                              value={editPhoneNumber}
+                              onChange={(e) => setEditPhoneNumber(e.target.value)}
+                              className="w-full p-2 border rounded text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="editHomeAddressMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                              Home Address
+                            </label>
+                            <input
+                              type="text"
+                              id="editHomeAddressMobile"
+                              value={editHomeAddress}
+                              onChange={(e) => setEditHomeAddress(e.target.value)}
+                              className="w-full p-2 border rounded text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="editCountryMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                              Country
+                            </label>
+                            <input
+                              type="text"
+                              id="editCountryMobile"
+                              value={editCountry}
+                              onChange={(e) => setEditCountry(e.target.value)}
+                              className="w-full p-2 border rounded text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="editStateMobile" className="block text-xs font-medium text-gray-700 mb-1">
+                              State
+                            </label>
+                            <input
+                              type="text"
+                              id="editStateMobile"
+                              value={editState}
+                              onChange={(e) => setEditState(e.target.value)}
+                              className="w-full p-2 border rounded text-sm"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
+                        {editingUserId === user._id ? (
+                          <>
+                            <button
+                              onClick={handleSaveEdit}
+                              className="flex-1 min-w-[70px] bg-blue-500 text-white py-2 rounded text-xs font-medium hover:bg-blue-600 transition disabled:opacity-50"
+                              disabled={editUserMutation.isPending}
+                            >
+                              {editUserMutation.isPending ? 'Saving...' : 'Save'}
+                            </button>
+                            <button
+                              onClick={() => setEditingUserId(null)}
+                              className="flex-1 min-w-[70px] bg-gray-300 text-gray-800 py-2 rounded text-xs font-medium hover:bg-gray-400 transition disabled:opacity-50"
+                              disabled={editUserMutation.isPending}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleEditClick(user)}
+                              className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(user._id)}
+                              className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
+                              disabled={deleteUserMutation.isPending}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      {!editingUserId && (
+                        <div className="flex gap-2 flex-wrap">
+                          <button
+                            onClick={() => handleToggleDisable(user._id, user.isDisabled)}
+                            className={`flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap ${
+                              user.isDisabled ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-red-500 text-white hover:bg-red-600'
+                            }`}
+                            disabled={toggleDisableUserMutation.isPending}
+                          >
+                            {user.isDisabled ? 'Enable' : 'Disable'}
+                          </button>
+                          <button
+                            onClick={() => handleToggleSuspend(user._id, user.isSuspended)}
+                            className={`flex-1 text-xs py-2 px-2 rounded font-medium transition disabled:opacity-50 whitespace-nowrap ${
+                              user.isSuspended ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-orange-500 text-white hover:bg-orange-600'
+                            }`}
+                            disabled={toggleSuspendUserMutation.isPending}
+                          >
+                            {user.isSuspended ? 'Unsuspend' : 'Suspend'}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
+                </React.Fragment>
               ))}
             </div>
           </>

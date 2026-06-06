@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import { Subscriber } from '@/server/models/Newsletter';
 import { sendMail } from '@/server/utils/mailer';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET(request) {
   try {
-    // Check authentication (admin only)
-    const authResult = await requireAuth(request, ['admin']);
+    // Check authentication (admin or employee)
+    const authResult = await requireAuth(request, ['admin', 'employee']);
     if (authResult.error) {
       return NextResponse.json({ error: authResult.error }, { status: authResult.status });
     }

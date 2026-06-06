@@ -197,108 +197,195 @@ Please ensure your backend route `/newsletter` is configured to allow &apos;past
         )}
 
         {newsletters && newsletters.length > 0 ? (
-          <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Subject
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Sent By
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date Sent
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {newsletters.map((newsletter) => (
-                  <React.Fragment key={newsletter._id}>
-                    <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg p-6">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Subject
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Sent By
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date Sent
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {newsletters.map((newsletter) => (
+                    <React.Fragment key={newsletter._id}>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {editingNewsletterId === newsletter._id ? (
+                            <input
+                              type="text"
+                              value={editSubject}
+                              onChange={(e) => setEditSubject(e.target.value)}
+                              className="w-full p-1 border rounded"
+                            />
+                          ) : (
+                            <span className="block max-w-xs truncate">{newsletter.subject}</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {newsletter.sentBy?.name || 'Unknown User'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {formatTimestamp(newsletter.date)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          {editingNewsletterId === newsletter._id ? (
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={handleSaveEdit}
+                                className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                                disabled={editNewsletterMutation.isPending}
+                              >
+                                {editNewsletterMutation.isPending ? 'Saving...' : 'Save'}
+                              </button>
+                              <button
+                                onClick={() => setEditingNewsletterId(null)}
+                                className="text-gray-600 hover:text-gray-900"
+                                disabled={editNewsletterMutation.isPending}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={() => handleEditClick(newsletter)}
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(newsletter._id)}
+                                className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                disabled={deleteNewsletterMutation.isPending}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                      {/* Expanded row for editing content */}
+                      {editingNewsletterId === newsletter._id && (
+                        <tr>
+                          <td colSpan="4" className="px-6 py-4 text-sm text-gray-700 bg-gray-50 border-t border-gray-200">
+                            <div>
+                              <label htmlFor="editContent" className="block text-sm font-medium text-gray-700 mb-1">
+                                Content
+                              </label>
+                              <textarea
+                                id="editContent"
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                                rows="6"
+                                className="w-full p-2 border rounded resize-y"
+                              ></textarea>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {newsletters.map((newsletter) => (
+                <React.Fragment key={newsletter._id}>
+                  <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-600">
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Subject</p>
                         {editingNewsletterId === newsletter._id ? (
                           <input
                             type="text"
                             value={editSubject}
                             onChange={(e) => setEditSubject(e.target.value)}
-                            className="w-full p-1 border rounded"
+                            className="w-full p-2 border rounded text-sm"
                           />
                         ) : (
-                          <span className="block max-w-xs truncate">{newsletter.subject}</span>
+                          <p className="text-sm font-bold text-gray-900">{newsletter.subject}</p>
                         )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {/* Display the name of the user who sent it */}
-                        {newsletter.sentBy?.name || 'Unknown User'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {formatTimestamp(newsletter.date)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Sent By</p>
+                          <p className="text-xs text-gray-700">{newsletter.sentBy?.name || 'Unknown User'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Date Sent</p>
+                          <p className="text-xs text-gray-700">{formatTimestamp(newsletter.date)}</p>
+                        </div>
+                      </div>
+                      {editingNewsletterId === newsletter._id && (
+                        <div className="pt-2 border-t border-gray-200">
+                          <label htmlFor="editContentMobile" className="block text-xs font-medium text-gray-700 mb-2">
+                            Content
+                          </label>
+                          <textarea
+                            id="editContentMobile"
+                            value={editContent}
+                            onChange={(e) => setEditContent(e.target.value)}
+                            rows="4"
+                            className="w-full p-2 border rounded text-sm resize-y"
+                          ></textarea>
+                        </div>
+                      )}
+                      <div className="flex gap-2 pt-2 border-t border-gray-200 flex-wrap">
                         {editingNewsletterId === newsletter._id ? (
-                          <div className="flex justify-end space-x-2">
+                          <>
                             <button
                               onClick={handleSaveEdit}
-                              className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                              className="flex-1 min-w-[70px] bg-blue-500 text-white py-2 rounded text-xs font-medium hover:bg-blue-600 transition disabled:opacity-50"
                               disabled={editNewsletterMutation.isPending}
                             >
                               {editNewsletterMutation.isPending ? 'Saving...' : 'Save'}
                             </button>
                             <button
                               onClick={() => setEditingNewsletterId(null)}
-                              className="text-gray-600 hover:text-gray-900"
+                              className="flex-1 min-w-[70px] bg-gray-300 text-gray-800 py-2 rounded text-xs font-medium hover:bg-gray-400 transition disabled:opacity-50"
                               disabled={editNewsletterMutation.isPending}
                             >
                               Cancel
                             </button>
-                          </div>
+                          </>
                         ) : (
-                          <div className="flex justify-end space-x-2">
+                          <>
                             <button
                               onClick={() => handleEditClick(newsletter)}
-                              className="text-indigo-600 hover:text-indigo-900"
+                              className="flex-1 min-w-[70px] bg-indigo-50 text-indigo-600 py-2 rounded text-xs font-medium hover:bg-indigo-100 transition"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleDeleteClick(newsletter._id)}
-                              className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                              className="flex-1 min-w-[70px] bg-red-50 text-red-600 py-2 rounded text-xs font-medium hover:bg-red-100 transition disabled:opacity-50"
                               disabled={deleteNewsletterMutation.isPending}
                             >
                               Delete
                             </button>
-                          </div>
+                          </>
                         )}
-                      </td>
-                    </tr>
-                    {/* Expanded row for editing content */}
-                    {editingNewsletterId === newsletter._id && (
-                      <tr>
-                        <td colSpan="4" className="px-6 py-4 text-sm text-gray-700 bg-gray-50 border-t border-gray-200">
-                          <div>
-                            <label htmlFor="editContent" className="block text-sm font-medium text-gray-700 mb-1">
-                              Content
-                            </label>
-                            <textarea
-                              id="editContent"
-                              value={editContent}
-                              onChange={(e) => setEditContent(e.target.value)}
-                              rows="6"
-                              className="w-full p-2 border rounded resize-y"
-                            ></textarea>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </div>
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </>
         ) : (
           <p className="text-center text-gray-600">No newsletters to manage.</p>
         )}
