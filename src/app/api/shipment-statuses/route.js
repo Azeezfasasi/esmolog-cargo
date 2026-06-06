@@ -44,6 +44,17 @@ export async function POST(request) {
     return NextResponse.json(newStatus, { status: 201 });
   } catch (error) {
     console.error('Error creating shipment status:', error);
+
+    // Handle duplicate key error
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      const value = error.keyValue[field];
+      return NextResponse.json(
+        { error: `A shipment status with ${field} "${value}" already exists` },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json(
       { error: 'Failed to create shipment status' },
       { status: 500 }

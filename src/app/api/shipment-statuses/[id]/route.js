@@ -37,6 +37,17 @@ export async function PUT(request, { params }) {
     return NextResponse.json(updatedStatus);
   } catch (error) {
     console.error('Error updating shipment status:', error);
+
+    // Handle duplicate key error
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      const value = error.keyValue[field];
+      return NextResponse.json(
+        { error: `A shipment status with ${field} "${value}" already exists` },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json(
       { error: 'Failed to update shipment status' },
       { status: 500 }
