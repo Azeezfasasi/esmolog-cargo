@@ -30,15 +30,37 @@ export async function PUT(request, { params }) {
 
     await connectDB();
 
-    // Parse request body
-    const body = await request.json();
+    // Parse request body - handle both JSON and FormData
+    let body = {};
+    
+    try {
+      const contentType = request.headers.get('content-type') || '';
+      
+      if (contentType.includes('application/json')) {
+        body = await request.json();
+      } else if (contentType.includes('multipart/form-data')) {
+        // Handle FormData
+        const formData = await request.formData();
+        for (const [key, value] of formData.entries()) {
+          body[key] = value;
+        }
+      } else {
+        body = await request.json();
+      }
+    } catch (parseError) {
+      console.error('Error parsing request body:', parseError);
+      return NextResponse.json(
+        { error: 'Invalid request format' },
+        { status: 400 }
+      );
+    }
     
     // Allowed fields for editing
-    const allowedFields = ['name', 'email', 'role', 'gender', 'phoneNumber', 'homeAddress', 'country', 'state', 'isDisabled', 'isSuspended'];
+    const allowedFields = ['name', 'email', 'role', 'gender', 'phoneNumber', 'homeAddress', 'country', 'state', 'isDisabled', 'isSuspended', 'profileImageUrl'];
     const updateData = {};
     
     for (const field of allowedFields) {
-      if (body[field] !== undefined) {
+      if (body[field] !== undefined && body[field] !== '') {
         updateData[field] = body[field];
       }
     }

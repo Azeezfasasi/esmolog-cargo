@@ -33,7 +33,7 @@ function ProfileMain() {
       const response = await axios.put(`${API_BASE_URL}/profile/edit/${userId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+          // Don't set Content-Type - axios will set it automatically for FormData
         },
       });
       return response.data;

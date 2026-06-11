@@ -3,11 +3,11 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Pencil, Mail, Eye, Trash2, RefreshCcw, QrCode } from 'lucide-react';
+import { Pencil, Mail, Eye, Trash2, RefreshCcw, QrCode, Check } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 10;
 
-export default function ShipmentTable({ shipments, onActionClick }) {
+export default function ShipmentTable({ shipments, onActionClick, selectedShipments = [], onSelectShipment, onSelectAll }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   // filter out shipments with delivered status (case-insensitive)
@@ -22,15 +22,37 @@ export default function ShipmentTable({ shipments, onActionClick }) {
     currentPage * ITEMS_PER_PAGE
   );
 
+  const isAllSelectedOnPage = paginated.length > 0 && paginated.every(s => selectedShipments.includes(s._id));
+
+  const handlePageSelectAll = () => {
+    if (isAllSelectedOnPage) {
+      // Deselect all on current page
+      const pageIds = paginated.map(s => s._id);
+      pageIds.forEach(id => onSelectShipment(id, false));
+    } else {
+      // Select all on current page
+      paginated.forEach(s => onSelectShipment(s._id, true));
+    }
+  };
+
   return (
     <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
       {/* Header glow */}
       <div className="h-1 w-full bg-gradient-to-r from-green-600 via-green-400 to-green-800" />
+      
       {/* Desktop Table View */}
       <div className="hidden lg:block overflow-x-auto">
       <table className="min-w-[900px] w-full text-sm text-left">
         <thead className="bg-green-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase">
           <tr>
+            <th className="p-2 sm:p-3 text-xs sm:text-sm">
+              <input
+                type="checkbox"
+                checked={isAllSelectedOnPage}
+                onChange={handlePageSelectAll}
+                className="w-4 h-4 cursor-pointer"
+              />
+            </th>
             <th className="p-2 sm:p-3 text-xs sm:text-sm">#</th>
             <th className="p-2 sm:p-3 text-xs sm:text-sm">Tracking No</th>
             <th className="p-2 sm:p-3 text-xs sm:text-sm">Sender</th>
@@ -43,8 +65,18 @@ export default function ShipmentTable({ shipments, onActionClick }) {
           </tr>
         </thead>
         <tbody>
-          {paginated.map((shipment, idx) => (
-            <tr key={shipment._id} className="border-t hover:bg-gray-50 dark:hover:bg-gray-800">
+          {paginated.map((shipment, idx) => {
+            const isSelected = selectedShipments.includes(shipment._id);
+            return (
+            <tr key={shipment._id} className={`border-t hover:bg-gray-50 dark:hover:bg-gray-800 ${isSelected ? 'bg-green-50' : ''}`}>
+              <td className="p-2 sm:p-3 text-xs sm:text-sm">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={(e) => onSelectShipment(shipment._id, e.target.checked)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+              </td>
               <td className="p-2 sm:p-3 text-xs sm:text-sm">{(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}</td>
               <td className="p-2 sm:p-3 font-medium text-xs sm:text-sm">{shipment.trackingNumber}</td>
               <td className="p-2 sm:p-3 text-xs sm:text-sm">{shipment.senderName}</td>
@@ -112,10 +144,11 @@ export default function ShipmentTable({ shipments, onActionClick }) {
                 </Button>
               </td>
             </tr>
-          ))}
+            );
+          })}
           {paginated.length === 0 && (
             <tr>
-              <td colSpan={9} className="p-4 text-center text-gray-500 text-sm">
+              <td colSpan={10} className="p-4 text-center text-gray-500 text-sm">
                 No shipments found.
               </td>
             </tr>
@@ -131,13 +164,23 @@ export default function ShipmentTable({ shipments, onActionClick }) {
             No shipments found.
           </div>
         ) : (
-          paginated.map((shipment, idx) => (
-            <div key={shipment._id} className="border rounded-lg p-3 sm:p-4 space-y-3 hover:shadow-md transition-shadow">
-              {/* Header with tracking number */}
+          paginated.map((shipment, idx) => {
+            const isSelected = selectedShipments.includes(shipment._id);
+            return (
+            <div key={shipment._id} className={`border rounded-lg p-3 sm:p-4 space-y-3 hover:shadow-md transition-shadow ${isSelected ? 'bg-blue-50 border-blue-300' : ''}`}>
+              {/* Header with tracking number and checkbox */}
               <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold">#{(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}</p>
-                  <p className="font-bold text-sm text-green-600">{shipment.trackingNumber}</p>
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={(e) => onSelectShipment(shipment._id, e.target.checked)}
+                    className="w-4 h-4 cursor-pointer mt-1"
+                  />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold">#{(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}</p>
+                    <p className="font-bold text-sm text-green-600">{shipment.trackingNumber}</p>
+                  </div>
                 </div>
                 <span
                   className={`font-medium capitalize text-xs px-2 py-1 rounded-md flex-shrink-0
@@ -196,7 +239,8 @@ export default function ShipmentTable({ shipments, onActionClick }) {
                 </Button>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
 

@@ -974,7 +974,85 @@
       "userId": null,
       "metadata": {},
       "loggedAt": "2026-06-06T05:48:36.729Z"
+    },
+    {
+      "id": "email_1781198689945_va9uok3yt",
+      "timestamp": "2026-06-11T17:24:49.944Z",
+      "to": "hayzedboy20@gmail.com",
+      "subject": "Shipment Created - Tracking #OSM83756096695",
+      "emailType": "shipment",
+      "success": true,
+      "messageId": "<202606111724.81304857390@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-11T17:24:49.945Z"
+    },
+    {
+      "id": "email_1781198690195_9hxomdsa7",
+      "timestamp": "2026-06-11T17:24:50.194Z",
+      "to": "fas.azeez@gmail.com",
+      "subject": "New Shipment Created - Tracking #OSM83756096695",
+      "emailType": "shipment",
+      "success": true,
+      "messageId": "<202606111724.95248174071@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-11T17:24:50.195Z"
+    },
+    {
+      "id": "email_1781199351824_iscrz1oih",
+      "timestamp": "2026-06-11T17:35:51.822Z",
+      "to": "hayzedboy20@gmail.com",
+      "subject": "Your Shipment Status Has Been Updated to Customs Clearance",
+      "emailType": "shipment-status-update",
+      "success": true,
+      "messageId": "<202606111735.51008805830@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-11T17:35:51.824Z"
+    },
+    {
+      "id": "email_1781199352104_1rcdvckjt",
+      "timestamp": "2026-06-11T17:35:52.103Z",
+      "to": "fas.azeez@gmail.com",
+      "subject": "Shipment 6a2aef60105703e1d1f043be Status Updated to Customs Clearance",
+      "emailType": "shipment-status-update",
+      "success": true,
+      "messageId": "<202606111735.19629006195@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-11T17:35:52.104Z"
+    },
+    {
+      "id": "email_1781199416845_lvr4gmow1",
+      "timestamp": "2026-06-11T17:36:56.843Z",
+      "to": "hayzedboy20@gmail.com",
+      "subject": "Shipment Created - Tracking #OSM53749269620",
+      "emailType": "shipment",
+      "success": true,
+      "messageId": "<202606111736.92315420521@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-11T17:36:56.845Z"
+    },
+    {
+      "id": "email_1781199417107_gh44j0v37",
+      "timestamp": "2026-06-11T17:36:57.106Z",
+      "to": "fas.azeez@gmail.com",
+      "subject": "New Shipment Created - Tracking #OSM53749269620",
+      "emailType": "shipment",
+      "success": true,
+      "messageId": "<202606111736.12001076354@smtp-relay.mailin.fr>",
+      "error": null,
+      "userId": null,
+      "metadata": {},
+      "loggedAt": "2026-06-11T17:36:57.107Z"
     }
   ],
-  "lastUpdated": "2026-06-06T05:48:36.729Z"
+  "lastUpdated": "2026-06-11T17:36:57.107Z"
 }

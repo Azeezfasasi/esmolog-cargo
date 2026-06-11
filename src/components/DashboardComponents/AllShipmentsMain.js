@@ -8,6 +8,8 @@ import EditShipmentModal from '../shipments/EditShipmentModal';
 import ReplyModal from '../shipments/ReplyModal';
 import ChangeStatusModal from '../shipments/ChangeStatusModal';
 import PrintModal from '../shipments/PrintModal';
+import BulkStatusToolbar from '../shipments/BulkStatusToolbar';
+import BulkStatusConfirmationModal from '../shipments/BulkStatusConfirmationModal';
 import { exportToExcel } from '../../utils/exportToExcel';
 import { API_BASE_URL } from '@/config/Api';
 import BasicModal from '@/components/ui/BasicModal';
@@ -26,6 +28,12 @@ export default function AllShipmentsMain({ token }) {
   const [error, setError] = useState(null);
   const [facilities, setFacilities] = useState([]);
   const [statuses, setStatuses] = useState([]);
+
+  // Bulk update states
+  const [selectedShipments, setSelectedShipments] = useState([]);
+  const [bulkStatusConfirmOpen, setBulkStatusConfirmOpen] = useState(false);
+  const [bulkUpdateStatus, setBulkUpdateStatus] = useState('');
+  const [bulkUpdateLoading, setBulkUpdateLoading] = useState(false);
 
   const getTimestamp = (item) => {
   return new Date(
@@ -146,7 +154,6 @@ export default function AllShipmentsMain({ token }) {
     setFilteredShipments(applied);
   };
 
-
   const handleFilter = (status) => {
     setSelectedStatus(status);
     const applied = applyFilters({ shipmentsList: shipments, status, facility: selectedFacility, term: searchQuery });
@@ -157,6 +164,64 @@ export default function AllShipmentsMain({ token }) {
     setSelectedFacility(facility);
     const applied = applyFilters({ shipmentsList: shipments, status: selectedStatus, facility, term: searchQuery });
     setFilteredShipments(applied);
+  };
+
+  // Bulk selection handlers
+  const handleSelectShipment = (shipmentId, isSelected) => {
+    if (isSelected) {
+      setSelectedShipments(prev => [...prev, shipmentId]);
+    } else {
+      setSelectedShipments(prev => prev.filter(id => id !== shipmentId));
+    }
+  };
+
+  const handleClearSelection = () => {
+    setSelectedShipments([]);
+  };
+
+  const handleBulkStatusSelect = (status) => {
+    setBulkUpdateStatus(status);
+  };
+
+  const handleBulkUpdateClick = (status) => {
+    if (selectedShipments.length === 0) {
+      alert('Please select at least one shipment');
+      return;
+    }
+    setBulkUpdateStatus(status);
+    setBulkStatusConfirmOpen(true);
+  };
+
+  const handleBulkStatusConfirm = async () => {
+    if (selectedShipments.length === 0 || !bulkUpdateStatus) {
+      alert('Invalid selection or status');
+      return;
+    }
+
+    setBulkUpdateLoading(true);
+    try {
+      const authToken = token || localStorage.getItem('token');
+      await axios.patch(`${API_BASE_URL}/shipments/bulk/status`, {
+        shipmentIds: selectedShipments,
+        status: bulkUpdateStatus
+      }, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      // Success - refresh shipments and clear selection
+      await fetchShipments();
+      setSelectedShipments([]);
+      setBulkStatusConfirmOpen(false);
+      setBulkUpdateStatus('');
+      alert('Shipment statuses updated successfully!');
+    } catch (err) {
+      console.error('Error updating bulk status:', err);
+      alert(err?.response?.data?.message || 'Failed to update shipment statuses');
+    } finally {
+      setBulkUpdateLoading(false);
+    }
   };
 
   const openModal = (shipment, type) => {
@@ -276,9 +341,20 @@ export default function AllShipmentsMain({ token }) {
         onExport={() => exportToExcel(filteredShipments, 'All_Shipments')}
       />
 
+      {/* Bulk Status Toolbar */}
+      <BulkStatusToolbar
+        selectedCount={selectedShipments.length}
+        statuses={statuses}
+        onStatusSelect={handleBulkStatusSelect}
+        onUpdateClick={handleBulkUpdateClick}
+        onClear={handleClearSelection}
+      />
+
       {/* Table */}
       <ShipmentTable
         shipments={filteredShipments}
+        selectedShipments={selectedShipments}
+        onSelectShipment={handleSelectShipment}
         onActionClick={openModal}
         onDeleteClick={(shipment) => openModal(shipment, 'delete')}
       />
@@ -389,6 +465,19 @@ export default function AllShipmentsMain({ token }) {
             </div>
         </BasicModal>
         )}
+
+        {/* Bulk Status Confirmation Modal */}
+        <BulkStatusConfirmationModal
+          isOpen={bulkStatusConfirmOpen}
+          shipmentCount={selectedShipments.length}
+          newStatus={bulkUpdateStatus}
+          onConfirm={handleBulkStatusConfirm}
+          onCancel={() => {
+            setBulkStatusConfirmOpen(false);
+            setBulkUpdateStatus('');
+          }}
+          isLoading={bulkUpdateLoading}
+        />
     </div>
   );
 }
