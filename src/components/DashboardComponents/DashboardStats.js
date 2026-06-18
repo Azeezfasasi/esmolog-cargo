@@ -135,7 +135,7 @@ const DashboardStats = () => {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Link href="/dashboard">
+            <Link href="/dashboard/allusers">
               <StatCard
                 icon={FaUsers}
                 title="Total Users"
@@ -145,7 +145,7 @@ const DashboardStats = () => {
                 error={usersQuery.error}
               />
             </Link>
-            <Link href="/dashboard/AllShipment">
+            <Link href="/dashboard/allshipments">
               <StatCard
                 icon={FaBox}
                 title="Total Shipments"
@@ -155,7 +155,7 @@ const DashboardStats = () => {
                 error={shipmentsQuery.error}
               />
             </Link>
-            <Link href="/dashboard/ContactFormResponses">
+            <Link href="/dashboard/contactformresponses">
               <StatCard
                 icon={FaClipboard}
                 title="Total Quote Requests"
@@ -165,7 +165,7 @@ const DashboardStats = () => {
                 error={contactQuery.error}
               />
             </Link>
-            <Link href="/dashboard/AllEvents">
+            <Link href="/dashboard/allevents">
               <StatCard
                 icon={FaCalendarAlt}
                 title="Total Events"
@@ -175,7 +175,7 @@ const DashboardStats = () => {
                 error={eventsQuery.error}
               />
             </Link>
-            <Link href="/dashboard/AllAppointments">
+            <Link href="/dashboard/allappointments">
               <StatCard
                 icon={FaHandshake}
                 title="Total Appointments"
@@ -185,14 +185,16 @@ const DashboardStats = () => {
                 error={appointmentsQuery.error}
               />
             </Link>
-            <StatCard
-              icon={FaBlog}
-              title="Total Blog Posts"
-              value={blogPostsQuery.data !== undefined ? blogPostsQuery.data : '--'}
-              isLoading={blogPostsQuery.isLoading}
-              isError={blogPostsQuery.isError}
-              error={blogPostsQuery.error}
-            />
+            <Link href="/dashboard/allblogpost">
+              <StatCard
+                icon={FaBlog}
+                title="Total Blog Posts"
+                value={blogPostsQuery.data !== undefined ? blogPostsQuery.data : '--'}
+                isLoading={blogPostsQuery.isLoading}
+                isError={blogPostsQuery.isError}
+                error={blogPostsQuery.error}
+              />
+            </Link>
           </div>
 
           {overallError && (
