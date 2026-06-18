@@ -99,7 +99,7 @@ export default function AllShipmentsMain({ token }) {
     try {
       const authToken = token || localStorage.getItem('token');
       // console.log('AllShipmentsMain: fetching shipments, token present?', !!authToken);
-      const res = await axios.get(`${API_BASE_URL}/shipments`, authToken ? {
+      const res = await axios.get(`${API_BASE_URL}/shipments?limit=100`, authToken ? {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -328,6 +328,17 @@ export default function AllShipmentsMain({ token }) {
   return (
     <div className="p-0 sm:p-4 md:p-6 space-y-4 sm:space-y-6 w-full">
       <div className='font-bold text-[18px] sm:text-[20px] md:text-[28px]'>All Shipments</div>
+
+      {/* Add total shipment counts */}
+      <div className="w-fit px-4 py-2 border bg-green-50 rounded-lg flex justify-between items-center">
+        <div className="flex justify-start items-center gap-1">
+          <div className="text-lg font-semibold text-gray-600">Total Shipments: </div>
+          <div className="text-lg text-green-800 font-semibold">
+            {shipments.length}
+          </div>
+        </div>
+      </div>
+
       {/* Toolbar and Filters */}
       <ShipmentToolbar
         searchQuery={searchQuery}
