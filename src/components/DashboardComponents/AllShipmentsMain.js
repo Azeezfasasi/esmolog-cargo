@@ -98,8 +98,8 @@ export default function AllShipmentsMain({ token }) {
     setError(null);
     try {
       const authToken = token || localStorage.getItem('token');
-      // console.log('AllShipmentsMain: fetching shipments, token present?', !!authToken);
-      const res = await axios.get(`${API_BASE_URL}/shipments?limit=100`, authToken ? {
+      // Fetch all shipments by requesting a very high limit to bypass pagination
+      const res = await axios.get(`${API_BASE_URL}/shipments?limit=10000`, authToken ? {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
