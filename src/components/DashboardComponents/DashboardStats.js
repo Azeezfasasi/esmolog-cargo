@@ -64,7 +64,7 @@ const DashboardStats = () => {
       },
       {
         queryKey: ['shipmentCount'],
-        queryFn: () => fetchData(`${API_BASE_URL}/shipments`),
+        queryFn: () => fetchData(`${API_BASE_URL}/shipments?limit=10000`), // Fetch all shipments to get accurate count
         select: (data) => {
           const shipmentsData = Array.isArray(data) ? data : (data?.data || []);
           return Array.isArray(shipmentsData) ? shipmentsData.length : 0;
